@@ -34,8 +34,8 @@ function App() {
     setFormSuccess("Form Submitted Successfully!");
 
     console.log("Email : " + emailInput);
-    console.log("Password : " + passwordInput);
-    console.log("Remember me : " + rememberMeChecked);
+    console.log("Contraseña : " + passwordInput);
+    console.log("Recuérdame : " + rememberMeChecked);
   }
   
   // Password visibility
@@ -96,14 +96,14 @@ function App() {
         <Typography component='h1' 
         variant='h5' 
         sx={{textAlign: "center"}}>
-          Sign In
+          Iniciar Sesión
         </Typography>
         <Box component='form'
         onSubmit={handleSubmit}
         noValidate
         sx={{ mt: 1}}>
-          <TextField label="E-mail"
-          placeholder="Enter e-mail address" 
+          <TextField label="Correo electrónico"
+          placeholder="Ingresar dirección de correo electrónico" 
           fullWidth 
           onBlur={handleEmail}
           error={emailError}
@@ -111,12 +111,13 @@ function App() {
           onChange={(event) => setEmailInput(event.target.value)}
           required 
           autoFocus 
+          
           type="email"
           sx={{ mb: 2}}/>
           <FormControl sx={{ mb: 2 }} variant="outlined" fullWidth required>
             <InputLabel htmlFor="outlined-adornment-password"
             error={passwordError}>
-              Password
+              Contraseña
             </InputLabel>
             <OutlinedInput
               id="outlined-adornment-password"
@@ -124,7 +125,7 @@ function App() {
               value={passwordInput}
               error={passwordError}
               onBlur={handlePassword}
-              placeholder="Enter password"
+              placeholder="Ingresar contraseña"
               onChange={(event) => setPasswordInput(event.target.value)}
               endAdornment={
                 <InputAdornment position="end">
@@ -152,7 +153,7 @@ function App() {
               checked={rememberMeChecked} 
               onChange={(event) => setRememberMeChecked(event.target.checked)}
             />}
-            label="Remember me"
+            label="Recuérdame"
           />
           <Button endIcon={<LoginOutlinedIcon />} 
           type="submit" 
@@ -160,7 +161,7 @@ function App() {
           variant="contained" 
           color="warning" 
           sx={{ mt: 2 }}>
-            Sign In
+            Iniciar Sesión
           </Button>
           {formValid && <Alert severity="error">{formValid}</Alert>}
           {formSuccess && <Alert severity="success">{formSuccess}</Alert>}
