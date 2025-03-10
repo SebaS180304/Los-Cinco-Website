@@ -7,12 +7,12 @@ import Bottombar from '../components/Bottombar';
 
 function Lecture() {
     return ( 
-        <div style={{ backgroundColor: '#060E25', height: '100vh' }}>
+        <div>
             <Lectbar />
-            <Box>
-                <Stack direction="row" spacing={2} justifyContent={'space-evenly'}>
-                    <Model />
+            <Box sx={{ mt: 9}}>
+                <Stack direction="row" spacing={2} justifyContent={'space-between'}>
                     <Content />
+                    <Model />
                 </Stack>
             </Box>
             <Bottombar />

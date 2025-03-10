@@ -23,8 +23,8 @@ function Lectbar() {
     };
 
     return ( 
-        <AppBar position='static' sx={{ backgroundColor: 'black', border: '1px solid white' }}>
-            <Container maxWidth='xl'>
+        <AppBar position='fixed' sx={{ backgroundColor: 'black'}}>
+            <Container maxWidth='xxl'>
                 <Toolbar>
                     <Link to='/'>
                         <img src={logo} alt='logoA' style={{ height: '50px' }} />
