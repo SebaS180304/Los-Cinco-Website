@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\temp\\compu\\CompuMty\\Web\\C_sApi\\MyApiProyect\\MyApiProyect.csproj": {}
+    "E:\\Codigos_Grandes\\Gits\\Los-Cinco-Website\\MyApiProyect\\MyApiProyect.csproj": {}
   },
   "projects": {
-    "C:\\temp\\compu\\CompuMty\\Web\\C_sApi\\MyApiProyect\\MyApiProyect.csproj": {
+    "E:\\Codigos_Grandes\\Gits\\Los-Cinco-Website\\MyApiProyect\\MyApiProyect.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\temp\\compu\\CompuMty\\Web\\C_sApi\\MyApiProyect\\MyApiProyect.csproj",
+        "projectUniqueName": "E:\\Codigos_Grandes\\Gits\\Los-Cinco-Website\\MyApiProyect\\MyApiProyect.csproj",
         "projectName": "MyApiProyect",
-        "projectPath": "C:\\temp\\compu\\CompuMty\\Web\\C_sApi\\MyApiProyect\\MyApiProyect.csproj",
+        "projectPath": "E:\\Codigos_Grandes\\Gits\\Los-Cinco-Website\\MyApiProyect\\MyApiProyect.csproj",
         "packagesPath": "C:\\Users\\hachi\\.nuget\\packages\\",
-        "outputPath": "C:\\temp\\compu\\CompuMty\\Web\\C_sApi\\MyApiProyect\\obj\\",
+        "outputPath": "E:\\Codigos_Grandes\\Gits\\Los-Cinco-Website\\MyApiProyect\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\hachi\\AppData\\Roaming\\NuGet\\NuGet.Config",

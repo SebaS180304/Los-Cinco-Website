@@ -10,11 +10,11 @@ namespace Data
             
         }
 
-        private string Server  = "localhost";
+        private string Server  = "sql3.freesqldatabase.com";
         private string Port  = "3306";
-        private string DatabaseName  = "vendedores_zona";
-        private string UserName  = "root";
-        private string Password = "*********";
+        private string DatabaseName  = "sql3766924";
+        private string UserName  = "sql3766924";
+        private string Password = "hgb1hyCPf5";
 
         public MySqlConnection? Connection { get; set;}
 

@@ -28,16 +28,20 @@ namespace MyApiProyect.Controllers
             {
                 //suppose col0 and col1 are defined as VARCHAR in the DB
                 
-                string query = "select * from vendedores";  
+                string query = "select * from Usuario";  
                 var cmd = new MySqlCommand(query, dbCon.Connection);
                 var reader = cmd.ExecuteReader();
                 while(reader.Read())
                 {
                     response.Add(new User()
                     {
-                        Id = reader.GetInt32(0),
-                        Name = reader.GetString(1),
-                        Password = reader.GetInt32(2)
+                        Id_usuario = reader.GetInt32(0),
+                        Nombre = reader.GetString(1),
+                        Apellido = reader.GetString(2),
+                        Correo_electronico = reader.GetString(3),
+                        Contraseña = reader.GetString(4),
+                        Numero_tecnico = reader.GetString(5),
+                        Liga =reader.GetInt32(6),
                     });
                 }
 
@@ -54,15 +58,15 @@ namespace MyApiProyect.Controllers
             
             User response = new User();
             if(dbCon.IsConnect()){
-                string query = "select * from vendedores where nombre = @name and telefono = @password";
+                string query = "select * from Usuario where Id_usuario = @Id_usuario and Contraseña = @password";
                 var cmd = new MySqlCommand(query, dbCon.Connection);
-                cmd.Parameters.AddWithValue("@name", user.Name);
-                cmd.Parameters.AddWithValue("@password", user.Password);
+                cmd.Parameters.AddWithValue("@name", user.Nombre);
+                cmd.Parameters.AddWithValue("@password", user.Contraseña);
                 var reader = cmd.ExecuteReader();
                 while(reader.Read()){
-                    response.Id = reader.GetInt32(0);
-                    response.Name = reader.GetString(1);
-                    response.Password = reader.GetInt32(2);
+                    response.Id_usuario = reader.GetInt32(0);
+                    response.Nombre = reader.GetString(1);
+                    response.Contraseña = reader.GetString(5);
                 }
                 dbCon.Close();
                 return response;
