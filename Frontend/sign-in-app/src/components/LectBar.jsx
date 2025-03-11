@@ -1,12 +1,14 @@
 import React from 'react';
 import logo from '../assets/logo.png';
 import { AppBar, Toolbar, Container, Box, Button, Tooltip, Menu, Typography, MenuItem, IconButton, Drawer } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import Drawcontent from './DrawContent';
 
-const settings = ['Profile', 'Account', 'Logout'];
+const settings = ['Logout'];
 
 function Lectbar() {
+    const navigate = useNavigate();
     const [anchorElUser, setAnchorElUser] = React.useState(null);
     const [open, setOpen] = React.useState(false);
 
@@ -18,6 +20,11 @@ function Lectbar() {
         setAnchorElUser(null);
     };
 
+    const handleLogout = () => {
+        handleCloseUserMenu();
+        navigate('/login');
+    };
+
     const toggleDrawer = (newOpen) => () => {
         setOpen(newOpen);
     };
@@ -27,7 +34,7 @@ function Lectbar() {
             <Container maxWidth='xxl'>
                 <Toolbar>
                     <Link to='/'>
-                        <img src={logo} alt='logoA' style={{ height: '50px' }} />
+                        <img src={logo} alt='Whirlpool logo' style={{ height: '50px' }} />
                     </Link>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, ml: 2 }} >
                         <Button key="home" sx={{ my: 2, color: 'white', display: 'block' }} 
@@ -37,10 +44,19 @@ function Lectbar() {
                         <Button onClick={toggleDrawer(true)} sx={{ my: 2, color: 'white' }}>
                             Syllabus
                         </Button>
-                        <Drawer open={open} onClose={toggleDrawer(false)}>
-                            <div>
-                                <h1>Contenido de leccion</h1>
-                            </div>
+                        <Drawer 
+                            open={open} 
+                            onClose={toggleDrawer(false)}
+                            sx={{
+                                '& .MuiDrawer-paper': {
+                                    width: '50vw',
+                                    minWidth: '250px',
+                                    maxWidth: '500px',
+                                    boxSizing: 'border-box',
+                                },
+                            }}
+                        >
+                            <Drawcontent onClose={toggleDrawer(false)} />
                         </Drawer>
                     </Box>
                     <Box>
@@ -54,7 +70,7 @@ function Lectbar() {
                             transformOrigin={{vertical: 'top', horizontal: 'right'}}
                             open={Boolean(anchorElUser)} onClose={handleCloseUserMenu}>
                             {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                                <MenuItem key={setting} onClick={handleLogout}>
                                     <Typography sx={{ textAlign: 'center', color: 'black' }}>{setting}</Typography>
                                 </MenuItem>
                             ))}

@@ -39,7 +39,7 @@ export const lecture_data = [
     },
     {
         id: 2,
-        title: 'Lecture 2',
+        title: 'Lecture 1',
         subtitle: 'Subtitle 2',
         content: `Lecture Content <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde
@@ -77,7 +77,7 @@ export const lecture_data = [
     },
     {
         id: 3,
-        title: 'Lecture 3',
+        title: 'Lecture 1',
         subtitle: 'Subtitle 3',
         content: `Lecture Content <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde
@@ -115,7 +115,7 @@ export const lecture_data = [
     },
     {
         id: 4,
-        title: 'Lecture 4',
+        title: 'Lecture 1',
         subtitle: 'Subtitle 4',
         content: `Lecture Content <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde
@@ -153,7 +153,7 @@ export const lecture_data = [
     },
     {
         id: 5,
-        title: 'Lecture 5',
+        title: 'Lecture 1',
         subtitle: 'Subtitle 5',
         content: `Lecture Content <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde

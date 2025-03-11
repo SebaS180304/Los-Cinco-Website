@@ -1,7 +1,7 @@
 import React from 'react';
 import logoA from '../assets/logoA.png';
 import { AppBar, Toolbar, Container, Box, Button, Tooltip, Menu, Typography, MenuItem } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
 
 const pages = [
@@ -11,9 +11,10 @@ const pages = [
     { name: 'login', path: '/login' }
 ];
 
-const settings = ['Profile', 'Account', 'Logout'];
+const settings = ['Logout'];
 
 function Navbar() {
+    const navigate = useNavigate();
     const [anchorElUser, setAnchorElUser] = React.useState(null);
 
     const handleOpenUserMenu = (event) => {
@@ -24,12 +25,17 @@ function Navbar() {
         setAnchorElUser(null);
     };
 
+    const handleLogout = () => {
+        handleCloseUserMenu();
+        navigate('/login');
+    };
+
     return ( 
         <AppBar position='static' color="transparent" sx={{ border: '1px solid white' }}>
             <Container maxWidth='xl'>
                 <Toolbar>
                     <Link to='/'>
-                        <img src={logoA} alt='logoA' style={{ height: '50px' }} />
+                        <img src={logoA} alt='Whirlpool logo' style={{ height: '50px' }} />
                     </Link>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, ml: 2 }} >
                         {pages.map((page) => (
@@ -52,7 +58,7 @@ function Navbar() {
                             transformOrigin={{vertical: 'top', horizontal: 'right'}}
                             open={Boolean(anchorElUser)} onClose={handleCloseUserMenu}>
                             {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                                <MenuItem key={setting} onClick={handleLogout}>
                                     <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
                                 </MenuItem>
                             ))}
