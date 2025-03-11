@@ -14,7 +14,7 @@ namespace Data
         private string Port  = "3306";
         private string DatabaseName  = "sql3766924";
         private string UserName  = "sql3766924";
-        private string Password = "hgb1hyCPf5";
+        private string Password = "hgb1hy";
 
         public MySqlConnection? Connection { get; set;}
 

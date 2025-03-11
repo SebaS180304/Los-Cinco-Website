@@ -1,16 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Mvc;
 using Data;
 using MyApiProyect.Models;
-using MySql.Data;
 using MySql.Data.MySqlClient;
-using Org.BouncyCastle.Asn1.X509.SigI;
-using Org.BouncyCastle.Cms;
-using Org.BouncyCastle.Asn1.Ocsp;
-using System.Reflection.Metadata.Ecma335;
 
 namespace MyApiProyect.Controllers
 {
@@ -21,7 +13,7 @@ namespace MyApiProyect.Controllers
         DBConnection dbCon = DBConnection.Instance();
         [HttpGet]
         [Route("GetUsers")]
-        public dynamic GetUser()
+        public dynamic GetUsers()
         {
             List<User> response = new List<User>();
             if (dbCon.IsConnect())
