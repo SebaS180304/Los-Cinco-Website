@@ -13,7 +13,7 @@ function Content({ currentLecture}) {
                     <Toolbar>
                         <LocalLibraryOutlinedIcon sx={{fontSize: 40}} />
                         <Typography component="div" sx={{ ml: 2, fontWeight:'bold' }}>
-                            Learning
+                            Aprendiendo
                         </Typography>
                     </Toolbar>
                 </Container>

@@ -21,25 +21,24 @@ function Bottombar({ currentLecture, setCurrentLecture }) {
                 <Toolbar>
                     <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: "center" }}>
-                            {currentLecture + 1} / {lecture_data.length} complete
+                            {currentLecture + 1} / {lecture_data.length} completado
                         </Typography>
                         <Box sx={{ display: 'flex', gap: 2}}>
                             <Button 
-                                color="warning" 
+                                sx={{ color: '#FFB300', border: '2px solid #FFB300' }}
                                 variant="outlined" 
-                                sx={{ borderWidth: 2 }}
                                 onClick={handleBack}
                                 disabled={currentLecture === 0}
                             >
-                                Back
+                                Atrás
                             </Button>
                             <Button 
-                                color="warning" 
+                                sx={{ backgroundColor: '#FFB300'}} 
                                 variant="contained"
                                 onClick={handleNext}
                                 disabled={currentLecture === lecture_data.length - 1}
                             >
-                                Next
+                                Siguiente
                             </Button>
                         </Box>
                     </Box>

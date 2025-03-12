@@ -36,7 +36,7 @@ function Model() {
                 <Container maxWidth='xxl'>
                     <Toolbar sx={{ justifyContent: 'flex-end' }}>
                         <Typography component="div" sx={{ mr: 2, fontWeight:'bold' }}>
-                            Graphics
+                            Gráficos
                         </Typography>
                         <ViewInArIcon sx={{ color: 'white', fontSize: 40 }} />
                     </Toolbar>
@@ -86,7 +86,7 @@ function Model() {
                             disabled={isLoading}
                             sx={{ 
                                 bgcolor: '#212633', 
-                                border: '2px solid orange', 
+                                border: '2px solid #FFB300', 
                                 color: 'white',
                                 '&:disabled': {
                                     bgcolor: '#1a1f2a',

@@ -43,7 +43,7 @@ function Login() {
     console.log("Email : " + emailInput);
     console.log("Contraseña : " + passwordInput);
     console.log("Recuérdame : " + rememberMeChecked);
-    navigate('/');
+    navigate('/learn');
   }
   
   // Password visibility
@@ -95,7 +95,7 @@ function Login() {
       <Paper elevation={10} sx={{marginTop: 8, padding: 2}}>
         <Avatar sx={{
           mx: "auto",
-          bgcolor: "warning.main",
+          bgcolor: "#FFB300",
           textAlign: "center",
           mb: 1,
         }}>
@@ -166,9 +166,8 @@ function Login() {
           <Button endIcon={<LoginOutlinedIcon />} 
           type="submit" 
           fullWidth 
-          variant="contained" 
-          color="warning" 
-          sx={{ mt: 2 }}>
+          variant="contained"
+          sx={{ mt: 2, bgcolor: '#FFB300' }}>
             Iniciar Sesión
           </Button>
           {formValid && <Alert severity="error">{formValid}</Alert>}

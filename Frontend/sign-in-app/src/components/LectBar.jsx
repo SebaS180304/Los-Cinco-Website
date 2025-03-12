@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import Drawcontent from './DrawContent';
 
-const settings = ['Logout'];
+const settings = ['Cerrar Sesión'];
 
 function Lectbar() {
     const navigate = useNavigate();
@@ -22,7 +22,7 @@ function Lectbar() {
 
     const handleLogout = () => {
         handleCloseUserMenu();
-        navigate('/login');
+        navigate('/');
     };
 
     const toggleDrawer = (newOpen) => () => {
@@ -33,16 +33,16 @@ function Lectbar() {
         <AppBar position='fixed' sx={{ backgroundColor: 'black'}}>
             <Container maxWidth='xxl'>
                 <Toolbar>
-                    <Link to='/'>
+                    <Link to='/learn'>
                         <img src={logo} alt='Whirlpool logo' style={{ height: '50px' }} />
                     </Link>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, ml: 2 }} >
                         <Button key="home" sx={{ my: 2, color: 'white', display: 'block' }} 
-                            component={Link} to="/">
-                            Home
+                            component={Link} to="/learn">
+                            Inicio
                         </Button>
                         <Button onClick={toggleDrawer(true)} sx={{ my: 2, color: 'white' }}>
-                            Syllabus
+                            Contenidos
                         </Button>
                         <Drawer 
                             open={open} 
@@ -60,9 +60,9 @@ function Lectbar() {
                         </Drawer>
                     </Box>
                     <Box>
-                        <Tooltip title="Open Settings" arrow>
+                        <Tooltip title="Abrir Configuración" arrow>
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <AccountCircleOutlinedIcon sx={{ color: 'white', fontSize: 40 }}/>
+                                <AccountCircleOutlinedIcon sx={{ color: '#FFB300', fontSize: 40 }}/>
                             </IconButton>
                         </Tooltip>
                         <Menu sx={{mt: '45px'}} id="user-menu" anchorEl={anchorElUser}

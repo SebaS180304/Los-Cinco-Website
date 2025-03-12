@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { Box, Container, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import CoPresentOutlinedIcon from '@mui/icons-material/CoPresentOutlined';
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined';
+
+const CUSTOM_COLOR = '#FFB300';
 
 const menuItems = [
     { text: 'Panel', icon: <CoPresentOutlinedIcon /> },
@@ -36,23 +38,23 @@ function Sidebar() {
                             <ListItemButton
                                 onClick={() => setSelectedItem(text)}
                                 sx={{
-                                    bgcolor: selectedItem === text ? 'rgba(255, 152, 0, 0.1)' : 'transparent',
+                                    bgcolor: selectedItem === text ? `${CUSTOM_COLOR}40` : 'transparent',
                                     boxShadow: selectedItem === text ? 'inset 0 0 5px rgba(0,0,0,0.1)' : 'none',
                                     '&:hover': {
-                                        bgcolor: 'rgba(255, 152, 0, 0.1)',
+                                        bgcolor: `${CUSTOM_COLOR}40`,
                                         '& .MuiListItemText-primary': {
-                                            color: 'warning.main',
+                                            color: CUSTOM_COLOR,
                                         },
                                         '& .MuiListItemIcon-root': {
-                                            color: 'warning.main',
+                                            color: CUSTOM_COLOR,
                                         }
                                     },
                                     transition: 'all 0.3s ease',
                                     '& .MuiListItemText-primary': {
-                                        color: selectedItem === text ? 'warning.main' : 'inherit',
+                                        color: selectedItem === text ? CUSTOM_COLOR : 'inherit',
                                     },
                                     '& .MuiListItemIcon-root': {
-                                        color: selectedItem === text ? 'warning.main' : 'inherit',
+                                        color: selectedItem === text ? CUSTOM_COLOR : 'inherit',
                                     }
                                 }}
                             >

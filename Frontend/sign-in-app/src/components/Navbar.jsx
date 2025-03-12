@@ -5,13 +5,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
 
 const pages = [
-    { name: 'home', path: '/' },
-    { name: 'learn', path: '/learn' },
-    { name: 'lecture', path: '/lecture' },
-    { name: 'login', path: '/login' }
+    { name: 'Inicio', path: '/learn' }
 ];
 
-const settings = ['Logout'];
+const settings = ['Cerrar Sesión'];
 
 function Navbar() {
     const navigate = useNavigate();
@@ -27,14 +24,14 @@ function Navbar() {
 
     const handleLogout = () => {
         handleCloseUserMenu();
-        navigate('/login');
+        navigate('/');
     };
 
     return ( 
         <Container maxWidth='xl'>
             <AppBar position='static' color="transparent" sx={{ border: '1px solid white' }}>
                 <Toolbar>
-                    <Link to='/'>
+                    <Link to='/learn'>
                         <img src={logoA} alt='Whirlpool logo' style={{ height: '50px' }} />
                     </Link>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, ml: 2 }} >
@@ -46,11 +43,11 @@ function Navbar() {
                         ))}
                     </Box>
                     <Box>
-                        <Tooltip title="Open Settings" arrow>
+                        <Tooltip title="Abrir Configuración" arrow>
                             <Button startIcon={<PermIdentityOutlinedIcon />} 
-                                variant="contained" color="warning" 
+                                variant="contained" sx={{ bgcolor: '#FFB300' }} 
                                 onClick={handleOpenUserMenu}>
-                                    Username
+                                    Usuario
                             </Button>
                         </Tooltip>
                         <Menu sx={{mt: '45px'}} id="user-menu" anchorEl={anchorElUser}

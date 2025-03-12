@@ -1,9 +1,9 @@
 export const lecture_data = [
     {
         id: 1,
-        title: 'Lecture 1',
-        subtitle: 'Subtitle 1',
-        content: `Lecture Content <br/>
+        title: 'Lección 1',
+        subtitle: 'Tema 1',
+        content: `Contenido de la Lección <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde
                     fugit veniam eius, perspiciatis sunt? Corporis qui ducimus quibusdam,
                     aliquam dolore excepturi quae. Distinctio enim at eligendi perferendis in
@@ -39,9 +39,9 @@ export const lecture_data = [
     },
     {
         id: 2,
-        title: 'Lecture 1',
-        subtitle: 'Subtitle 2',
-        content: `Lecture Content <br/>
+        title: 'Lección 1',
+        subtitle: 'Tema 2',
+        content: `Contenido de la Lección <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde
                     fugit veniam eius, perspiciatis sunt? Corporis qui ducimus quibusdam,
                     aliquam dolore excepturi quae. Distinctio enim at eligendi perferendis in
@@ -77,9 +77,9 @@ export const lecture_data = [
     },
     {
         id: 3,
-        title: 'Lecture 1',
-        subtitle: 'Subtitle 3',
-        content: `Lecture Content <br/>
+        title: 'Lección 1',
+        subtitle: 'Tema 3',
+        content: `Contenido de la Lección <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde
                     fugit veniam eius, perspiciatis sunt? Corporis qui ducimus quibusdam,
                     aliquam dolore excepturi quae. Distinctio enim at eligendi perferendis in
@@ -115,9 +115,9 @@ export const lecture_data = [
     },
     {
         id: 4,
-        title: 'Lecture 1',
-        subtitle: 'Subtitle 4',
-        content: `Lecture Content <br/>
+        title: 'Lección 1',
+        subtitle: 'Tema 4',
+        content: `Contenido de la Lección <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde
                     fugit veniam eius, perspiciatis sunt? Corporis qui ducimus quibusdam,
                     aliquam dolore excepturi quae. Distinctio enim at eligendi perferendis in
@@ -153,9 +153,9 @@ export const lecture_data = [
     },
     {
         id: 5,
-        title: 'Lecture 1',
-        subtitle: 'Subtitle 5',
-        content: `Lecture Content <br/>
+        title: 'Lección 1',
+        subtitle: 'Tema 5',
+        content: `Contenido de la Lección <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde
                     fugit veniam eius, perspiciatis sunt? Corporis qui ducimus quibusdam,
                     aliquam dolore excepturi quae. Distinctio enim at eligendi perferendis in
