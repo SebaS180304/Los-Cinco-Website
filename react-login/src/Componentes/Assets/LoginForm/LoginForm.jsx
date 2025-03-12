@@ -6,7 +6,6 @@ import './LoginForm.css';
 const LoginForm = () => {
     const navigate = useNavigate();
     
-    // Estados para campos del formulario y errores
     const [formData, setFormData] = useState({
         usuario: '',
         contraseña: ''
@@ -16,7 +15,6 @@ const LoginForm = () => {
     const [passwordError, setPasswordError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    // Función para validar usuario
     const handleUser = () => {
         if (!formData.usuario || formData.usuario.length < 3) {
             setUserError(true);
@@ -25,7 +23,6 @@ const LoginForm = () => {
         setUserError(false);
     };
 
-    // Función para validar contraseña
     const handlePassword = () => {
         if (!formData.contraseña || formData.contraseña.length < 5 || formData.contraseña.length > 20) {
             setPasswordError(true);
@@ -34,16 +31,14 @@ const LoginForm = () => {
         setPasswordError(false);
     };
 
-    // Función para manejar cambios en los inputs
     const handleInputChange = (e) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
         });
-        setErrorMessage(''); // Limpiar mensaje de error cuando el usuario escribe
+        setErrorMessage('');
     };
 
-    // Función para manejar el envío del formulario
     const handleSubmit = async (e) => {
         e.preventDefault();
         setErrorMessage('');
@@ -53,16 +48,24 @@ const LoginForm = () => {
             console.log('🚀 Iniciando proceso de login...');
             const response = await loginUser(formData);
             
-            if (response.role === 'admin') {
-                setErrorMessage('✅ Login exitoso! Redirigiendo a panel de administrador...');
-                setTimeout(() => {
-                    navigate('/admin');
-                }, 1500);
-            } else if (response.role === 'tecnico') {
-                setErrorMessage('✅ Login exitoso! Redirigiendo a panel técnico...');
-                setTimeout(() => {
-                    navigate('/tecnico');
-                }, 1500);
+            switch(response.role) {
+                case 0:
+                    setErrorMessage('✅ Login exitoso! Redirigiendo a panel de administrador...');
+                    setTimeout(() => {
+                        navigate('/admin');
+                    }, 1500);
+                    break;
+                case 1:
+                    setErrorMessage('✅ Login exitoso! Redirigiendo a panel técnico...');
+                    setTimeout(() => {
+                        navigate('/tecnico');
+                    }, 1500);
+                    break;
+                case 2:
+                    setErrorMessage('❌ Usuario o contraseña incorrectos');
+                    break;
+                default:
+                    setErrorMessage('❌ Error en la autenticación');
             }
         } catch (error) {
             setErrorMessage('❌ Error: ' + error.message);
