@@ -31,8 +31,8 @@ function Navbar() {
     };
 
     return ( 
-        <AppBar position='static' color="transparent" sx={{ border: '1px solid white' }}>
-            <Container maxWidth='xl'>
+        <Container maxWidth='xl'>
+            <AppBar position='static' color="transparent" sx={{ border: '1px solid white' }}>
                 <Toolbar>
                     <Link to='/'>
                         <img src={logoA} alt='Whirlpool logo' style={{ height: '50px' }} />
@@ -50,7 +50,7 @@ function Navbar() {
                             <Button startIcon={<PermIdentityOutlinedIcon />} 
                                 variant="contained" color="warning" 
                                 onClick={handleOpenUserMenu}>
-                                    Juan Perez
+                                    Username
                             </Button>
                         </Tooltip>
                         <Menu sx={{mt: '45px'}} id="user-menu" anchorEl={anchorElUser}
@@ -65,8 +65,8 @@ function Navbar() {
                         </Menu>
                     </Box>
                 </Toolbar>
-            </Container>
-        </AppBar>
+            </AppBar>
+        </Container>
      );
 }
 

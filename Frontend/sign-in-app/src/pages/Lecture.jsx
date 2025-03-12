@@ -12,7 +12,7 @@ function Lecture() {
         <div>
             <Lectbar />
             <Box sx={{ mt: 9}}>
-                <Stack direction="row" spacing={2} justifyContent={'space-between'}>
+                <Stack direction="row" justifyContent={'space-between'}>
                     <Content currentLecture={currentLecture} setCurrentLecture={setCurrentLecture} />
                     <Model />
                 </Stack>
