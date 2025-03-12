@@ -50,7 +50,7 @@ namespace MyApiProyect.Controllers
             
             User response = new User();
             if(dbCon.IsConnect()){
-                string query = "select * from Usuario where Id_usuario = @Id_usuario and Contraseña = @password";
+                string query = "select * from Usuario where Numero_tecnico = @Id_usuario and Contraseña = @password";
                 var cmd = new MySqlCommand(query, dbCon.Connection);
                 cmd.Parameters.AddWithValue("@name", user.Nombre);
                 cmd.Parameters.AddWithValue("@password", user.Contraseña);
@@ -66,6 +66,28 @@ namespace MyApiProyect.Controllers
                 return StatusCode(500);
             }
             
+        }
+        [HttpPost]
+        public dynamic LoginTry(LoginResponse lresponse){
+            if(dbCon.IsConnect()){
+                string query = "select Id_usuario from Usuario where Numero_tecnico = @user and Contraseña = @password";
+                var cmd = new MySqlCommand(query, dbCon.Connection);
+                cmd.Parameters.AddWithValue("@user", lresponse.user);
+                cmd.Parameters.AddWithValue("@password", lresponse.password);
+                object reader = cmd.ExecuteScalar();
+                if(reader == null){
+                    lresponse.result = -1;
+                }else {
+
+                    lresponse.result = (Int32)reader % 2;
+                    
+                }
+            }else{
+                return StatusCode(500);
+            }
+        
+            dbCon.Close();
+            return lresponse;
         }
     }
 }
