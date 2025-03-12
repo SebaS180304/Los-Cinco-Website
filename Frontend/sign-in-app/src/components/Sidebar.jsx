@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, LinearProgress, Typography } from '@mui/material';
 import CoPresentOutlinedIcon from '@mui/icons-material/CoPresentOutlined';
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
@@ -32,6 +32,7 @@ function Sidebar() {
                     }
                 }}
             >
+                <Divider/>
                 <List>
                     {menuItems.map(({ text, icon }) => (
                         <ListItem key={text} disablePadding>
@@ -66,6 +67,25 @@ function Sidebar() {
                         </ListItem>
                     ))}
                 </List>
+                <Divider />
+                <Box p={2}>
+                    <LinearProgress 
+                        variant="determinate" 
+                        value={20} 
+                        sx={{ 
+                            height: '20px',
+                            borderRadius: '10px',
+                            backgroundColor: `${CUSTOM_COLOR}40`,
+                            '& .MuiLinearProgress-bar': {
+                                borderRadius: '10px',
+                                backgroundColor: CUSTOM_COLOR
+                            }
+                        }} 
+                    />
+                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                        Progreso del curso actual: 20%
+                    </Typography>
+                </Box>
                 <Divider />
             </Drawer>
         </Box>
