@@ -1,181 +1,149 @@
-// Material UI Icons
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { loginUser } from '../services/authService.js';
+import logoA from './../assets/logoA.png';
+import './Login.css';
 
-// Material UI Components
-import { Avatar, Button, Container, Paper, Typography, Box, TextField, 
-  FormControlLabel, Checkbox, InputLabel, FormControl, OutlinedInput, 
-  InputAdornment, IconButton, Alert } from "@mui/material";
-  
-// React Component
-import * as React from "react";
-
-// React Router Dom Component
-import { useNavigate } from "react-router-dom";
-
-function Login() {
-    // Navigation
+const Login = () => {
     const navigate = useNavigate();
+    
+    const [formData, setFormData] = useState({
+        user: '',
+        password: ''
+    });
+    const [errorMessage, setErrorMessage] = useState('');
+    const [userError, setUserError] = useState(false);
+    const [passwordError, setPasswordError] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
 
-  // Submit forms
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setFormSuccess(null);
 
-    if(emailError || !emailInput){
-      setFormValid(
-        "Email is invalid. Please re-enter your email");
-        return;
-    }
+    const handleUser = () => {
+        if (!formData.user || formData.user.length < 3) {
+            setUserError(true);
+            return;
+        }
+        setUserError(false);
+    };
 
-    if(passwordError ||!passwordInput){
-      setFormValid(
-        "Password must be at least 5 characters long and not contain spaces. Please re-enter your password");
-        return;
-    }
+    const handlePassword = () => {
+        if (!formData.password || formData.password.length < 5 || formData.password.length > 20) {
+            setPasswordError(true);
+            return;
+        }
+        setPasswordError(false);
+    };
 
-    setFormValid(null);
-    setFormSuccess("Form Submitted Successfully!");
+    const handleInputChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+        setErrorMessage('');
+    };
 
-    console.log("Email : " + emailInput);
-    console.log("Contraseña : " + passwordInput);
-    console.log("Recuérdame : " + rememberMeChecked);
-    navigate('/learn');
-  }
-  
-  // Password visibility
-  const [showPassword, setShowPassword] = React.useState(false);
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
-  const handleMouseUpPassword = (event) => {
-    event.preventDefault();
-  };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setErrorMessage('');
+        setIsLoading(true);
 
-  // Inputs
-  const [emailInput, setEmailInput] = React.useState('');
-  const [passwordInput, setPasswordInput] = React.useState('');
-  const [rememberMeChecked, setRememberMeChecked] = React.useState(false);
+        try {
+            console.log('🚀 Iniciando proceso de login...');
+            const orderedFormData = {
+                user: formData.user,
+                password: formData.password
+            };
 
-  // Input Errors
-  const [emailError, setEmailError] = React.useState(false);
-  const [passwordError, setPasswordError] = React.useState(false);
-
-  // Validation for onBlur email
-  const handleEmail = () => {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9]+\.[a-zA-Z]{2,}(\.[a-zA-Z]{2,})?$/;
-    if (!emailRegex.test(emailInput)) {
-      setEmailError(true);
-      return;
-    }
-    setEmailError(false);
-  }
-
-  // Validation for onBlur password
-  const handlePassword = () => {
-    if (!passwordInput || passwordInput.length < 5 || passwordInput.length > 20){
-      setPasswordError(true);
-      return;
-    }
-    setPasswordError(false);
-  }
-
-  // Form validation
-  const [formValid, setFormValid] = React.useState();
-  const [formSuccess, setFormSuccess] = React.useState();
-
-  // Form submission
-
-  return (
-    <Container maxWidth="xs">
-      <Paper elevation={10} sx={{marginTop: 8, padding: 2}}>
-        <Avatar sx={{
-          mx: "auto",
-          bgcolor: "#FFB300",
-          textAlign: "center",
-          mb: 1,
-        }}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component='h1' 
-        variant='h5' 
-        sx={{textAlign: "center"}}>
-          Iniciar Sesión
-        </Typography>
-        <Box component='form'
-        onSubmit={handleSubmit}
-        noValidate
-        sx={{ mt: 1}}>
-          <TextField label="Correo electrónico"
-          placeholder="Ingresar dirección de correo electrónico" 
-          fullWidth 
-          onBlur={handleEmail}
-          error={emailError}
-          value={emailInput}
-          onChange={(event) => setEmailInput(event.target.value)}
-          required 
-          autoFocus 
-          
-          type="email"
-          sx={{ mb: 2}}/>
-          <FormControl sx={{ mb: 2 }} variant="outlined" fullWidth required>
-            <InputLabel htmlFor="outlined-adornment-password"
-            error={passwordError}>
-              Contraseña
-            </InputLabel>
-            <OutlinedInput
-              id="outlined-adornment-password"
-              type={showPassword ? 'text' : 'password'}
-              value={passwordInput}
-              error={passwordError}
-              onBlur={handlePassword}
-              placeholder="Ingresar contraseña"
-              onChange={(event) => setPasswordInput(event.target.value)}
-              endAdornment={
-                <InputAdornment position="end">
-                <IconButton
-                  aria-label={
-                    showPassword ? 'hide the password' : 'display the password'
-                  }
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
-                  onMouseUp={handleMouseUpPassword}
-                  edge="end"
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
+            console.log(orderedFormData);
+            const response = await loginUser(orderedFormData);
+            
+            switch(response.result) {
+                case 0:
+                    setErrorMessage('✅ Login exitoso! Redirigiendo a panel de administrador...');
+                    setTimeout(() => {
+                        navigate('/dashboard');
+                    }, 1500);
+                    break;
+                case 1:
+                    setErrorMessage('✅ Login exitoso! Redirigiendo a panel técnico...');
+                    setTimeout(() => {
+                        navigate('/learn');
+                    }, 1500);
+                    break;
+                case -1:
+                    setErrorMessage('❌ Usuario o contraseña incorrectos');
+                    break;
+                default:
+                    setErrorMessage('❌ Error en la autenticación');
             }
-            label="Password"
-            required
-          />
-          </FormControl>
-          <FormControlLabel 
-            control={<Checkbox 
-              value="remember" 
-              color="warning" 
-              checked={rememberMeChecked} 
-              onChange={(event) => setRememberMeChecked(event.target.checked)}
-            />}
-            label="Recuérdame"
-          />
-          <Button endIcon={<LoginOutlinedIcon />} 
-          type="submit" 
-          fullWidth 
-          variant="contained"
-          sx={{ mt: 2, bgcolor: '#FFB300' }}>
-            Iniciar Sesión
-          </Button>
-          {formValid && <Alert severity="error">{formValid}</Alert>}
-          {formSuccess && <Alert severity="success">{formSuccess}</Alert>}
-        </Box>
-      </Paper>
-    </Container>
-  )
-}
+        } catch (error) {
+            setErrorMessage('❌ Error: ' + error.message);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-export default Login
+    return(
+        <div className="login-page">
+            <div className='wrapper'>
+                <form onSubmit={handleSubmit}>
+                    <div className="whirlpoolImage">
+                        <img src={logoA} alt="Logo de Whirlpool" />
+                    </div>
+
+                    <h1>Login</h1>
+
+                    <div className="inputbox">
+                        <input 
+                            type="text"
+                            name="user" 
+                            value={formData.user}
+                            onChange={handleInputChange}
+                            onBlur={handleUser}
+                            placeholder='User' 
+                            required 
+                            disabled={isLoading}
+                        />
+                        {userError && (
+                            <div className="error-message">
+                                El usuario debe tener al menos 3 caracteres
+                            </div>
+                        )}
+                    </div>
+                    
+                    <div className="inputbox">
+                        <input 
+                            type="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleInputChange}
+                            onBlur={handlePassword}
+                            placeholder='Password' 
+                            required 
+                            disabled={isLoading}
+                        />
+                        {passwordError && (
+                            <div className="error-message">
+                                La contraseña debe tener entre 5 y 20 caracteres
+                            </div>
+                        )}
+                    </div>
+
+                    {errorMessage && (
+                        <div className={errorMessage.includes('✅') ? 'success-message' : 'error-message'}>
+                            {errorMessage}
+                        </div>
+                    )}
+
+                    <div className="loginSubmit">
+                        <button type="submit" disabled={isLoading}>
+                            {isLoading ? 'Procesando...' : 'Login'}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
+
+export default Login;
