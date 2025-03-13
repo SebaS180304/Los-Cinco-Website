@@ -6,7 +6,24 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
+
+builder.WebHost.UseUrls("http://0.0.0.0:5000", "https://0.0.0.0:5001");
+
 var app = builder.Build();
+
+
+app.MapGet("/", () => "¡API accesible por HTTPS!");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -17,6 +34,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+app.UseCors("AllowAllOrigins");
+
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
