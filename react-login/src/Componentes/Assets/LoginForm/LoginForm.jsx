@@ -7,16 +7,18 @@ const LoginForm = () => {
     const navigate = useNavigate();
     
     const [formData, setFormData] = useState({
-        usuario: '',
-        contraseña: ''
+        user: '',
+        password: ''
     });
     const [errorMessage, setErrorMessage] = useState('');
     const [userError, setUserError] = useState(false);
     const [passwordError, setPasswordError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
+
+
     const handleUser = () => {
-        if (!formData.usuario || formData.usuario.length < 3) {
+        if (!formData.user || formData.user.length < 3) {
             setUserError(true);
             return;
         }
@@ -24,7 +26,7 @@ const LoginForm = () => {
     };
 
     const handlePassword = () => {
-        if (!formData.contraseña || formData.contraseña.length < 5 || formData.contraseña.length > 20) {
+        if (!formData.password || formData.password.length < 5 || formData.password.length > 20) {
             setPasswordError(true);
             return;
         }
@@ -46,9 +48,15 @@ const LoginForm = () => {
 
         try {
             console.log('🚀 Iniciando proceso de login...');
-            const response = await loginUser(formData);
+            const orderedFormData = {
+                user: formData.user,
+                password: formData.password
+            };
+
+            console.log(orderedFormData);
+            const response = await loginUser(orderedFormData);
             
-            switch(response.role) {
+            switch(response.result) {
                 case 0:
                     setErrorMessage('✅ Login exitoso! Redirigiendo a panel de administrador...');
                     setTimeout(() => {
@@ -61,7 +69,7 @@ const LoginForm = () => {
                         navigate('/tecnico');
                     }, 1500);
                     break;
-                case 2:
+                case -1:
                     setErrorMessage('❌ Usuario o contraseña incorrectos');
                     break;
                 default:
@@ -86,11 +94,11 @@ const LoginForm = () => {
                 <div className="inputbox">
                     <input 
                         type="text"
-                        name="usuario" 
-                        value={formData.usuario}
+                        name="user" 
+                        value={formData.user}
                         onChange={handleInputChange}
                         onBlur={handleUser}
-                        placeholder='Usuario' 
+                        placeholder='User' 
                         required 
                         disabled={isLoading}
                     />
@@ -104,11 +112,11 @@ const LoginForm = () => {
                 <div className="inputbox">
                     <input 
                         type="password"
-                        name="contraseña"
-                        value={formData.contraseña}
+                        name="password"
+                        value={formData.password}
                         onChange={handleInputChange}
                         onBlur={handlePassword}
-                        placeholder='Contraseña' 
+                        placeholder='Password' 
                         required 
                         disabled={isLoading}
                     />
