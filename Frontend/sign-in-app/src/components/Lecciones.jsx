@@ -93,19 +93,19 @@ const Lecciones = ({ courseId }) => {
       </Box>
 
       <Dialog fullScreen open={open} onClose={handleClose}>
-        <Box sx={{ position: 'relative', height: '100%' }}>
+        <Box sx={{ position: 'relative', height: '100%', px: 14 }}>
           <IconButton
             edge="start"
             color="inherit"
             onClick={handleClose}
             aria-label="close"
-            sx={{ position: 'absolute', top: 16, left: 16 }}
+            sx={{ position: 'absolute', top: 30, left: 45, transform: 'scale(1.4)' }} // Aumentar el tamaño del botón
           >
             <ArrowBackIcon />
           </IconButton>
-          <Box sx={{ p: 3, mt: 5 }}>
+          <Box sx={{ p: 3, mt: 8 }}>
             <Typography variant="h4">Detalles de Lecciones</Typography>
-            <TableContainer component={Paper} sx={{ mt: 2 }}>
+            <TableContainer component={Paper} sx={{ mt: 5 }}>
               <Table sx={{ tableLayout: 'fixed' }} aria-label="simple table">
                 <TableBody>
                   {lecciones.length === 0 ? (
