@@ -1,11 +1,15 @@
 import React, { useContext, useState } from 'react';
-import { AppBar, Toolbar, Typography, Button, Box, Divider, Menu, MenuItem } from '@mui/material';
-import PersonIcon from '@mui/icons-material/Person';
-import { Link } from 'react-router-dom';
+import { AppBar, Toolbar, Box, Button, Tooltip, Menu, Typography, MenuItem, Divider } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/images/logo.png'; // Importa la imagen del logo
 import { CursosContext } from '../context/GlobalContext'; // Importa el contexto de cursos
+import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
+
+const settings = ['Cerrar Sesión'];
 
 const NavbarAdmin = () => {
+  const navigate = useNavigate();
+  const [anchorElUser, setAnchorElUser] = useState(null);
   const { cursos } = useContext(CursosContext);
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -15,6 +19,19 @@ const NavbarAdmin = () => {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+
+  const handleLogout = () => {
+    handleCloseUserMenu();
+    navigate('/');
   };
 
   return (
@@ -54,9 +71,25 @@ const NavbarAdmin = () => {
               )}
             </Menu>
           </Box>
-          <Button variant="contained" color="warning" startIcon={<PersonIcon />}>
-            Admin
-          </Button>
+          <Box>
+            <Tooltip title="Abrir Configuración" arrow>
+                <Button startIcon={<PermIdentityOutlinedIcon />} 
+                    variant="contained" sx={{ bgcolor: '#FFB300' }} 
+                    onClick={handleOpenUserMenu}>
+                        Admin
+                </Button>
+            </Tooltip>
+            <Menu sx={{mt: '45px'}} id="user-menu" anchorEl={anchorElUser}
+                anchorOrigin={{vertical: 'top', horizontal: 'right'}} keepMounted
+                transformOrigin={{vertical: 'top', horizontal: 'right'}}
+                open={Boolean(anchorElUser)} onClose={handleCloseUserMenu}>
+                {settings.map((setting) => (
+                    <MenuItem key={setting} onClick={handleLogout}>
+                        <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
+                    </MenuItem>
+                ))}
+            </Menu>
+        </Box>
         </Toolbar>
         <Divider sx={{ backgroundColor: 'black' }} />
       </AppBar>
