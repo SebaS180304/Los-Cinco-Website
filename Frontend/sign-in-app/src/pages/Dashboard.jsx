@@ -5,7 +5,7 @@ import EvaluacionCurso from '../components/Cursos';
 import Alumnos from '../components/Alumnos';
 import NavbarAdmin from '../components/NavbarAdmin';
 
-const Home = () => {
+const Dashboard = () => {
   return (
     <Box sx={{ display: 'flex', mt: '64px' }}>
       <NavbarAdmin />
@@ -26,4 +26,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Dashboard;
