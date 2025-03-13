@@ -99,7 +99,7 @@ const Lecciones = ({ courseId }) => {
             color="inherit"
             onClick={handleClose}
             aria-label="close"
-            sx={{ position: 'absolute', top: 30, left: 45, transform: 'scale(1.4)' }} // Aumentar el tamaño del botón
+            sx={{ position: 'fixed', top: 30, left: 45, transform: 'scale(1.4)' }} // Aumentar el tamaño del botón
           >
             <ArrowBackIcon />
           </IconButton>

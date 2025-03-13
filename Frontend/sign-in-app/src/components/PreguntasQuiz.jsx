@@ -11,7 +11,7 @@ const PreguntasQuiz = ({ courseId }) => {
   const [open, setOpen] = useState(false);
   const [expandedPregunta, setExpandedPregunta] = useState(null);
   const [newPregunta, setNewPregunta] = useState('');
-  const [opciones, setOpciones] = useState([{ texto: '', correcta: false }, { texto: '', correcta: false }]);
+  const [newOpciones, setNewOpciones] = useState([{ texto: '', correcta: false }, { texto: '', correcta: false }]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -26,23 +26,23 @@ const PreguntasQuiz = ({ courseId }) => {
   };
 
   const handleAddOpcion = () => {
-    if (opciones.length < 4) {
-      setOpciones([...opciones, { texto: '', correcta: false }]);
+    if (newOpciones.length < 4) {
+      setNewOpciones([...newOpciones, { texto: '', correcta: false }]);
     }
   };
 
-  const handleOpcionChange = (index, field, value) => {
-    const updatedOpciones = opciones.map((opcion, i) => 
+  const handleNewOpcionChange = (index, field, value) => {
+    const updatedOpciones = newOpciones.map((opcion, i) => 
       i === index ? { ...opcion, [field]: value } : opcion
     );
-    setOpciones(updatedOpciones);
+    setNewOpciones(updatedOpciones);
   };
 
-  const handleCorrectaChange = (index) => {
-    const updatedOpciones = opciones.map((opcion, i) => 
+  const handleNewCorrectaChange = (index) => {
+    const updatedOpciones = newOpciones.map((opcion, i) => 
       ({ ...opcion, correcta: i === index })
     );
-    setOpciones(updatedOpciones);
+    setNewOpciones(updatedOpciones);
   };
 
   const handleSavePregunta = () => {
@@ -55,10 +55,38 @@ const PreguntasQuiz = ({ courseId }) => {
     if (!updatedCursos[courseId].quiz) {
       updatedCursos[courseId].quiz = [];
     }
-    updatedCursos[courseId].quiz.push({ pregunta: newPregunta, opciones });
+    updatedCursos[courseId].quiz.push({ pregunta: newPregunta, opciones: newOpciones });
     setCursos(updatedCursos);
     setNewPregunta('');
-    setOpciones([{ texto: '', correcta: false }, { texto: '', correcta: false }]);
+    setNewOpciones([{ texto: '', correcta: false }, { texto: '', correcta: false }]);
+  };
+
+  const handleOpcionChange = (preguntaIndex, opcionIndex, field, value) => {
+    const updatedPreguntas = preguntas.map((pregunta, i) => {
+      if (i === preguntaIndex) {
+        const updatedOpciones = pregunta.opciones.map((opcion, j) => 
+          j === opcionIndex ? { ...opcion, [field]: value } : opcion
+        );
+        return { ...pregunta, opciones: updatedOpciones };
+      }
+      return pregunta;
+    });
+    const updatedCursos = { ...cursos, [courseId]: { ...cursos[courseId], quiz: updatedPreguntas } };
+    setCursos(updatedCursos);
+  };
+
+  const handleCorrectaChange = (preguntaIndex, opcionIndex) => {
+    const updatedPreguntas = preguntas.map((pregunta, i) => {
+      if (i === preguntaIndex) {
+        const updatedOpciones = pregunta.opciones.map((opcion, j) => 
+          ({ ...opcion, correcta: j === opcionIndex })
+        );
+        return { ...pregunta, opciones: updatedOpciones };
+      }
+      return pregunta;
+    });
+    const updatedCursos = { ...cursos, [courseId]: { ...cursos[courseId], quiz: updatedPreguntas } };
+    setCursos(updatedCursos);
   };
 
   return (
@@ -69,7 +97,7 @@ const PreguntasQuiz = ({ courseId }) => {
         </Typography>
         <Box sx={{ height: 350, overflow: 'auto', p: 2 }}>
           <TableContainer component={Paper}>
-            <Table sx={{ tableLayout: 'fixed' }} aria-label="simple table">
+            <Table sx={{ tableLayout: 'fixed', width: '100%' }} aria-label="simple table">
               <TableBody>
                 {preguntas.length === 0 ? (
                   <TableRow>
@@ -96,41 +124,6 @@ const PreguntasQuiz = ({ courseId }) => {
                           </Typography>
                         </TableCell>
                       </TableRow>
-                      {expandedPregunta === index && (
-                        <TableRow>
-                          <TableCell colSpan={2}>
-                            <Box sx={{ mt: 1, p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
-                              {pregunta.opciones.map((opcion, i) => (
-                                <Box key={i} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                                  <TextField
-                                    label={`Opción ${i + 1}`}
-                                    variant="outlined"
-                                    fullWidth
-                                    value={opcion.texto}
-                                    onChange={(e) => handleOpcionChange(i, 'texto', e.target.value)}
-                                    sx={{ mr: 2 }}
-                                  />
-                                  <FormControlLabel
-                                    control={
-                                      <Checkbox
-                                        checked={opcion.correcta}
-                                        onChange={() => handleCorrectaChange(i)}
-                                      />
-                                    }
-                                    label="Correcta"
-                                  />
-                                  <IconButton
-                                    color="primary"
-                                    onClick={() => handleOpcionChange(i, 'texto', prompt('Editar opción', opcion.texto))}
-                                  >
-                                    <EditIcon />
-                                  </IconButton>
-                                </Box>
-                              ))}
-                            </Box>
-                          </TableCell>
-                        </TableRow>
-                      )}
                     </React.Fragment>
                   ))
                 )}
@@ -147,7 +140,7 @@ const PreguntasQuiz = ({ courseId }) => {
             color="inherit"
             onClick={handleClose}
             aria-label="close"
-            sx={{ position: 'absolute', top: 30, left: 45, transform: 'scale(1.4)' }} // Aumentar el tamaño del botón
+            sx={{ position: 'fixed', top: 30, left: 45, transform: 'scale(1.4)' }} // Aumentar el tamaño del botón
           >
             <ArrowBackIcon />
           </IconButton>
@@ -157,7 +150,7 @@ const PreguntasQuiz = ({ courseId }) => {
               Aquí puedes ver los detalles completos de cada pregunta del quiz.
             </Typography>
             <TableContainer component={Paper} sx={{ mt: 2 }}>
-              <Table sx={{ tableLayout: 'fixed' }} aria-label="simple table">
+              <Table sx={{ tableLayout: 'fixed', width: '100%' }} aria-label="simple table">
                 <TableBody>
                   {preguntas.length === 0 ? (
                     <TableRow>
@@ -186,33 +179,27 @@ const PreguntasQuiz = ({ courseId }) => {
                         </TableRow>
                         {expandedPregunta === index && (
                           <TableRow>
-                            <TableCell colSpan={2}>
+                            <TableCell colSpan={1}>
                               <Box sx={{ mt: 1, p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
                                 {pregunta.opciones.map((opcion, i) => (
-                                  <Box key={i} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                                  <Box key={i} sx={{ display: 'flex', alignItems: 'center', mb: 1, width: '100' }}>
                                     <TextField
                                       label={`Opción ${i + 1}`}
                                       variant="outlined"
                                       fullWidth
                                       value={opcion.texto}
-                                      onChange={(e) => handleOpcionChange(i, 'texto', e.target.value)}
+                                      onChange={(e) => handleOpcionChange(index, i, 'texto', e.target.value)}
                                       sx={{ mr: 2 }}
                                     />
                                     <FormControlLabel
                                       control={
                                         <Checkbox
                                           checked={opcion.correcta}
-                                          onChange={() => handleCorrectaChange(i)}
+                                          onChange={() => handleCorrectaChange(index, i)}
                                         />
                                       }
                                       label="Correcta"
                                     />
-                                    <IconButton
-                                      color="primary"
-                                      onClick={() => handleOpcionChange(i, 'texto', prompt('Editar opción', opcion.texto))}
-                                    >
-                                      <EditIcon />
-                                    </IconButton>
                                   </Box>
                                 ))}
                               </Box>
@@ -230,7 +217,7 @@ const PreguntasQuiz = ({ courseId }) => {
                         sx={{ cursor: 'pointer', color: 'blue' }}
                         onClick={handleAddOpcion}
                       >
-                        {opciones.length < 4 ? 'Agregar opción' : 'Máximo de opciones alcanzado'}
+                        {newOpciones.length < 4 ? 'Agregar opción' : 'Máximo de opciones alcanzado'}
                       </Typography>
                       <Box sx={{ mt: 2 }}>
                         <TextField
@@ -241,21 +228,21 @@ const PreguntasQuiz = ({ courseId }) => {
                           onChange={(e) => setNewPregunta(e.target.value)}
                           sx={{ mb: 2 }}
                         />
-                        {opciones.map((opcion, index) => (
+                        {newOpciones.map((opcion, index) => (
                           <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                             <TextField
                               label={`Opción ${index + 1}`}
                               variant="outlined"
                               fullWidth
                               value={opcion.texto}
-                              onChange={(e) => handleOpcionChange(index, 'texto', e.target.value)}
+                              onChange={(e) => handleNewOpcionChange(index, 'texto', e.target.value)}
                               sx={{ mr: 2 }}
                             />
                             <FormControlLabel
                               control={
                                 <Checkbox
                                   checked={opcion.correcta}
-                                  onChange={() => handleCorrectaChange(index)}
+                                  onChange={() => handleNewCorrectaChange(index)}
                                 />
                               }
                               label="Correcta"
