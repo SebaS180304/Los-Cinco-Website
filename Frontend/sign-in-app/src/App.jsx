@@ -1,7 +1,6 @@
 import React from 'react';
 import Home from './pages/Home';
 import { Routes, Route } from 'react-router-dom';
-import Learn from './pages/Learn';
 import Lecture from './pages/Lecture';
 import Login from './pages/Login';
 
