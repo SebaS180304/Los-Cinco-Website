@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import logo from '../assets/images/logo.png'; // Importa la imagen del logo
 import { CursosContext } from '../context/GlobalContext'; // Importa el contexto de cursos
 
-const Navbar = () => {
+const NavbarAdmin = () => {
   const { cursos } = useContext(CursosContext);
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -23,7 +23,7 @@ const Navbar = () => {
         <Toolbar>
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
             <Box component="img" src={logo} alt="Logo" sx={{ height: '40px' }} />
-            <Typography variant="h6" component={Link} to="/" sx={{ ml: 2, textDecoration: 'none', color: 'black' }}>
+            <Typography variant="h6" component={Link} to="/dashboard" sx={{ ml: 2, textDecoration: 'none', color: 'black' }}>
               Inicio
             </Typography>
             <Typography
@@ -43,7 +43,7 @@ const Navbar = () => {
                   <MenuItem
                     key={index}
                     component={Link}
-                    to={`/courses/${curso.id}`}
+                    to={`/courses/${index}`}
                     onClick={handleMenuClose}
                   >
                     {curso.nombre}
@@ -64,4 +64,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default NavbarAdmin;

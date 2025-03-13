@@ -6,6 +6,7 @@ import EstadisticasAlumnos from '../components/EstadisticasAlumnos';
 import Lecciones from '../components/Lecciones';
 import CursosSimilares from '../components/CursosSimilares';
 import PreguntasQuiz from '../components/PreguntasQuiz';
+import NavbarAdmin from '../components/NavbarAdmin';
 
 const Courses = () => {
   const { courseId } = useParams();
@@ -19,6 +20,7 @@ const Courses = () => {
 
   return (
     <Box sx={{ display: 'flex', mt: '64px' }}>
+      <NavbarAdmin />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Typography variant="h4">Curso: {curso.nombre}</Typography>
         <Grid container spacing={3}>

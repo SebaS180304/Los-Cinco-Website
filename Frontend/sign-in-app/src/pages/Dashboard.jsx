@@ -3,10 +3,12 @@ import { Box, Grid } from '@mui/material';
 import Estadisticas from '../components/Estadisticas';
 import EvaluacionCurso from '../components/Cursos';
 import Alumnos from '../components/Alumnos';
+import NavbarAdmin from '../components/NavbarAdmin';
 
 const Home = () => {
   return (
     <Box sx={{ display: 'flex', mt: '64px' }}>
+      <NavbarAdmin />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Grid container spacing={5}>
           <Grid item xs={12} md={7}>
