@@ -91,7 +91,7 @@ const Login = () => {
                         <img src={logoA} alt="Logo de Whirlpool" />
                     </div>
 
-                    <h1>Login</h1>
+                    <h1>Iniciar Sesión</h1>
 
                     <div className="inputbox">
                         <input 
@@ -100,7 +100,7 @@ const Login = () => {
                             value={formData.user}
                             onChange={handleInputChange}
                             onBlur={handleUser}
-                            placeholder='User' 
+                            placeholder='Nombre de Usuario' 
                             required 
                             disabled={isLoading}
                         />
@@ -118,7 +118,7 @@ const Login = () => {
                             value={formData.password}
                             onChange={handleInputChange}
                             onBlur={handlePassword}
-                            placeholder='Password' 
+                            placeholder='Contraseña' 
                             required 
                             disabled={isLoading}
                         />
@@ -137,7 +137,7 @@ const Login = () => {
 
                     <div className="loginSubmit">
                         <button type="submit" disabled={isLoading}>
-                            {isLoading ? 'Procesando...' : 'Login'}
+                            {isLoading ? 'Procesando...' : 'Iniciar Sesión'}
                         </button>
                     </div>
                 </form>
