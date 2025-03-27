@@ -9,7 +9,7 @@ function Content({ currentLecture}) {
     return ( 
         <Box bgcolor={'#101626'} flex={1} sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 144px)', overflow: 'hidden' }}>
             <AppBar position="static" sx={{ backgroundColor: '#273661'}}>
-                <Container>
+                <Container maxWidth="xxl">
                     <Toolbar>
                         <LocalLibraryOutlinedIcon sx={{fontSize: 40}} />
                         <Typography component="div" sx={{ ml: 2, fontWeight:'bold' }}>

@@ -2,12 +2,12 @@ import React, { Suspense, useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Preload, useGLTF } from '@react-three/drei';
 
-const Computer = ({ onError, onLoad }) => {
+const Computer = ({ src, onError, onLoad }) => {
     const computerRef = useRef();
     const [isLoading, setIsLoading] = useState(true);
     const [hasError, setHasError] = useState(false);
 
-    const computer = useGLTF("/computer/computer.gltf", undefined, (error) => {
+    const computer = useGLTF(src, undefined, (error) => {
         console.error("Error al cargar el modelo:", error);
         setHasError(true);
         onError();
@@ -67,7 +67,7 @@ const Computer = ({ onError, onLoad }) => {
     );
 };
 
-const ComputerCanvas = ({ onError, onLoad }) => {
+const ComputerCanvas = ({ src, onError, onLoad }) => {
     return (
         <Canvas 
             shadows 
@@ -82,7 +82,7 @@ const ComputerCanvas = ({ onError, onLoad }) => {
         >
             <Suspense fallback={null}>
                 <Preload all />
-                <Computer onError={onError} onLoad={onLoad} />
+                <Computer src={src} onError={onError} onLoad={onLoad} />
                 <OrbitControls 
                     autoRotate 
                     enableZoom={false}
@@ -90,7 +90,7 @@ const ComputerCanvas = ({ onError, onLoad }) => {
                 />
             </Suspense>
         </Canvas>
-    )
+    );
 }
 
 export default ComputerCanvas;

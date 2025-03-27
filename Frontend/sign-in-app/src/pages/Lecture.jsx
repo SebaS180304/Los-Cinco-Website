@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import Lectbar from '../components/LectBar';
 import { Box, Stack } from '@mui/material';
-import Model from '../components/Model';
+import Media from '../components/Media';
 import Content from '../components/Content';
 import Bottombar from '../components/Bottombar';
+import { lecture_data } from '../components/constants';
 
 function Lecture() {
     const [currentLecture, setCurrentLecture] = useState(0);
+    const lecture = lecture_data[currentLecture];
 
     return ( 
         <div>
@@ -14,7 +16,7 @@ function Lecture() {
             <Box sx={{ mt: 9}}>
                 <Stack direction="row" justifyContent={'space-between'}>
                     <Content currentLecture={currentLecture} setCurrentLecture={setCurrentLecture} />
-                    <Model />
+                    <Media mediaType={lecture.mediaType} src={lecture.src} />
                 </Stack>
             </Box>
             <Bottombar currentLecture={currentLecture} setCurrentLecture={setCurrentLecture} />
