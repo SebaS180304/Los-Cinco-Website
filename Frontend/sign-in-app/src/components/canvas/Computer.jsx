@@ -1,6 +1,7 @@
 import React, { Suspense, useRef, useEffect, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Preload, useGLTF } from '@react-three/drei';
+import { useTheme, useMediaQuery } from '@mui/material';
 
 const Computer = ({ onError, onLoad }) => {
     const computerRef = useRef();
@@ -68,6 +69,9 @@ const Computer = ({ onError, onLoad }) => {
 };
 
 const ComputerCanvas = ({ onError, onLoad }) => {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
     return (
         <Canvas 
             shadows 
@@ -85,7 +89,7 @@ const ComputerCanvas = ({ onError, onLoad }) => {
                 <Computer onError={onError} onLoad={onLoad} />
                 <OrbitControls 
                     autoRotate 
-                    enableZoom={false}
+                    enableZoom={isMobile ? true : false}
                     maxPolarAngle={Math.PI / 2.5} 
                 />
             </Suspense>

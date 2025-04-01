@@ -12,7 +12,7 @@ function Lecture() {
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     return (
-        <Box sx={{ display: 'flex', mt: '64px' }}>
+        <Box sx={{ display: 'flex', mt: '64px', mb: '64px'}}>
             <Lectbar selectedView={selectedView} setSelectedView={setSelectedView} />
             <Box component="main" sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
                 {isMobile ? (

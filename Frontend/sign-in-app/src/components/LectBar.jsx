@@ -1,7 +1,7 @@
 import React from 'react';
 import logoA from '../assets/logo-c.png';
 import logo from '../assets/logo.png';
-import { AppBar, Toolbar, Container, Box, ButtonGroup, Button, Tooltip, Menu, Typography, MenuItem, IconButton, Drawer, useMediaQuery, useTheme } from '@mui/material';
+import { AppBar, Toolbar, Box, ButtonGroup, Button, Tooltip, Menu, Typography, MenuItem, IconButton, Drawer, useMediaQuery, useTheme } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
@@ -34,12 +34,12 @@ function Lectbar({ selectedView, setSelectedView }) {
     };
 
     return (
-        <AppBar position='fixed' sx={{ backgroundColor: 'black', boxShadow: 'none' }}>
+        <AppBar position='fixed' sx={{ backgroundColor: 'black', boxShadow: 'none', height: '64px' }}>
             {isMobile ? (
                 <Toolbar sx={{ justifyContent: 'space-between' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <Link to='/learn'>
-                            <img src={logoA} alt='Whirlpool logo' style={{ height: '30px' }} />
+                            <img src={logoA} alt='Whirlpool logo' style={{ height: '40px' }} />
                         </Link>
                     </Box>
                     <ButtonGroup>
@@ -68,7 +68,7 @@ function Lectbar({ selectedView, setSelectedView }) {
                     </ButtonGroup>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <IconButton onClick={toggleDrawer(true)}>
-                            <LibraryBooksIcon sx={{ color: '#FFB300', fontSize: 30 }} />
+                            <LibraryBooksIcon sx={{ color: '#FFB300', fontSize: 40 }} />
                         </IconButton>
                         <Drawer 
                             open={open} 
@@ -86,7 +86,7 @@ function Lectbar({ selectedView, setSelectedView }) {
                         </Drawer>
                         <Tooltip title="Abrir Configuración" arrow>
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, ml: 1 }}>
-                                <AccountCircleOutlinedIcon sx={{ color: '#FFB300', fontSize: 30 }}/>
+                                <AccountCircleOutlinedIcon sx={{ color: '#FFB300', fontSize: 40 }}/>
                             </IconButton>
                         </Tooltip>
                     </Box>
@@ -100,7 +100,7 @@ function Lectbar({ selectedView, setSelectedView }) {
                         <Typography variant='h6' component={Link} to='/learn' sx={{ ml: 2, textDecoration: 'none', color: 'white' }}>
                             Inicio
                         </Typography>
-                        <Typography component={Link} onClick={toggleDrawer(true)} sx={{ ml: 2, textDecoration: 'none', color: 'white' }}>
+                        <Typography component={Link} onClick={toggleDrawer(true)} sx={{ ml: 2, textDecoration: 'none', color: 'white', fontSize: '20px' }}>
                             Contenidos
                         </Typography>
                         <Drawer 

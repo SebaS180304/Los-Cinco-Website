@@ -1,31 +1,31 @@
-import { Box, AppBar, Toolbar, Typography, Container } from '@mui/material';
+import { Box, AppBar, Toolbar, Typography, useTheme, useMediaQuery } from '@mui/material';
 import React from 'react';
 import LocalLibraryOutlinedIcon from '@mui/icons-material/LocalLibraryOutlined';
 import { lecture_data } from './constants';
 
-function Content({ currentLecture}) {
+function Content({ currentLecture }) {
     const lecture = lecture_data[currentLecture];
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     return ( 
-        <Box bgcolor={'#101626'} flex={1} sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 144px)', overflow: 'hidden' }}>
-            <AppBar position="static" sx={{ backgroundColor: '#273661'}}>
-                <Container>
-                    <Toolbar>
-                        <LocalLibraryOutlinedIcon sx={{fontSize: 40}} />
-                        <Typography component="div" sx={{ ml: 2, fontWeight:'bold' }}>
-                            Aprendiendo
-                        </Typography>
-                    </Toolbar>
-                </Container>
+        <Box bgcolor="#101626" {...(!isMobile ? { flex: 1 } : {})} sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 128px)'}}>
+            <AppBar position="static" sx={{ backgroundColor: '#273661', boxShadow: 'none' }}>
+                <Toolbar>
+                    <LocalLibraryOutlinedIcon sx={{fontSize: 40}} />
+                    <Typography component="div" sx={{ ml: 2, fontWeight:'bold' }}>
+                        Aprendiendo
+                    </Typography>
+                </Toolbar>
             </AppBar>
-            <Box component="main" sx={{ p: 5, overflow: 'auto' }}>
-                <Typography variant="h6" color="#CECACA" sx={{ mb: 3, textTransform: 'uppercase' }}>
+            <Box component="main" sx={{ p: 3, overflow: 'auto' }}>
+                <Typography variant="h6" color="#CECACA" sx={{ mb: 2, textTransform: 'uppercase' }}>
                     {lecture.title}
                 </Typography>
-                <Typography color="white" variant="h4" sx={{ mb: 3, fontWeight: 'bold' }}>
+                <Typography color="white" variant="h4" sx={{ mb: 2, fontWeight: 'bold' }}>
                     {lecture.subtitle}
                 </Typography>
-                <Typography color="white" sx={{ textAlign: 'justify', lineHeight: 2 }}
+                <Typography color="white" sx={{ textAlign: 'left', lineHeight: 2 }}
                     dangerouslySetInnerHTML={{ __html: lecture.content }}>
                 </Typography>
             </Box>

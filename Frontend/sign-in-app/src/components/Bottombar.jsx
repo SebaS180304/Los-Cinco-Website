@@ -16,34 +16,32 @@ function Bottombar({ currentLecture, setCurrentLecture }) {
     };
 
     return ( 
-        <AppBar position="fixed" sx={{ top: 'auto', bottom: 0, backgroundColor: 'black', zIndex: 1100 }}>
-            <Container maxWidth='xxl'>
-                <Toolbar>
-                    <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: "center" }}>
-                            {currentLecture + 1} / {lecture_data.length} completado
-                        </Typography>
-                        <Box sx={{ display: 'flex', gap: 2}}>
-                            <Button 
-                                sx={{ color: '#FFB300', border: '2px solid #FFB300' }}
-                                variant="outlined" 
-                                onClick={handleBack}
-                                disabled={currentLecture === 0}
-                            >
-                                Atrás
-                            </Button>
-                            <Button 
-                                sx={{ backgroundColor: '#FFB300'}} 
-                                variant="contained"
-                                onClick={handleNext}
-                                disabled={currentLecture === lecture_data.length - 1}
-                            >
-                                Siguiente
-                            </Button>
-                        </Box>
+        <AppBar position="fixed" sx={{ top: 'auto', bottom: 0, backgroundColor: 'black', height: '64px' }}>
+            <Toolbar>
+                <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: "center" }}>
+                        {currentLecture + 1}/{lecture_data.length} lecciones
+                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 2}}>
+                        <Button 
+                            sx={{ color: '#FFB300', border: '2px solid #FFB300' }}
+                            variant="outlined" 
+                            onClick={handleBack}
+                            disabled={currentLecture === 0}
+                        >
+                            Atrás
+                        </Button>
+                        <Button 
+                            sx={{ backgroundColor: '#FFB300'}} 
+                            variant="contained"
+                            onClick={handleNext}
+                            disabled={currentLecture === lecture_data.length - 1}
+                        >
+                            Siguiente
+                        </Button>
                     </Box>
-                </Toolbar>
-            </Container>
+                </Box>
+            </Toolbar>
         </AppBar>
      );
 }
