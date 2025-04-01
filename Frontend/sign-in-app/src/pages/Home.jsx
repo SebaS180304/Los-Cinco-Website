@@ -6,14 +6,12 @@ import { Box, Container } from '@mui/material';
 
 function Home() {
     return ( 
-        <Box>
+        <Box sx={{ display: 'flex', mt: '64px' }}>
             <Navbar />
-            <Container maxWidth='xl'>
-                <Box sx={{ display: 'flex', gap: 2}}>
-                    <Sidebar />
-                    <Homecontent />
-                </Box>
-            </Container>
+            <Box component="main" sx={{ flexGrow: 1, display: 'flex', p: 3 }}>
+                <Sidebar />
+                <Homecontent />
+            </Box>
         </Box>
      );
 }

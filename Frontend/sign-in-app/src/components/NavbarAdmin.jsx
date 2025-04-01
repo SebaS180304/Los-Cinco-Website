@@ -89,7 +89,7 @@ const NavbarAdmin = () => {
                     </MenuItem>
                 ))}
             </Menu>
-        </Box>
+          </Box>
         </Toolbar>
         <Divider sx={{ backgroundColor: 'black' }} />
       </AppBar>

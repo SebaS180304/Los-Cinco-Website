@@ -7,7 +7,7 @@ const CUSTOM_COLOR = '#FFB300';
 
 function Homecontent() {
     return ( 
-        <Container maxWidth='xl'>
+        <Box sx={{ flexGrow: 1 }}>
             <Box p={5}>
                 <Typography variant="h4" component="h1" sx={{fontWeight: 'bold', mb: 3}}>
                     Continúa tu Aprendizaje
@@ -64,7 +64,7 @@ function Homecontent() {
                     </CardContent>
                 </Card>
             </Box>
-        </Container>
+        </Box>
      );
 }
 
