@@ -8,7 +8,7 @@ const CUSTOM_COLOR = '#FFB300';
 function Homecontent() {
     return ( 
         <Box sx={{ flexGrow: 1 }}>
-            <Box p={5}>
+            <Box p={3}>
                 <Typography variant="h4" component="h1" sx={{fontWeight: 'bold', mb: 3}}>
                     Continúa tu Aprendizaje
                 </Typography>
