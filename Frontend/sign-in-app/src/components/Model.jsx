@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { Box, AppBar, Toolbar, Typography, Container, Button, Alert, CircularProgress } from '@mui/material';
+import { Box, AppBar, Toolbar, Typography, Button, Alert, CircularProgress, useTheme, useMediaQuery } from '@mui/material';
 import ViewInArIcon from '@mui/icons-material/ViewInAr';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ComputerCanvas from './canvas/Computer';
@@ -8,6 +8,8 @@ function Model() {
     const [reloadKey, setReloadKey] = useState(0);
     const [loadError, setLoadError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const handleReload = useCallback(() => {
         setIsLoading(true);
@@ -27,22 +29,22 @@ function Model() {
     }, []);
 
     return ( 
-        <Box bgcolor={'#212633'} sx={{ 
-            flex: 2, 
+        <Box bgcolor={'#212633'} 
+            {...(!isMobile ? { flex: 2 } : {})}
+            sx={{  
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
+            height: 'calc(100vh - 128px)'
         }}>
-            <AppBar position="sticky" sx={{ backgroundColor: '#060E25' }}>
-                <Container maxWidth='xxl'>
-                    <Toolbar sx={{ justifyContent: 'flex-end' }}>
-                        <Typography component="div" sx={{ mr: 2, fontWeight:'bold' }}>
-                            Gráficos
-                        </Typography>
-                        <ViewInArIcon sx={{ color: 'white', fontSize: 40 }} />
-                    </Toolbar>
-                </Container>
+            <AppBar position="static" sx={{ backgroundColor: '#060E25', boxShadow: 'none' }}>
+                <Toolbar sx={{ justifyContent: 'flex-end' }}>
+                    <Typography component="div" sx={{ mr: 2, fontWeight:'bold' }}>
+                        Gráficos
+                    </Typography>
+                    <ViewInArIcon sx={{ color: 'white', fontSize: 40 }} />
+                </Toolbar>
             </AppBar>
-            <Box component="main" sx={{ p: 5, flexGrow: 1, position: 'relative' }}>
+            <Box component="main" sx={{ p: 3, flexGrow: 1, position: 'relative' }}>
                 {loadError && (
                     <Alert severity="error" sx={{ mb: 2 }}>
                         El modelo 3D no se cargó correctamente. Por favor, intente recargar el modelo usando el botón de reinicio.
@@ -76,29 +78,27 @@ function Model() {
                 backgroundColor: '#060E25',
                 zIndex: 1
             }}>
-                <Container maxWidth='xxl'>
-                    <Toolbar>
-                        <Button 
-                            variant="contained" 
-                            size='large' 
-                            startIcon={<RefreshIcon/>} 
-                            onClick={handleReload}
-                            disabled={isLoading}
-                            sx={{ 
-                                bgcolor: '#212633', 
-                                border: '2px solid #FFB300', 
-                                color: 'white',
-                                '&:disabled': {
-                                    bgcolor: '#1a1f2a',
-                                    border: '2px solid #666',
-                                    color: '#666'
-                                }
-                            }}
-                        >
-                            {isLoading ? 'Reiniciando...' : 'Reiniciar'}
-                        </Button>
-                    </Toolbar>
-                </Container>
+                <Toolbar>
+                    <Button 
+                        variant="contained" 
+                        size='large' 
+                        startIcon={<RefreshIcon/>} 
+                        onClick={handleReload}
+                        disabled={isLoading}
+                        sx={{ 
+                            bgcolor: '#212633', 
+                            border: '2px solid #FFB300', 
+                            color: 'white',
+                            '&:disabled': {
+                                bgcolor: '#1a1f2a',
+                                border: '2px solid #666',
+                                color: '#666'
+                            }
+                        }}
+                    >
+                        {isLoading ? 'Reiniciando...' : 'Reiniciar'}
+                    </Button>
+                </Toolbar>
             </AppBar>
         </Box>
      );

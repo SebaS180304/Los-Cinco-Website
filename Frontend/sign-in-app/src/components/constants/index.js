@@ -1,8 +1,13 @@
+import videoPrueba from '../../assets/videos/video-prueba.mp4';
+import imagenPrueba from '../../assets/images/imagen-prueba.jpg';
+
 export const lecture_data = [
     {
         id: 1,
         title: 'Lección 1',
         subtitle: 'Tema 1',
+        mediaType: 'model3d',
+        src: '/computer/computer.gltf',
         content: `Contenido de la Lección <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde
                     fugit veniam eius, perspiciatis sunt? Corporis qui ducimus quibusdam,
@@ -41,6 +46,8 @@ export const lecture_data = [
         id: 2,
         title: 'Lección 1',
         subtitle: 'Tema 2',
+        mediaType: 'image',
+        src: imagenPrueba,
         content: `Contenido de la Lección <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde
                     fugit veniam eius, perspiciatis sunt? Corporis qui ducimus quibusdam,
@@ -79,6 +86,8 @@ export const lecture_data = [
         id: 3,
         title: 'Lección 1',
         subtitle: 'Tema 3',
+        mediaType: 'video',
+        src: videoPrueba,
         content: `Contenido de la Lección <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde
                     fugit veniam eius, perspiciatis sunt? Corporis qui ducimus quibusdam,
@@ -117,6 +126,8 @@ export const lecture_data = [
         id: 4,
         title: 'Lección 1',
         subtitle: 'Tema 4',
+        mediaType: 'none',
+        src: '',
         content: `Contenido de la Lección <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde
                     fugit veniam eius, perspiciatis sunt? Corporis qui ducimus quibusdam,
@@ -155,6 +166,8 @@ export const lecture_data = [
         id: 5,
         title: 'Lección 1',
         subtitle: 'Tema 5',
+        mediaType: 'none',
+        src: '',
         content: `Contenido de la Lección <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde
                     fugit veniam eius, perspiciatis sunt? Corporis qui ducimus quibusdam,
