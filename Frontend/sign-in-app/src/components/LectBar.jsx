@@ -9,7 +9,7 @@ import Drawcontent from './DrawContent';
 
 const settings = ['Cerrar Sesión'];
 
-function Lectbar({ selectedView, setSelectedView }) {
+function Lectbar({ selectedView, setSelectedView, disableMedia }) {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const navigate = useNavigate();
@@ -46,6 +46,7 @@ function Lectbar({ selectedView, setSelectedView }) {
                         <Button 
                             onClick={() => setSelectedView('model')}
                             variant={selectedView === 'model' ? 'contained' : 'outlined'}
+                            disabled={disableMedia}
                             sx={{
                                 color: selectedView === 'model' ? 'black' : '#FFB300',
                                 backgroundColor: selectedView === 'model' ? '#FFB300' : 'transparent',
