@@ -3,14 +3,17 @@ import { Box, Table, TableBody, TableCell, TableContainer, TableRow, Paper, Typo
 import { CursosContext } from '../context/GlobalContext';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckIcon from '@mui/icons-material/Check';
+import AddIcon from '@mui/icons-material/Add';
+import CloseIcon from '@mui/icons-material/Close';
 
 const Lecciones = ({ courseId }) => {
   const { cursos, setCursos } = useContext(CursosContext);
   const lecciones = cursos[courseId]?.lecciones || [];
   const [open, setOpen] = useState(false);
-  const [expanded, setExpanded] = useState(false);
-  const [newLeccion, setNewLeccion] = useState({ title: '', content: '' });
   const [expandedLeccion, setExpandedLeccion] = useState(null);
+  const [editingLeccion, setEditingLeccion] = useState({ title: '', content: '' }); // Estado para la lección que se está editando
+  const [newLeccion, setNewLeccion] = useState({ title: '', content: '' }); // Estado separado para la nueva lección
+  const [expandedAdd, setExpandedAdd] = useState(false);
 
   const handleOpen = () => {
     setOpen(true);
@@ -18,30 +21,36 @@ const Lecciones = ({ courseId }) => {
 
   const handleClose = () => {
     setOpen(false);
+    setExpandedLeccion(null);
+    setExpandedAdd(false);
   };
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
+  const handleLeccionClick = (index) => {
+    setExpandedLeccion(expandedLeccion === index ? null : index);
+    setEditingLeccion(lecciones[index]); // Cargar los datos existentes de la lección en edición
   };
 
-  const handleSaveLeccion = () => {
-    if (!cursos[courseId] || typeof cursos[courseId] !== 'object') {
-      console.error(`Curso con ID ${courseId} no encontrado o no es un objeto.`);
-      return;
-    }
+  const handleSaveLeccion = (index) => {
+    const updatedCursos = { ...cursos };
+    updatedCursos[courseId].lecciones[index] = { ...editingLeccion };
+    setCursos(updatedCursos);
+    setExpandedLeccion(null);
+  };
 
+  const handleAddExpandClick = () => {
+    setExpandedAdd(!expandedAdd);
+    setNewLeccion({ title: '', content: '' }); // Limpiar los campos para una nueva lección
+  };
+
+  const handleAddLeccion = () => {
     const updatedCursos = { ...cursos };
     if (!updatedCursos[courseId].lecciones) {
       updatedCursos[courseId].lecciones = [];
     }
     updatedCursos[courseId].lecciones.push(newLeccion);
     setCursos(updatedCursos);
+    setExpandedAdd(false);
     setNewLeccion({ title: '', content: '' });
-    setExpanded(false);
-  };
-
-  const handleLeccionClick = (index) => {
-    setExpandedLeccion(expandedLeccion === index ? null : index);
   };
 
   return (
@@ -64,21 +73,20 @@ const Lecciones = ({ courseId }) => {
                   </TableRow>
                 ) : (
                   lecciones.map((leccion, index) => (
-                    <TableRow
-                      key={index}
-                      sx={{
-                        backgroundColor: index % 2 === 0 ? '#F1EDED' : 'white',
-                        '&:hover': { backgroundColor: '#e0e0e0' },
-                        cursor: 'pointer',
-                      }}
-                      onClick={() => handleLeccionClick(index)}
-                    >
-                      <TableCell>
-                        <Typography variant="body1">
-                          {leccion.title}
-                        </Typography>
-                      </TableCell>
-                    </TableRow>
+                    <React.Fragment key={index}>
+                      <TableRow
+                        sx={{
+                          backgroundColor: index % 2 === 0 ? '#F1EDED' : 'white',
+                          '&:hover': { backgroundColor: '#e0e0e0' },
+                          cursor: 'pointer',
+                        }}
+                        onClick={() => handleLeccionClick(index)}
+                      >
+                        <TableCell>
+                          <Typography variant="body1">{leccion.title}</Typography>
+                        </TableCell>
+                      </TableRow>
+                    </React.Fragment>
                   ))
                 )}
               </TableBody>
@@ -114,14 +122,14 @@ const Lecciones = ({ courseId }) => {
             >
               <ArrowBackIcon />
             </IconButton>
-            <Typography variant="h6">Detalles de Lecciones</Typography>
+            <Typography variant="h6">Lista de Lecciones</Typography>
           </Box>
         </DialogTitle>
         <DialogContent>
           <TableContainer component={Paper} sx={{ mt: 2 }}>
-            <Table sx={{ tableLayout: 'fixed' }} aria-label="simple table">
+            <Table sx={{ tableLayout: 'fixed', width: '100%' }} aria-label="simple table">
               <TableBody>
-                {lecciones.length === 0 ? (
+              {lecciones.length === 0 ? (
                   <TableRow>
                     <TableCell>
                       <Typography variant="body1" align="center">
@@ -131,39 +139,73 @@ const Lecciones = ({ courseId }) => {
                   </TableRow>
                 ) : (
                   lecciones.map((leccion, index) => (
-                    <TableRow
-                      key={index}
-                      sx={{
-                        backgroundColor: index % 2 === 0 ? '#F1EDED' : 'white',
-                        '&:hover': { backgroundColor: '#e0e0e0' },
-                        cursor: 'pointer',
-                      }}
-                      onClick={() => handleLeccionClick(index)}
-                    >
-                      <TableCell>
-                        <Typography variant="body1">
-                          {leccion.title}
-                        </Typography>
-                        {expandedLeccion === index && (
-                          <Typography variant="body2" sx={{ mt: 1 }}>
-                            {leccion.content.substring(0, 100)}...
-                          </Typography>
-                        )}
-                      </TableCell>
-                    </TableRow>
+                    <React.Fragment key={index}>
+                      <TableRow
+                        sx={{
+                          backgroundColor: index % 2 === 0 ? '#F1EDED' : 'white',
+                          '&:hover': { backgroundColor: '#e0e0e0' },
+                          cursor: 'pointer',
+                        }}
+                        onClick={() => handleLeccionClick(index)}
+                      >
+                        <TableCell>
+                          <Typography variant="body1">{leccion.title}</Typography>
+                        </TableCell>
+                      </TableRow>
+
+
+                      {expandedLeccion === index && (
+                        <TableRow>
+                          <TableCell colSpan={1}>
+                            <Box sx={{ mt: 1, p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
+                              <TextField
+                                label="Título de la lección"
+                                variant="outlined"
+                                fullWidth
+                                value={editingLeccion.title}
+                                onChange={(e) => setEditingLeccion({ ...editingLeccion, title: e.target.value })}
+                                sx={{ mb: 2 }}
+                              />
+                              <TextField
+                                label="Contenido de la lección"
+                                variant="outlined"
+                                fullWidth
+                                multiline
+                                rows={4}
+                                value={editingLeccion.content}
+                                onChange={(e) => setEditingLeccion({ ...editingLeccion, content: e.target.value })}
+                                sx={{ mb: 2 }}
+                              />
+                              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                                <IconButton
+                                  color="success"
+                                  onClick={() => handleSaveLeccion(index)}
+                                  sx={{ backgroundColor: 'green', color: 'white' }}
+                                >
+                                  <CheckIcon />
+                                </IconButton>
+                              </Box>
+                            </Box>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </React.Fragment>
                   ))
                 )}
                 <TableRow>
-                  <TableCell>
-                    <Typography
-                      variant="body1"
-                      align="center"
-                      sx={{ cursor: 'pointer', color: 'blue' }}
-                      onClick={handleExpandClick}
+                  <TableCell align="center">
+                    <IconButton
+                      color="primary"
+                      onClick={handleAddExpandClick}
+                      sx={{ backgroundColor: expandedAdd ? 'lightgray' : 'white' }}
                     >
-                      {expanded ? 'Cancelar' : 'Agregar nueva lección'}
-                    </Typography>
-                    {expanded && (
+                      <AddIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+                {expandedAdd && (
+                  <TableRow>
+                    <TableCell>
                       <Box sx={{ mt: 2 }}>
                         <TextField
                           label="Título de la lección"
@@ -186,16 +228,16 @@ const Lecciones = ({ courseId }) => {
                         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                           <IconButton
                             color="success"
-                            onClick={handleSaveLeccion}
+                            onClick={handleAddLeccion}
                             sx={{ backgroundColor: 'green', color: 'white' }}
                           >
                             <CheckIcon />
                           </IconButton>
                         </Box>
                       </Box>
-                    )}
-                  </TableCell>
-                </TableRow>
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </TableContainer>
