@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Box, Table, TableBody, TableCell, TableContainer, TableRow, Paper, Typography, Dialog, DialogContent, DialogTitle, IconButton, TextField } from '@mui/material';
+import { Box, Table, TableBody, TableCell, TableContainer, TableRow, Paper, Typography, Dialog, DialogContent, DialogTitle, IconButton, TextField, Button } from '@mui/material';
 import { CursosContext } from '../context/GlobalContext';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckIcon from '@mui/icons-material/Check';
@@ -32,7 +32,10 @@ const Lecciones = ({ courseId }) => {
 
   const handleSaveLeccion = (index) => {
     const updatedCursos = { ...cursos };
-    updatedCursos[courseId].lecciones[index] = { ...editingLeccion };
+    updatedCursos[courseId].lecciones[index] = {
+      ...editingLeccion,
+      mediaUrl: editingLeccion.mediaFileUrl || updatedCursos[courseId].lecciones[index].mediaUrl, // Mantener la URL anterior si no se selecciona un nuevo archivo
+    };
     setCursos(updatedCursos);
     setExpandedLeccion(null);
   };
@@ -47,10 +50,15 @@ const Lecciones = ({ courseId }) => {
     if (!updatedCursos[courseId].lecciones) {
       updatedCursos[courseId].lecciones = [];
     }
-    updatedCursos[courseId].lecciones.push(newLeccion);
+  
+    updatedCursos[courseId].lecciones.push({
+      ...newLeccion,
+      mediaUrl: newLeccion.mediaFileUrl || '', // Usar la URL temporal del archivo
+    });
+  
     setCursos(updatedCursos);
     setExpandedAdd(false);
-    setNewLeccion({ title: '', content: '' });
+    setNewLeccion({ title: '', content: '', mediaFileName: '', mediaFileUrl: '' });
   };
 
   return (
@@ -152,8 +160,6 @@ const Lecciones = ({ courseId }) => {
                           <Typography variant="body1">{leccion.title}</Typography>
                         </TableCell>
                       </TableRow>
-
-
                       {expandedLeccion === index && (
                         <TableRow>
                           <TableCell colSpan={1}>
@@ -176,7 +182,33 @@ const Lecciones = ({ courseId }) => {
                                 onChange={(e) => setEditingLeccion({ ...editingLeccion, content: e.target.value })}
                                 sx={{ mb: 2 }}
                               />
-                              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                <Button
+                                  variant="outlined"
+                                  component="label"
+                                  sx={{ textTransform: 'none' }}
+                                >
+                                  Editar archivo multimedia
+                                  <input
+                                    type="file"
+                                    accept=".jpg,.png,.mp4,.gltf"
+                                    hidden
+                                    onChange={(e) => {
+                                      const file = e.target.files[0];
+                                      if (file) {
+                                        const fileUrl = URL.createObjectURL(file); // Crear una URL temporal para el archivo
+                                        setEditingLeccion({ ...editingLeccion, mediaFileName: file.name, mediaFileUrl: fileUrl });
+                                      }
+                                    }}
+                                  />
+                                </Button>
+                                {editingLeccion.mediaFileName && (
+                                  <Typography variant="body2" color="textSecondary">
+                                    Archivo seleccionado: {editingLeccion.mediaFileName}
+                                  </Typography>
+                                )}
+                              </Box>
+                              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
                                 <IconButton
                                   color="success"
                                   onClick={() => handleSaveLeccion(index)}
@@ -206,35 +238,61 @@ const Lecciones = ({ courseId }) => {
                 {expandedAdd && (
                   <TableRow>
                     <TableCell>
-                      <Box sx={{ mt: 2 }}>
-                        <TextField
-                          label="Título de la lección"
+                    <Box sx={{ mt: 2 }}>
+                      <TextField
+                        label="Título de la lección"
+                        variant="outlined"
+                        fullWidth
+                        value={newLeccion.title}
+                        onChange={(e) => setNewLeccion({ ...newLeccion, title: e.target.value })}
+                        sx={{ mb: 2 }}
+                      />
+                      <TextField
+                        label="Contenido de la lección"
+                        variant="outlined"
+                        fullWidth
+                        multiline
+                        rows={4}
+                        value={newLeccion.content}
+                        onChange={(e) => setNewLeccion({ ...newLeccion, content: e.target.value })}
+                        sx={{ mb: 2 }}
+                      />
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        <Button
                           variant="outlined"
-                          fullWidth
-                          value={newLeccion.title}
-                          onChange={(e) => setNewLeccion({ ...newLeccion, title: e.target.value })}
-                          sx={{ mb: 2 }}
-                        />
-                        <TextField
-                          label="Contenido de la lección"
-                          variant="outlined"
-                          fullWidth
-                          multiline
-                          rows={4}
-                          value={newLeccion.content}
-                          onChange={(e) => setNewLeccion({ ...newLeccion, content: e.target.value })}
-                          sx={{ mb: 2 }}
-                        />
-                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                          <IconButton
-                            color="success"
-                            onClick={handleAddLeccion}
-                            sx={{ backgroundColor: 'green', color: 'white' }}
-                          >
-                            <CheckIcon />
-                          </IconButton>
-                        </Box>
+                          component="label"
+                          sx={{ textTransform: 'none' }}
+                        >
+                          Seleccionar archivo
+                          <input
+                            type="file"
+                            accept=".jpg,.png,.mp4,.gltf"
+                            hidden
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              if (file) {
+                                const fileUrl = URL.createObjectURL(file); // Crear una URL temporal para el archivo
+                                setNewLeccion({ ...newLeccion, mediaFileName: file.name, mediaFileUrl: fileUrl });
+                              }
+                            }}
+                          />
+                        </Button>
+                        {newLeccion.mediaFileName && (
+                          <Typography variant="body2" color="textSecondary">
+                            Archivo seleccionado: {newLeccion.mediaFileName}
+                          </Typography>
+                        )}
                       </Box>
+                      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                        <IconButton
+                          color="success"
+                          onClick={handleAddLeccion}
+                          sx={{ backgroundColor: 'green', color: 'white' }}
+                        >
+                          <CheckIcon />
+                        </IconButton>
+                      </Box>
+                    </Box>
                     </TableCell>
                   </TableRow>
                 )}
