@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
-import { useParams } from 'react-router-dom';
-import { Box, Typography, Grid } from '@mui/material';
+import { useParams, Link as RouterLink } from 'react-router-dom';
+import { Box, Typography, Grid, Breadcrumbs, Link } from '@mui/material';
 import { CursosContext } from '../context/GlobalContext';
 import EstadisticasAlumnos from '../components/EstadisticasAlumnos';
 import Lecciones from '../components/Lecciones';
@@ -22,6 +22,15 @@ const Courses = () => {
     <Box sx={{ display: 'flex', mt: '64px' }}>
       <NavbarAdmin />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        {/* Breadcrumbs */}
+        <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 2 }}>
+          <Typography color="text.primary">Dashboard</Typography>
+          <Link underline="hover" color="inherit" component={RouterLink} to="/dashboard">
+            Inicio
+          </Link>
+          <Typography color="text.primary">{curso.nombre}</Typography>
+        </Breadcrumbs>
+
         <Typography variant="h4">Curso: {curso.nombre}</Typography>
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
