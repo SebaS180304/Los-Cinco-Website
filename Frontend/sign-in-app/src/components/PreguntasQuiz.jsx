@@ -158,7 +158,7 @@ const PreguntasQuiz = ({ courseId }) => {
 
   return (
     <>
-      <Box sx={{ width: '100%', border: '2px solid black', borderRadius: 2, mt: 3, p: 0 }} onClick={handleOpen}>
+      <Box sx={{ width: '100%', border: '2px solid black', borderRadius: 2, mt: 3, p: 0, cursor: 'pointer', '&:hover': { backgroundColor: '#f5f5f5' } }} onClick={handleOpen}>
         <Typography variant="h6" sx={{ p: 2 }}>
           Preguntas del Quiz
         </Typography>

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Box, Table, TableBody, TableCell, TableContainer, TableRow, Paper, Typography, IconButton } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import { CursosContext } from '../context/GlobalContext';
 
 const CursosSimilares = () => {
@@ -57,7 +57,7 @@ const CursosSimilares = () => {
                             color="primary"
                             onClick={() => handleEditCurso(index)}
                           >
-                            <EditIcon />
+                            <VisibilityIcon />
                           </IconButton>
                         )}
                       </Box>
