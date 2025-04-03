@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, LinearProgress, Typography } from '@mui/material';
 import CoPresentOutlinedIcon from '@mui/icons-material/CoPresentOutlined';
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
@@ -14,9 +14,7 @@ const menuItems = [
     { text: 'Practicar', icon: <RocketLaunchOutlinedIcon /> }
 ];
 
-function Sidebar() {
-    const [selectedItem, setSelectedItem] = useState('Panel');
-
+function Sidebar({ selectedTab, onChange }) {
     return (
         <Box component="nav">
             <Drawer
@@ -32,30 +30,26 @@ function Sidebar() {
                     }
                 }}
             >
-                <Divider/>
+                <Divider />
                 <List>
                     {menuItems.map(({ text, icon }) => (
                         <ListItem key={text} disablePadding>
                             <ListItemButton
-                                onClick={() => setSelectedItem(text)}
+                                onClick={() => onChange(text)}
                                 sx={{
-                                    bgcolor: selectedItem === text ? `${CUSTOM_COLOR}40` : 'transparent',
-                                    boxShadow: selectedItem === text ? 'inset 0 0 5px rgba(0,0,0,0.1)' : 'none',
+                                    bgcolor: selectedTab === text ? `${CUSTOM_COLOR}40` : 'transparent',
+                                    boxShadow: selectedTab === text ? 'inset 0 0 5px rgba(0,0,0,0.1)' : 'none',
                                     '&:hover': {
                                         bgcolor: `${CUSTOM_COLOR}40`,
-                                        '& .MuiListItemText-primary': {
-                                            color: CUSTOM_COLOR,
-                                        },
-                                        '& .MuiListItemIcon-root': {
-                                            color: CUSTOM_COLOR,
-                                        }
+                                        '& .MuiListItemText-primary': { color: CUSTOM_COLOR },
+                                        '& .MuiListItemIcon-root': { color: CUSTOM_COLOR }
                                     },
                                     transition: 'all 0.3s ease',
                                     '& .MuiListItemText-primary': {
-                                        color: selectedItem === text ? CUSTOM_COLOR : 'inherit',
+                                        color: selectedTab === text ? CUSTOM_COLOR : 'inherit',
                                     },
                                     '& .MuiListItemIcon-root': {
-                                        color: selectedItem === text ? CUSTOM_COLOR : 'inherit',
+                                        color: selectedTab === text ? CUSTOM_COLOR : 'inherit',
                                     }
                                 }}
                             >

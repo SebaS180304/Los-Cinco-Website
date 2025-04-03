@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react';
 import CoPresentOutlinedIcon from '@mui/icons-material/CoPresentOutlined';
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
@@ -12,20 +12,20 @@ const menuItems = [
     { text: 'Practicar', icon: <RocketLaunchOutlinedIcon /> }
 ];
 
-function HomeBottBar() {
-  const [value, setValue] = useState(0);
-
+function LearnBottBar({ selectedTab, onChange }) {
   return (
-    <Box sx={{width: '100%', position: 'fixed', bottom: 0}}>
-        <Divider sx={{ backgroundColor: 'black'}} />
-        <BottomNavigation showLabels value={value} onChange={(event, newValue) => {
-                setValue(newValue);
-            }}
+    <Box sx={{ width: '100%', position: 'fixed', bottom: 0 }}>
+        <Divider sx={{ backgroundColor: 'black' }} />
+        <BottomNavigation 
+            showLabels 
+            value={selectedTab} 
+            onChange={(event, newValue) => onChange(newValue)}
         >
             {menuItems.map((item) => (
                 <BottomNavigationAction
                     key={item.text}
                     label={item.text}
+                    value={item.text}
                     icon={item.icon}
                     sx={{
                         '&.Mui-selected': { color: '#FFB300' }
@@ -37,4 +37,4 @@ function HomeBottBar() {
   );
 }
 
-export default HomeBottBar;
+export default LearnBottBar;

@@ -1,11 +1,11 @@
 import React from 'react';
-import { Box, Typography, Container, Card, CardContent, LinearProgress, Button, Stack, Divider } from '@mui/material';
+import { Box, Typography, Card, CardContent, LinearProgress, Button, Stack, Divider } from '@mui/material';
 import { Link } from 'react-router-dom';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const CUSTOM_COLOR = '#FFB300';
 
-function Homecontent() {
+function PanelContent() {
     return ( 
         <Box sx={{ flexGrow: 1 }}>
             <Box p={3}>
@@ -46,7 +46,7 @@ function Homecontent() {
                             <Box>
                                 <Button 
                                     component={Link} 
-                                    to="/lecture" 
+                                    to="/lesson" 
                                     variant="contained" 
                                     fullWidth
                                     endIcon={<ArrowForwardIcon />}
@@ -68,4 +68,4 @@ function Homecontent() {
      );
 }
 
-export default Homecontent;
+export default PanelContent;

@@ -5,7 +5,7 @@ import Courses from './pages/Courses';
 import { GlobalProvider } from './context/GlobalContext';
 import Lecture from './pages/Lecture';
 import Login from './pages/Login';
-import Home from './pages/Home';
+import Learn from './pages/Learn';
 
 function App() {
   return (
@@ -13,8 +13,8 @@ function App() {
       <Router>
           <Routes>
             <Route path='/' element={<Login />} />
-            <Route path='/learn' element={<Home />} />
-            <Route path='/lecture' element={<Lecture />} />
+            <Route path='/learn' element={<Learn />} />
+            <Route path='/lesson' element={<Lecture />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/courses/:courseId" element={<Courses />} />
           </Routes>
