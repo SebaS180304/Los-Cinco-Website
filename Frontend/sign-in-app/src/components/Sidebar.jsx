@@ -25,8 +25,9 @@ function Sidebar({ selectedTab, onChange }) {
                     '& .MuiDrawer-paper': {
                         width: '300px',
                         boxSizing: 'border-box',
-                        position: 'static',
-                        mt: 2
+                        position: 'fixed',
+                        top: '64px',
+                        borderTop: '1px solid black'
                     }
                 }}
             >
@@ -47,9 +48,12 @@ function Sidebar({ selectedTab, onChange }) {
                                     transition: 'all 0.3s ease',
                                     '& .MuiListItemText-primary': {
                                         color: selectedTab === text ? CUSTOM_COLOR : 'inherit',
+                                        fontWeight: selectedTab === text ? 'bold' : 'normal',
+
                                     },
                                     '& .MuiListItemIcon-root': {
                                         color: selectedTab === text ? CUSTOM_COLOR : 'inherit',
+                                        fontSize: selectedTab === text ? '1.5rem' : '1.25rem'
                                     }
                                 }}
                             >

@@ -32,7 +32,7 @@ function Learn() {
                     <LearnBottBar selectedTab={selectedTab} onChange={setSelectedTab} />
                 </Box>
             ) : (
-                <Box component="main" sx={{ flexGrow: 1, display: 'flex', p: 3 }}>
+                <Box component="main" sx={{ flexGrow: 1, display: 'flex', ml: '300px' }}>
                     <Sidebar selectedTab={selectedTab} onChange={setSelectedTab} />
                     {renderContent()}
                 </Box>
