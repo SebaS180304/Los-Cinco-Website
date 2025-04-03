@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { loginUser } from '../services/authService.js';
 import logoA from './../assets/logoA.png';
 import './Login.css';
 
@@ -15,11 +16,7 @@ const Login = () => {
     const [passwordError, setPasswordError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    // Credenciales predefinidas
-    const credentials = {
-        admin: { user: 'admin', password: '1234' },
-        technician: { user: 'tecnico', password: '1234' }
-    };
+
 
     const handleUser = () => {
         if (!formData.user || formData.user.length < 3) {
@@ -45,28 +42,39 @@ const Login = () => {
         setErrorMessage('');
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setErrorMessage('');
         setIsLoading(true);
 
         try {
             console.log('🚀 Iniciando proceso de login...');
-            const { user, password } = formData;
+            const orderedFormData = {
+                user: formData.user,
+                password: formData.password
+            };
 
-            // Verificación de credenciales
-            if (user === credentials.admin.user && password === credentials.admin.password) {
-                setErrorMessage('✅ Login exitoso! Redirigiendo a panel de administrador...');
-                setTimeout(() => {
-                    navigate('/dashboard');
-                }, 1500);
-            } else if (user === credentials.technician.user && password === credentials.technician.password) {
-                setErrorMessage('✅ Login exitoso! Redirigiendo a panel técnico...');
-                setTimeout(() => {
-                    navigate('/learn');
-                }, 1500);
-            } else {
-                setErrorMessage('❌ Usuario o contraseña incorrectos');
+            console.log(orderedFormData);
+            const response = await loginUser(orderedFormData);
+            
+            switch(response.result) {
+                case 0:
+                    setErrorMessage('✅ Login exitoso! Redirigiendo a panel de administrador...');
+                    setTimeout(() => {
+                        navigate('/dashboard');
+                    }, 1500);
+                    break;
+                case 1:
+                    setErrorMessage('✅ Login exitoso! Redirigiendo a panel técnico...');
+                    setTimeout(() => {
+                        navigate('/learn');
+                    }, 1500);
+                    break;
+                case -1:
+                    setErrorMessage('❌ Usuario o contraseña incorrectos');
+                    break;
+                default:
+                    setErrorMessage('❌ Error en la autenticación');
             }
         } catch (error) {
             setErrorMessage('❌ Error: ' + error.message);
@@ -75,7 +83,7 @@ const Login = () => {
         }
     };
 
-    return (
+    return(
         <div className="login-page">
             <div className='wrapper'>
                 <form onSubmit={handleSubmit}>
