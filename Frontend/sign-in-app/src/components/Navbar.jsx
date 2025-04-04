@@ -20,6 +20,8 @@ function Navbar() {
 
     const handleLogout = () => {
         handleCloseUserMenu();
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
         navigate('/');
     };
 
