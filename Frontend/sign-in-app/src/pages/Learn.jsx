@@ -15,11 +15,11 @@ function Learn() {
 
     const renderContent = () => {
         switch (selectedTab) {
-            case 'Panel': return <PanelContent />;
+            case 'Panel': return <PanelContent onVerAprender={() => setSelectedTab('Aprender')} />;
             case 'Aprender': return <LearnContent />;
             case 'Liga': return <LeagueContent />;
             case 'Practicar': return <PracticeContent />;
-            default: return <PanelContent />;
+            default: return <PanelContent onVerAprender={() => setSelectedTab('Aprender')} />;
         }
     }
 

@@ -203,3 +203,42 @@ export const lecture_data = [
                     dolores sunt inventore perferendis, aut sapiente modi nesciunt.`
     }
 ]
+
+export const course_data = [
+    {
+        id: 1,
+        title: 'Curso 1',
+        category: 'Mecánica',
+        progress: 10
+    },
+    {
+        id: 2,
+        title: 'Curso 2',
+        category: 'Seguridad',
+        progress: 20
+    },
+    {
+        id: 3,
+        title: 'Curso 3',
+        category: 'Electrónica',
+        progress: 30
+    },
+    {
+        id: 4,
+        title: 'Curso 4',
+        category: 'Atención al Cliente',
+        progress: 40
+    },
+    {
+        id: 5,
+        title: 'Curso 5',
+        category: 'Mecánica',
+        progress: 100
+    },
+    {
+        id: 6,
+        title: 'Curso 6',
+        category: 'Seguridad',
+        progress: 100
+    }
+]

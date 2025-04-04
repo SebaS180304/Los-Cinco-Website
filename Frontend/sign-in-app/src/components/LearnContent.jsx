@@ -1,11 +1,24 @@
 import React from 'react';
 import { Box, Typography, Divider, Tab, Tabs, Card, CardContent, CardMedia, CardActionArea, LinearProgress, Accordion, AccordionSummary, 
-    AccordionDetails, Stack} from '@mui/material';
+    AccordionDetails, Stack } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import courseBg from '../assets/images/courseBg.png';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import StarsRoundedIcon from '@mui/icons-material/StarsRounded';
+import client from '../assets/images/client-course.jpg';
+import mechanical from '../assets/images/mechanical-course.jpg';
+import electronics from '../assets/images/electrical-course.jpg';
+import security from '../assets/images/security-course.jpg';
+import { course_data } from './constants';
+import ArrowCircleRightRoundedIcon from '@mui/icons-material/ArrowCircleRightRounded';
+
+const courseBackground = [
+    { text: 'Atención al Cliente', src: client },
+    { text: 'Mecánica', src: mechanical },
+    { text: 'Electrónica', src: electronics },
+    { text: 'Seguridad', src: security },
+];
 
 const CUSTOM_COLOR = '#FFB300';
 
@@ -28,13 +41,15 @@ const StyledTab = styled(Tab)(({ theme }) => ({
     },
 }));
 
-function CourseCard() {
+
+function CourseCard({ course }) {
+    const bgImage = courseBackground.find(item => item.text === course.category)?.src || courseBg;
     return (
-        <Card 
-            sx={{ 
+        <Card
+            sx={{
                 width: '100%',
                 maxWidth: '425px',
-                borderRadius: '16px', 
+                borderRadius: '16px',
                 border: '1px solid #000',
             }}
         >
@@ -42,17 +57,17 @@ function CourseCard() {
                 <CardMedia 
                     component="img" 
                     height="125px" 
-                    image={courseBg} 
+                    image={bgImage} 
                     alt="course background" 
                     sx={{ opacity: 0.5, borderRadius: '16px 16px 0 0' }}
                 />
                 <CardContent sx={{ p: 1.5 }}>
                     <Box>
                         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-                            Título del Curso
+                            {course.title}
                         </Typography>
                         <Typography color="text.secondary">
-                            Tipo de Curso
+                            {course.category}
                         </Typography>
                     </Box>
                 </CardContent>
@@ -61,12 +76,12 @@ function CourseCard() {
             <CardContent sx={{ p: 1.5 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Typography variant="body2" color="text.secondary" sx={{ mr: 2 }}>
-                        Progreso: 20%
+                        Progreso: <strong>{course.progress}%</strong>
                     </Typography>
                     <LinearProgress 
                         variant="determinate" 
-                        value={20} 
-                        sx={{ 
+                        value={course.progress} 
+                        sx={{
                             width: '50%',
                             height: '10px',
                             borderRadius: '10px',
@@ -81,11 +96,12 @@ function CourseCard() {
             </CardContent>
         </Card>
     );
-};
+}
 
-function CourseAccordion({ panel, expanded, handleChange }) {
+
+function CourseAccordion({ course, panel, expanded, handleChange }) {
     return (
-        <Accordion 
+        <Accordion
             expanded={expanded === panel}
             onChange={handleChange(panel)}
             sx={{ mb: 2 }}
@@ -98,21 +114,21 @@ function CourseAccordion({ panel, expanded, handleChange }) {
                 <Stack direction="row" sx={{ justifyContent: 'space-between', width: '100%' }}>
                     <Box flex={2} sx={{ display: 'flex', flexDirection: 'column' }}>
                         <Typography color="text.secondary">
-                            Tipo de Curso
+                            {course.category}
                         </Typography>
                         <Typography variant="h5" sx={{ fontWeight: 'bold', mt: 1 }}>
-                            Título del Curso
+                            {course.title}
                         </Typography>
                     </Box>
                     <Box flex={1} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', mr: 2 }}>
                         <Typography variant="body2" sx={{ fontWeight: 'bold', mb: 1 }}>
-                            100%
+                            {course.progress}%
                         </Typography>
                         <LinearProgress 
                             variant="determinate" 
-                            value={100} 
-                            sx={{ 
-                                width: '50%', 
+                            value={course.progress} 
+                            sx={{
+                                width: '50%',
                                 height: '10px',
                                 borderRadius: '10px',
                                 backgroundColor: `${CUSTOM_COLOR}40`,
@@ -134,7 +150,7 @@ function CourseAccordion({ panel, expanded, handleChange }) {
                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                             <CheckCircleIcon sx={{ color: '#FFB300', fontSize: 30 }} />
                             <Typography variant="body2" sx={{ ml: 3 }}>
-                                Lección 1: Titulo de la Lección
+                                Lección 1: Título de la Lección
                             </Typography>
                         </Box>
                     </Box>
@@ -145,24 +161,27 @@ function CourseAccordion({ panel, expanded, handleChange }) {
                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                             <StarsRoundedIcon sx={{ color: '#FFB300', fontSize: 30 }} />
                             <Typography variant="body2" sx={{ ml: 3, mr: 1 }}>
-                                Evaluación 1: Titulo del Curso
+                                Evaluación 1: {course.title}
                             </Typography>
                             <Divider orientation="vertical" flexItem sx={{ backgroundColor: 'black' }} />
                             <Typography variant="body2" sx={{ ml: 1, mr: 1, fontWeight: 'bold' }}>
-                                100%
+                                {course.progress}%
                             </Typography>
                         </Box>
                     </Box>
                 </Box>
-                <Box sx={{ p: 3, display: 'flex', flexDirection: 'column', alignItems: 'flex-end'}}>
+                <Box sx={{ p: 3, display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+                    <ArrowCircleRightRoundedIcon sx={{ color: '#FFB300', fontSize: 30 }} />
                     <Typography
                         variant="body1"
-                        sx={{ 
-                            fontWeight: 'bold', 
-                            color: '#FFB300', 
-                            cursor: 'pointer', 
-                            transition: 'opacity 0.3s ease', 
-                            '&:hover': { opacity: 0.7 }
+                        sx={{
+                            fontWeight: 'bold',
+                            color: '#FFB300',
+                            cursor: 'pointer',
+                            transition: 'opacity 0.3s ease',
+                            textDecoration: 'underline',
+                            '&:hover': { opacity: 0.7 },
+                            ml: 2
                         }}
                     >
                         Ver Contenidos
@@ -183,7 +202,12 @@ function LearnContent() {
 
   const handleTabChange = (event, newValue) => {
     setValue(newValue);
+    setExpanded(false);
   };
+
+ 
+  const inProgressCourses = course_data.filter(course => course.progress < 100);
+  const completedCourses = course_data.filter(course => course.progress === 100);
 
   return ( 
     <Box sx={{ flexGrow: 1, p: 3 }}>
@@ -201,33 +225,33 @@ function LearnContent() {
       </StyledTabs>
       <Divider sx={{ backgroundColor: 'black' }} />
       {value === 0 && (
-        <Box 
-          role="tabpanel" 
-          id="tabpanel-0" 
-          aria-labelledby="tab-0" 
+        <Box
+          role="tabpanel"
+          id="tabpanel-0"
+          aria-labelledby="tab-0"
           sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 2 }}
         >
-          <CourseCard />
-          <CourseCard />
-          <CourseCard />
-          <CourseCard />
-          <CourseCard />
-          <CourseCard />
+          {inProgressCourses.map(course => (
+            <CourseCard course={course} key={course.id} />
+          ))}
         </Box>
       )}
       {value === 1 && (
-        <Box 
-          role="tabpanel" 
-          id="tabpanel-1" 
-          aria-labelledby="tab-1" 
+        <Box
+          role="tabpanel"
+          id="tabpanel-1"
+          aria-labelledby="tab-1"
           sx={{ mt: 2 }}
         >
-          <CourseAccordion panel="panel1" expanded={expanded} handleChange={handleChange} />
-          <CourseAccordion panel="panel2" expanded={expanded} handleChange={handleChange} />
-          <CourseAccordion panel="panel3" expanded={expanded} handleChange={handleChange} />
-          <CourseAccordion panel="panel4" expanded={expanded} handleChange={handleChange} />
-          <CourseAccordion panel="panel5" expanded={expanded} handleChange={handleChange} />
-          <CourseAccordion panel="panel6" expanded={expanded} handleChange={handleChange} />
+          {completedCourses.map(course => (
+            <CourseAccordion 
+              course={course} 
+              panel={`panel-${course.id}`} 
+              key={course.id} 
+              expanded={expanded} 
+              handleChange={handleChange} 
+            />
+          ))}
         </Box>
       )}
     </Box>
