@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logoA from './../assets/logoA.png';
 import './Login.css';
@@ -21,6 +21,19 @@ const Login = () => {
         technician: { user: 'tecnico', password: '1234' }
     };
 
+    // Verificar si ya hay una sesión activa
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const userId = localStorage.getItem('userId');
+        if (token && userId) {
+            if (userId === 'admin') {
+                navigate('/dashboard');
+            } else if (userId === 'tecnico') {
+                navigate('/learn');
+            }
+        }
+    }, [navigate]);
+
     const handleUser = () => {
         if (!formData.user || formData.user.length < 3) {
             setUserError(true);
@@ -30,7 +43,7 @@ const Login = () => {
     };
 
     const handlePassword = () => {
-        if (!formData.password || formData.password.length < 5 || formData.password.length > 20) {
+        if (!formData.password || formData.password.length < 3 || formData.password.length > 20) {
             setPasswordError(true);
             return;
         }
@@ -51,16 +64,23 @@ const Login = () => {
         setIsLoading(true);
 
         try {
-            console.log('🚀 Iniciando proceso de login...');
             const { user, password } = formData;
-
-            // Verificación de credenciales
             if (user === credentials.admin.user && password === credentials.admin.password) {
+                const token = 'dummy-token-admin';
+                const userId = 'admin';
+                localStorage.setItem('token', token);
+                localStorage.setItem('userId', userId);
+                
                 setErrorMessage('✅ Login exitoso! Redirigiendo a panel de administrador...');
                 setTimeout(() => {
                     navigate('/dashboard');
                 }, 1500);
             } else if (user === credentials.technician.user && password === credentials.technician.password) {
+                const token = 'dummy-token-technician';
+                const userId = 'tecnico';
+                localStorage.setItem('token', token);
+                localStorage.setItem('userId', userId);
+                
                 setErrorMessage('✅ Login exitoso! Redirigiendo a panel técnico...');
                 setTimeout(() => {
                     navigate('/learn');
@@ -92,17 +112,16 @@ const Login = () => {
                             value={formData.user}
                             onChange={handleInputChange}
                             onBlur={handleUser}
-                            placeholder='Nombre de Usuario' 
+                            placeholder="Usuario" 
                             required 
                             disabled={isLoading}
                         />
-                        {userError && (
-                            <div className="error-message">
-                                El usuario debe tener al menos 3 caracteres
-                            </div>
-                        )}
                     </div>
-                    
+                    {userError && (
+                        <div className="error-message">
+                            Usuario Inválido. Debe de incluir al menos 3 caracters. Por favor, intente de nuevo.
+                        </div>
+                    )}
                     <div className="inputbox">
                         <input 
                             type="password"
@@ -110,17 +129,16 @@ const Login = () => {
                             value={formData.password}
                             onChange={handleInputChange}
                             onBlur={handlePassword}
-                            placeholder='Contraseña' 
+                            placeholder="Contraseña" 
                             required 
                             disabled={isLoading}
                         />
-                        {passwordError && (
-                            <div className="error-message">
-                                La contraseña debe tener entre 5 y 20 caracteres
-                            </div>
-                        )}
                     </div>
-
+                    {passwordError && (
+                        <div className="error-message">
+                            Contraseña Inválida. Debe de incluir entre 3 y 20 caracteres. Por favor, intente de nuevo.
+                        </div>
+                    )}
                     {errorMessage && (
                         <div className={errorMessage.includes('✅') ? 'success-message' : 'error-message'}>
                             {errorMessage}

@@ -36,6 +36,7 @@
     margin-top: 10px;
     margin-bottom: 10px;
     color: black;
+    justify-content: center;
 }
 
 .login-page .inputbox {
@@ -83,10 +84,6 @@
     text-decoration: underline;
 }
 
-.login-page .wrapper hover {
-    text-decoration: underline;
-}
-
 .login-page .wrapper button {
     width: 100%;
     height: 45px;
@@ -118,7 +115,7 @@
 }
 
 .login-page .whirlpoolImage {
-    display: felx;
+    display: flex;
     justify-content: center;
     align-items: center;
     margin: -15px 76px;
@@ -182,4 +179,16 @@
 .login-page .loginSubmit button:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+    .login-page {
+        padding: 20px;
+        /* Evita que el contenido se recorte en pantallas pequeñas */
+    }
+
+    .login-page .wrapper {
+        width: 90%;
+        padding: 20px;
+    }
 }
