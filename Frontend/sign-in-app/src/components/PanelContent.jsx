@@ -5,7 +5,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 const CUSTOM_COLOR = '#FFB300';
 
-function PanelContent() {
+function PanelContent( { onVerAprender }) {
     return ( 
         <Box sx={{ flexGrow: 1 }}>
             <Box p={3}>
@@ -17,7 +17,7 @@ function PanelContent() {
                         <Stack spacing={2} divider={<Divider flexItem sx={{border: '1px solid #000'}} />}>
                             <Box>
                                 <Typography variant="body2" color="text.secondary" gutterBottom>
-                                    Progreso: 20%
+                                    Progreso: <strong>20%</strong>
                                 </Typography>
                                 <LinearProgress variant="determinate" 
                                     value={20} 
@@ -63,6 +63,22 @@ function PanelContent() {
                         </Stack>
                     </CardContent>
                 </Card>
+                <Typography
+                    variant="body1"
+                    sx={{
+                        fontWeight: 'bold',
+                        color: '#FFB300',
+                        cursor: 'pointer',
+                        transition: 'opacity 0.3s ease',
+                        textDecoration: 'underline',
+                        '&:hover': { opacity: 0.7 },
+                        mt: 2,
+                        p: 1
+                    }}
+                    onClick={onVerAprender}
+                >
+                    Ver todo el progreso de Aprendizaje
+                </Typography>
             </Box>
         </Box>
      );

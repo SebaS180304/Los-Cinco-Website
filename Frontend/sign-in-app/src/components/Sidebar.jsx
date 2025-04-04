@@ -81,7 +81,7 @@ function Sidebar({ selectedTab, onChange }) {
                         }} 
                     />
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                        Progreso del curso actual: 20%
+                        Progreso del curso más reciente: <strong>20%</strong>   
                     </Typography>
                 </Box>
                 <Divider />
