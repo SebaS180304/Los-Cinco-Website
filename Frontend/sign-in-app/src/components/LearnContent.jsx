@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Divider, Tab, Tabs, Card, CardContent, CardMedia, CardActionArea, LinearProgress, Accordion, AccordionSummary, 
     AccordionDetails, Stack } from '@mui/material';
 import { styled } from '@mui/material/styles';
@@ -43,6 +44,7 @@ const StyledTab = styled(Tab)(({ theme }) => ({
 
 
 function CourseCard({ course }) {
+    const navigate = useNavigate();
     const bgImage = courseBackground.find(item => item.text === course.category)?.src || courseBg;
     return (
         <Card
@@ -53,7 +55,7 @@ function CourseCard({ course }) {
                 border: '1px solid #000',
             }}
         >
-            <CardActionArea>
+            <CardActionArea onClick={() => navigate(`/enrolled/${course.id}`)}>
                 <CardMedia 
                     component="img" 
                     height="125px" 
@@ -100,6 +102,8 @@ function CourseCard({ course }) {
 
 
 function CourseAccordion({ course, panel, expanded, handleChange }) {
+    const navigate = useNavigate();
+
     return (
         <Accordion
             expanded={expanded === panel}
@@ -174,6 +178,7 @@ function CourseAccordion({ course, panel, expanded, handleChange }) {
                     <ArrowCircleRightRoundedIcon sx={{ color: '#FFB300', fontSize: 30 }} />
                     <Typography
                         variant="body1"
+                        onClick={() => navigate(`/enrolled/${course.id}`)}
                         sx={{
                             fontWeight: 'bold',
                             color: '#FFB300',

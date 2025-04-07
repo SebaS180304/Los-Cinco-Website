@@ -6,6 +6,7 @@ import Lecture from './pages/Lecture';
 import Login from './pages/Login';
 import Learn from './pages/Learn';
 import { GlobalProvider } from './context/GlobalContext';
+import EnrolledCourse from './pages/EnrolledCourse';
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -79,6 +80,16 @@ function App() {
               <PrivateRoute>
                 <TechnicianRoute>
                   <Lecture />
+                </TechnicianRoute>
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/enrolled/:courseId" 
+            element={
+              <PrivateRoute>
+                <TechnicianRoute>
+                  <EnrolledCourse />
                 </TechnicianRoute>
               </PrivateRoute>
             } 

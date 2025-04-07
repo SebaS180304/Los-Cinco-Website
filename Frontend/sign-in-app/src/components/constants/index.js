@@ -5,8 +5,9 @@ export const lecture_data = [
     {
         id: 1,
         title: 'Lección 1',
-        subtitle: 'Tema 1',
+        course: 'Curso 1',
         mediaType: 'model3d',
+        progress: 20,
         src: '/computer/computer.gltf',
         content: `Contenido de la Lección <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde
@@ -44,9 +45,10 @@ export const lecture_data = [
     },
     {
         id: 2,
-        title: 'Lección 1',
-        subtitle: 'Tema 2',
+        title: 'Lección 2',
+        course: 'Curso 1',
         mediaType: 'image',
+        progress: 40,
         src: imagenPrueba,
         content: `Contenido de la Lección <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde
@@ -84,9 +86,10 @@ export const lecture_data = [
     },
     {
         id: 3,
-        title: 'Lección 1',
-        subtitle: 'Tema 3',
+        title: 'Lección 3',
+        course: 'Curso 1',
         mediaType: 'video',
+        progress: 60,
         src: videoPrueba,
         content: `Contenido de la Lección <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde
@@ -124,9 +127,10 @@ export const lecture_data = [
     },
     {
         id: 4,
-        title: 'Lección 1',
-        subtitle: 'Tema 4',
+        title: 'Lección 4',
+        course: 'Curso 1',
         mediaType: 'none',
+        progress: 80,
         src: '',
         content: `Contenido de la Lección <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde
@@ -164,9 +168,10 @@ export const lecture_data = [
     },
     {
         id: 5,
-        title: 'Lección 1',
-        subtitle: 'Tema 5',
+        title: 'Lección 5',
+        course: 'Curso 1',
         mediaType: 'none',
+        progress: 100,
         src: '',
         content: `Contenido de la Lección <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde
