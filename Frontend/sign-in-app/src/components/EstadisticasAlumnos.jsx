@@ -14,7 +14,7 @@ const EstadisticasAlumnos = () => {
       <Typography variant="h5" component="div" sx={{ mb: 1 }}>
         Estadísticas de Alumnos
       </Typography>
-      <TableContainer component={Paper} sx={{ border: '2px solid black', borderRadius: 2, width: '100%', height: 350, overflow: 'auto' }}>
+      <TableContainer component={Paper} sx={{ border: '2px solid black', borderRadius: 2, width: '100%', height: '350px', overflow: 'auto' }}>
         <Table sx={{ minWidth: 350 }} aria-label="simple table">
           <TableBody>
             {alumnos.length === 0 ? (

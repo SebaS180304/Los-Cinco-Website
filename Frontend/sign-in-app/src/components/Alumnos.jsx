@@ -32,13 +32,13 @@ const Alumnos = () => {
         Lista de Alumnos
       </Typography>
       <Divider sx={{ mx: 2 }} />
-      <Box sx={{ height: 350, overflow: 'auto', p: 2 }}> {/* Ajusta la altura para el scroll */}
+      <Box sx={{ height: 250, overflow: 'auto', p: 2 }}> {/* Ajusta la altura para el scroll */}
         <TableContainer component={Paper}>
           <Table sx={{ tableLayout: 'fixed' }} aria-label="simple table">
             <TableBody>
-              <Grid container spacing={2}>
+              <Grid container spacing={0}>
                 {alumnos.map((alumno, index) => (
-                  <Grid item xs={12} sm={6} md={4} key={index}>
+                  <Grid item xs={12} sm={8} md={4} key={index}>
                     <TableRow
                       sx={{
                         backgroundColor: index % 2 === 0 ? '#F1EDED' : 'white',
@@ -63,7 +63,7 @@ const Alumnos = () => {
                     </TableRow>
                   </Grid>
                 ))}
-                <Grid item xs={12} sm={6} md={4}>
+                <Grid item xs={12} sm={8} md={4}>
                   <TableRow
                     sx={{
                       backgroundColor: alumnos.length % 2 === 0 ? '#F1EDED' : 'white',
