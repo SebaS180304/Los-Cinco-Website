@@ -20,7 +20,7 @@ const CursosSimilares = () => {
       <Typography variant="h6" sx={{ p: 2 }}>
         Cursos Similares
       </Typography>
-      <Box sx={{ height: 350, overflow: 'auto', p: 2 }}>
+      <Box sx={{ height: '16rem', overflow: 'auto', p: 2 }}>
         <TableContainer component={Paper}>
           <Table sx={{ tableLayout: 'fixed' }} aria-label="simple table">
             <TableBody>
@@ -34,35 +34,54 @@ const CursosSimilares = () => {
                 </TableRow>
               ) : (
                 cursosArray.map((curso, index) => (
-                  <TableRow
-                    key={index}
-                    sx={{
-                      backgroundColor: index % 2 === 0 ? '#F1EDED' : 'white',
-                      '&:hover': { backgroundColor: '#e0e0e0' },
-                    }}
-                  >
-                    <TableCell sx={{ width: '80%' }}>
-                      <Typography variant="body1">
-                        {curso.nombre}
-                      </Typography>
-                    </TableCell>
-                    <TableCell sx={{ width: '20%' }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        {index.toString() === courseId ? (
+                  index.toString() === courseId ? (
+                    <TableRow
+                      key={index}
+                      sx={{
+                        backgroundColor: index % 2 === 0 ? '#F1EDED' : 'white',
+                        '&:hover': { backgroundColor: '#e0e0e0' },
+                      }}
+                      onClick={() => handleEditCurso(index)}
+                    >
+                      <TableCell sx={{ width: '80%' }}>
+                        <Typography variant="body1">
+                          {curso.nombre}
+                        </Typography>
+                      </TableCell>
+                      <TableCell sx={{ width: '20%' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           <Typography variant="body1" sx={{ color: 'blue' }}>
                             Actual
                           </Typography>
-                        ) : (
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    <TableRow
+                      key={index}
+                      sx={{
+                        backgroundColor: index % 2 === 0 ? '#F1EDED' : 'white',
+                        '&:hover': { backgroundColor: '#e0e0e0' },
+                      }}
+                      onClick={() => handleEditCurso(index)}
+                    >
+                      <TableCell sx={{ width: '80%' }}>
+                        <Typography variant="body1">
+                          {curso.nombre}
+                        </Typography>
+                      </TableCell>
+                      <TableCell sx={{ width: '20%' }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           <IconButton
                             color="primary"
-                            onClick={() => handleEditCurso(index)}
+                            sx={{ padding: 0 }}
                           >
                             <VisibilityIcon />
                           </IconButton>
-                        )}
-                      </Box>
-                    </TableCell>
-                  </TableRow>
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  )
                 ))
               )}
             </TableBody>

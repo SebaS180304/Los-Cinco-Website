@@ -19,7 +19,7 @@ const Estadisticas = () => {
       <Typography variant="h5" component="div" sx={{ mb: 1 }}>
         Estadísticas
       </Typography>
-      <TableContainer component={Paper} sx={{ border: '2px solid black', borderRadius: 2, width: '100%' }}>
+      <TableContainer component={Paper} sx={{ border: '2px solid black', borderRadius: 2, height: 445, width: '100%' }}>
         <Table sx={{ minWidth: 350 }} aria-label="simple table">
           <TableBody>
             {rows.map((row) => (

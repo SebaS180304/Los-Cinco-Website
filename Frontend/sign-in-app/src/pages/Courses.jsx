@@ -37,10 +37,10 @@ const Courses = () => {
             <EstadisticasAlumnos />
           </Grid>
           <Grid item xs={12} md={6}>
-            <Lecciones courseId={courseId} />
+            <CursosSimilares />
           </Grid>
           <Grid item xs={12} md={6}>
-            <CursosSimilares />
+            <Lecciones courseId={courseId} />
           </Grid>
           <Grid item xs={12} md={6}>
             <PreguntasQuiz courseId={courseId} />
