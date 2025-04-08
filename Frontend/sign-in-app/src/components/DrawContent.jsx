@@ -6,10 +6,10 @@ import { lecture_data } from './constants';
 
 function Drawcontent({ onClose }) {
     const groupedLectures = lecture_data.reduce((acc, lecture) => {
-        if (!acc[lecture.title]) {
-            acc[lecture.title] = [];
+        if (!acc[lecture.course]) {
+            acc[lecture.course] = [];
         }
-        acc[lecture.title].push(lecture);
+        acc[lecture.course].push(lecture);
         return acc;
     }, {});
 
@@ -24,9 +24,9 @@ function Drawcontent({ onClose }) {
                 </IconButton>
             </Box>
             
-            {Object.entries(groupedLectures).map(([title, lectures]) => (
+            {Object.entries(groupedLectures).map(([course, lectures]) => (
                 <Accordion 
-                    key={title}
+                    key={course}
                     sx={{
                         backgroundColor: '#1e2738',
                         color: 'white',
@@ -37,17 +37,17 @@ function Drawcontent({ onClose }) {
                 >
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
-                        aria-controls={`panel-${title}-content`}
-                        id={`panel-${title}-header`}
+                        aria-controls={`panel-${course}-content`}
+                        id={`panel-${course}-header`}
                     >
-                        <Typography>{title}</Typography>
+                        <Typography>{course}</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         <List sx={{ width: '100%' }}>
                             {lectures.map((lecture, index) => (
                                 <React.Fragment key={lecture.id}>
                                     <ListItem>
-                                        <Typography color="white">{lecture.subtitle}</Typography>
+                                        <Typography color="white">{lecture.title}</Typography>
                                     </ListItem>
                                     {index < lectures.length - 1 && (
                                         <Divider sx={{ backgroundColor: 'rgba(255, 255, 255, 0.12)' }} />
