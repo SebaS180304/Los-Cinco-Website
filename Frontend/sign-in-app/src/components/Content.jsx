@@ -20,10 +20,10 @@ function Content({ currentLecture }) {
             </AppBar>
             <Box component="main" sx={{ p: 3, overflow: 'auto' }}>
                 <Typography variant="h6" color="#CECACA" sx={{ mb: 2, textTransform: 'uppercase' }}>
-                    {lecture.title}
+                    {lecture.course}
                 </Typography>
                 <Typography color="white" variant="h4" sx={{ mb: 2, fontWeight: 'bold' }}>
-                    {lecture.subtitle}
+                    {lecture.title}
                 </Typography>
                 <Typography color="white" sx={{ textAlign: 'left', lineHeight: 2 }}
                     dangerouslySetInnerHTML={{ __html: lecture.content }}>
