@@ -150,6 +150,9 @@ function EnrolledCourse() {
                             <Typography variant="h3" sx={{ fontWeight: 'bold', mt: 2, mb: 2, color: 'white' }}>
                                 {course?.title || 'Curso no encontrado'}
                             </Typography>
+                            <Typography variant="body1" sx={{ mt: 3, mb: 2, color: 'white' }}>
+                                Descripción del curso
+                            </Typography>
                             <Box
                                 sx={{
                                     display: 'flex',
@@ -200,22 +203,9 @@ function EnrolledCourse() {
                 </Box>
                 <Box sx={{ pt: 7 }}>
                     <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3 }}>
-                        Lección Actual
-                    </Typography>
-                    {courseLessons[0] && (
-                        <LessonAccordion 
-                            lecture={courseLessons[0]}
-                            panel={`panel-${courseLessons[0].id}`}
-                            expanded={lessonExpanded}
-                            handleChange={handleLessonChange}
-                        />
-                    )}
-                </Box>
-                <Box sx={{ pt: 7 }}>
-                    <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3 }}>
                         Contenido del Curso
                     </Typography>
-                    {courseLessons.slice(1).map(lecture => (
+                    {courseLessons.map(lecture => (
                         <LessonAccordion 
                             key={lecture.id}
                             lecture={lecture}
