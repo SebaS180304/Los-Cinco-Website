@@ -1,48 +1,42 @@
 import React, { useContext, useState } from 'react';
-import { Box, Table, TableBody, TableCell, TableContainer, TableRow, Paper, Typography, Dialog, DialogContent, DialogTitle, IconButton, TextField, Button } from '@mui/material';
+import { Box, Table, TableBody, TableCell, TableContainer, TableRow, Paper, Typography, Dialog, DialogContent, DialogTitle, IconButton, TextField, Button, Divider } from '@mui/material';
 import { CursosContext } from '../context/GlobalContext';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CheckIcon from '@mui/icons-material/Check';
 import AddIcon from '@mui/icons-material/Add';
-import CloseIcon from '@mui/icons-material/Close';
 
 const Lecciones = ({ courseId }) => {
   const { cursos, setCursos } = useContext(CursosContext);
   const lecciones = cursos[courseId]?.lecciones || [];
-  const [open, setOpen] = useState(false);
-  const [expandedLeccion, setExpandedLeccion] = useState(null);
-  const [editingLeccion, setEditingLeccion] = useState({ title: '', content: '' }); // Estado para la lección que se está editando
-  const [newLeccion, setNewLeccion] = useState({ title: '', content: '' }); // Estado separado para la nueva lección
-  const [expandedAdd, setExpandedAdd] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [openAdd, setOpenAdd] = useState(false);
+  const [editingLeccion, setEditingLeccion] = useState({ title: '', content: '' });
+  const [newLeccion, setNewLeccion] = useState({ title: '', content: '' });
 
-  const handleOpen = () => {
-    setOpen(true);
+  const handleOpenEdit = (index) => {
+    setEditingLeccion(lecciones[index]);
+    setOpenEdit(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
-    setExpandedLeccion(null);
-    setExpandedAdd(false);
-  };
-
-  const handleLeccionClick = (index) => {
-    setExpandedLeccion(expandedLeccion === index ? null : index);
-    setEditingLeccion(lecciones[index]); // Cargar los datos existentes de la lección en edición
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+    setEditingLeccion({ title: '', content: '' });
   };
 
   const handleSaveLeccion = (index) => {
     const updatedCursos = { ...cursos };
-    updatedCursos[courseId].lecciones[index] = {
-      ...editingLeccion,
-      mediaUrl: editingLeccion.mediaFileUrl || updatedCursos[courseId].lecciones[index].mediaUrl, // Mantener la URL anterior si no se selecciona un nuevo archivo
-    };
+    updatedCursos[courseId].lecciones[index] = editingLeccion;
     setCursos(updatedCursos);
-    setExpandedLeccion(null);
+    handleCloseEdit();
   };
 
-  const handleAddExpandClick = () => {
-    setExpandedAdd(!expandedAdd);
-    setNewLeccion({ title: '', content: '' }); // Limpiar los campos para una nueva lección
+  const handleOpenAdd = () => {
+    setOpenAdd(true);
+  };
+
+  const handleCloseAdd = () => {
+    setOpenAdd(false);
+    setNewLeccion({ title: '', content: '' });
   };
 
   const handleAddLeccion = () => {
@@ -50,20 +44,14 @@ const Lecciones = ({ courseId }) => {
     if (!updatedCursos[courseId].lecciones) {
       updatedCursos[courseId].lecciones = [];
     }
-  
-    updatedCursos[courseId].lecciones.push({
-      ...newLeccion,
-      mediaUrl: newLeccion.mediaFileUrl || '', // Usar la URL temporal del archivo
-    });
-  
+    updatedCursos[courseId].lecciones.push(newLeccion);
     setCursos(updatedCursos);
-    setExpandedAdd(false);
-    setNewLeccion({ title: '', content: '', mediaFileName: '', mediaFileUrl: '' });
+    handleCloseAdd();
   };
 
   return (
     <>
-      <Box sx={{ width: '100%', border: '2px solid black', borderRadius: 2, mt: 3, p: 0, cursor: 'pointer', '&:hover': { backgroundColor: '#f5f5f5' } }} onClick={handleOpen}>
+      <Box sx={{ width: '100%', border: '2px solid black', borderRadius: 2, mt: 3, p: 0 }}>
         <Typography variant="h6" sx={{ p: 2 }}>
           Lista de Lecciones
         </Typography>
@@ -83,222 +71,92 @@ const Lecciones = ({ courseId }) => {
                   lecciones.map((leccion, index) => (
                     <React.Fragment key={index}>
                       <TableRow
+                        onClick={() => handleOpenEdit(index)}
                         sx={{
-                          backgroundColor: index % 2 === 0 ? '#F1EDED' : 'white',
-                          '&:hover': { backgroundColor: '#e0e0e0' },
-                          cursor: 'pointer',
+                          backgroundColor: 'white',
+                          '&:hover': { backgroundColor: '#e0e0e0', cursor: 'pointer' },
                         }}
-                        onClick={() => handleLeccionClick(index)}
                       >
                         <TableCell>
                           <Typography variant="body1">{leccion.title}</Typography>
                         </TableCell>
                       </TableRow>
+                      <TableRow>
+                        <TableCell colSpan={1} sx={{ padding: 0 }}>
+                          <Divider />
+                        </TableCell>
+                      </TableRow>
                     </React.Fragment>
                   ))
                 )}
+                <TableRow>
+                  <TableCell align="center">
+                    <IconButton color="primary" onClick={handleOpenAdd}>
+                      <AddIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
               </TableBody>
             </Table>
           </TableContainer>
         </Box>
       </Box>
 
-      {/* Pop-Up Section */}
-
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        maxWidth="md"
-        fullWidth
-        sx={{
-          '& .MuiDialog-paper': {
-            width: '60%',
-            height: '80%',
-            maxWidth: 'none', // Evita que se limite al tamaño predeterminado
-            margin: 'auto', // Centra el pop-up
-          },
-        }}
-      >
-        <DialogTitle>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <IconButton
-              edge="start"
-              color="inherit"
-              onClick={handleClose}
-              aria-label="close"
-              sx={{ mr: 2 }}
-            >
-              <ArrowBackIcon />
-            </IconButton>
-            <Typography variant="h6">Lista de Lecciones</Typography>
-          </Box>
-        </DialogTitle>
+      {/* Pop-up para editar lección */}
+      <Dialog open={openEdit} onClose={handleCloseEdit} maxWidth="sm" fullWidth>
+        <DialogTitle>Editar Lección</DialogTitle>
         <DialogContent>
-          <TableContainer component={Paper} sx={{ mt: 2 }}>
-            <Table sx={{ tableLayout: 'fixed', width: '100%' }} aria-label="simple table">
-              <TableBody>
-              {lecciones.length === 0 ? (
-                  <TableRow>
-                    <TableCell>
-                      <Typography variant="body1" align="center">
-                        Aún no hay lecciones.
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  lecciones.map((leccion, index) => (
-                    <React.Fragment key={index}>
-                      <TableRow
-                        sx={{
-                          backgroundColor: index % 2 === 0 ? '#F1EDED' : 'white',
-                          '&:hover': { backgroundColor: '#e0e0e0' },
-                          cursor: 'pointer',
-                        }}
-                        onClick={() => handleLeccionClick(index)}
-                      >
-                        <TableCell>
-                          <Typography variant="body1">{leccion.title}</Typography>
-                        </TableCell>
-                      </TableRow>
-                      {expandedLeccion === index && (
-                        <TableRow>
-                          <TableCell colSpan={1}>
-                            <Box sx={{ mt: 1, p: 2, border: '1px solid #ccc', borderRadius: 2 }}>
-                              <TextField
-                                label="Título de la lección"
-                                variant="outlined"
-                                fullWidth
-                                value={editingLeccion.title}
-                                onChange={(e) => setEditingLeccion({ ...editingLeccion, title: e.target.value })}
-                                sx={{ mb: 2 }}
-                              />
-                              <TextField
-                                label="Contenido de la lección"
-                                variant="outlined"
-                                fullWidth
-                                multiline
-                                rows={4}
-                                value={editingLeccion.content}
-                                onChange={(e) => setEditingLeccion({ ...editingLeccion, content: e.target.value })}
-                                sx={{ mb: 2 }}
-                              />
-                              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                <Button
-                                  variant="outlined"
-                                  component="label"
-                                  sx={{ textTransform: 'none' }}
-                                >
-                                  Editar archivo multimedia
-                                  <input
-                                    type="file"
-                                    accept=".jpg,.png,.mp4,.gltf"
-                                    hidden
-                                    onChange={(e) => {
-                                      const file = e.target.files[0];
-                                      if (file) {
-                                        const fileUrl = URL.createObjectURL(file); // Crear una URL temporal para el archivo
-                                        setEditingLeccion({ ...editingLeccion, mediaFileName: file.name, mediaFileUrl: fileUrl });
-                                      }
-                                    }}
-                                  />
-                                </Button>
-                                {editingLeccion.mediaFileName && (
-                                  <Typography variant="body2" color="textSecondary">
-                                    Archivo seleccionado: {editingLeccion.mediaFileName}
-                                  </Typography>
-                                )}
-                              </Box>
-                              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                                <IconButton
-                                  color="success"
-                                  onClick={() => handleSaveLeccion(index)}
-                                  sx={{ backgroundColor: 'green', color: 'white' }}
-                                >
-                                  <CheckIcon />
-                                </IconButton>
-                              </Box>
-                            </Box>
-                          </TableCell>
-                        </TableRow>
-                      )}
-                    </React.Fragment>
-                  ))
-                )}
-                <TableRow>
-                  <TableCell align="center">
-                    <IconButton
-                      color="primary"
-                      onClick={handleAddExpandClick}
-                      sx={{ backgroundColor: expandedAdd ? 'lightgray' : 'white' }}
-                    >
-                      <AddIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-                {expandedAdd && (
-                  <TableRow>
-                    <TableCell>
-                    <Box sx={{ mt: 2 }}>
-                      <TextField
-                        label="Título de la lección"
-                        variant="outlined"
-                        fullWidth
-                        value={newLeccion.title}
-                        onChange={(e) => setNewLeccion({ ...newLeccion, title: e.target.value })}
-                        sx={{ mb: 2 }}
-                      />
-                      <TextField
-                        label="Contenido de la lección"
-                        variant="outlined"
-                        fullWidth
-                        multiline
-                        rows={4}
-                        value={newLeccion.content}
-                        onChange={(e) => setNewLeccion({ ...newLeccion, content: e.target.value })}
-                        sx={{ mb: 2 }}
-                      />
-                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                        <Button
-                          variant="outlined"
-                          component="label"
-                          sx={{ textTransform: 'none' }}
-                        >
-                          Seleccionar archivo
-                          <input
-                            type="file"
-                            accept=".jpg,.png,.mp4,.gltf"
-                            hidden
-                            onChange={(e) => {
-                              const file = e.target.files[0];
-                              if (file) {
-                                const fileUrl = URL.createObjectURL(file); // Crear una URL temporal para el archivo
-                                setNewLeccion({ ...newLeccion, mediaFileName: file.name, mediaFileUrl: fileUrl });
-                              }
-                            }}
-                          />
-                        </Button>
-                        {newLeccion.mediaFileName && (
-                          <Typography variant="body2" color="textSecondary">
-                            Archivo seleccionado: {newLeccion.mediaFileName}
-                          </Typography>
-                        )}
-                      </Box>
-                      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                        <IconButton
-                          color="success"
-                          onClick={handleAddLeccion}
-                          sx={{ backgroundColor: 'green', color: 'white' }}
-                        >
-                          <CheckIcon />
-                        </IconButton>
-                      </Box>
-                    </Box>
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <TextField
+            label="Título de la lección"
+            variant="outlined"
+            fullWidth
+            value={editingLeccion.title}
+            onChange={(e) => setEditingLeccion({ ...editingLeccion, title: e.target.value })}
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            label="Contenido de la lección"
+            variant="outlined"
+            fullWidth
+            multiline
+            rows={4}
+            value={editingLeccion.content}
+            onChange={(e) => setEditingLeccion({ ...editingLeccion, content: e.target.value })}
+          />
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+            <Button variant="contained" color="primary" onClick={() => handleSaveLeccion(lecciones.indexOf(editingLeccion))}>
+              Guardar
+            </Button>
+          </Box>
+        </DialogContent>
+      </Dialog>
+
+      {/* Pop-up para añadir nueva lección */}
+      <Dialog open={openAdd} onClose={handleCloseAdd} maxWidth="sm" fullWidth>
+        <DialogTitle>Añadir Nueva Lección</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Título de la lección"
+            variant="outlined"
+            fullWidth
+            value={newLeccion.title}
+            onChange={(e) => setNewLeccion({ ...newLeccion, title: e.target.value })}
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            label="Contenido de la lección"
+            variant="outlined"
+            fullWidth
+            multiline
+            rows={4}
+            value={newLeccion.content}
+            onChange={(e) => setNewLeccion({ ...newLeccion, content: e.target.value })}
+          />
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+            <Button variant="contained" color="primary" onClick={handleAddLeccion}>
+              Añadir
+            </Button>
+          </Box>
         </DialogContent>
       </Dialog>
     </>

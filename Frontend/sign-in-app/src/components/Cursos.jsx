@@ -34,57 +34,55 @@ const Cursos = () => {
   const cursosArray = Object.values(cursos);
 
   return (
-    <Box sx={{ width: '100%', border: '2px solid black', borderRadius: 2, mt: 5, p: 0 }}>
+    <Box sx={{ width: '100%', border: '2px solid black', borderRadius: 2, mt: 2, p: 0 }}>
       <Typography variant="h6" sx={{ p: 2 }}>
         Cursos
       </Typography>
       <Divider sx={{ mx: 2 }} />
-      <Box sx={{ height: 350, overflow: 'auto', p: 2 }}> {/* Ajusta la altura para el scroll */}
+      <Box sx={{ height: 350, overflow: 'auto', px: 2, pb: 4 }}> {/* Ajusta la altura para el scroll */}
         <TableContainer component={Paper}>
-          <Table sx={{ tableLayout: 'fixed' }} aria-label="simple table">
+          <Table sx={{ tableLayout: 'fixed', borderCollapse: 'separate', borderSpacing: 0 }} aria-label="simple table">
             <TableBody>
               {cursosArray.map((curso, index) => (
-                <TableRow
-                  key={index}
-                  sx={{
-                    backgroundColor: index % 2 === 0 ? '#F1EDED' : 'white',
-                    '&:hover': { backgroundColor: '#e0e0e0', cursor: 'pointer' },
-                  }}
-                  onClick={() => navigate(`/courses/${index}`)} // Hacer clic en toda la fila
-                >
-                  <TableCell sx={{ width: '80%' }}>
-                    <Typography variant="body1">
-                      {curso.nombre}
-                    </Typography>
-                  </TableCell>
-                  <TableCell sx={{ width: '20%' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>
-                      <VisibilityIcon color="primary" />
-                    </Box>
-                  </TableCell>
-                </TableRow>
+                <React.Fragment key={index}>
+                  <TableRow
+                    onClick={() => navigate(`/courses/${index}`)}
+                    sx={{
+                      backgroundColor: 'white',
+                      '&:hover': { backgroundColor: '#e0e0e0', cursor: 'pointer' },
+                    }}
+                  >
+                    <TableCell sx={{ width: '80%', borderBottom: 'none' }}>
+                      <Typography variant="body1">{curso.nombre}</Typography>
+                    </TableCell>
+                    <TableCell sx={{ width: '20%', borderBottom: 'none' }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <VisibilityIcon color="primary" />
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell colSpan={2} sx={{ padding: 0 }}>
+                      <Divider />
+                    </TableCell>
+                  </TableRow>
+                </React.Fragment>
               ))}
               <TableRow
                 onClick={!showInput ? handleShowInput : undefined}
                 sx={{
-                  backgroundColor: cursosArray.length % 2 === 0 ? '#F1EDED' : 'white',
+                  backgroundColor: 'white',
                   cursor: showInput ? 'default' : 'pointer',
-                  '&:hover': showInput ? {} : { backgroundColor: '#e0e0e0' },
+                  '&:hover': showInput ? {} : { backgroundColor: '#f5f5f5' },
                 }}
               >
                 <TableCell colSpan={2}>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Box sx={{ transition: 'all 2s ease', width: showInput ? '100%' : '0', padding: 0, margin: 0 }}>
                       <TextField
                         inputRef={(input) => {
                           if (showInput && input) {
-                            input.focus(); // Enfocar el TextField cuando showInput sea true
+                            input.focus();
                           }
                         }}
                         value={newCurso}
@@ -92,10 +90,10 @@ const Cursos = () => {
                         onKeyPress={handleKeyPress}
                         placeholder="Agregar nuevo curso"
                         variant="outlined"
-                        onBlur={() => setShowInput(false)} // Ocultar el input al perder el foco
+                        onBlur={() => setShowInput(false)}
                         InputProps={{
                           sx: {
-                            height: showInput ? '35px' : '20px', // Ajusta la altura del TextField
+                            height: showInput ? '35px' : '20px',
                             transition: 'all 0.5s ease',
                             opacity: showInput ? 1 : 0,
                           },
