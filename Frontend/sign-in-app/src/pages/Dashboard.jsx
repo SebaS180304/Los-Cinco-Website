@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Grid, Breadcrumbs, Link, Typography } from '@mui/material';
 import Estadisticas from '../components/Estadisticas';
-import EvaluacionCurso from '../components/Cursos';
+import Cursos from '../components/Cursos';
 import Alumnos from '../components/Alumnos';
 import NavbarAdmin from '../components/NavbarAdmin';
 
@@ -24,11 +24,11 @@ const Dashboard = () => {
           </Grid>
           <Grid item xs={12} md={5}>
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-              <EvaluacionCurso />
+              <Alumnos />
             </Box>
           </Grid>
         </Grid>
-        <Alumnos />
+        <Cursos />
       </Box>
     </Box>
   );

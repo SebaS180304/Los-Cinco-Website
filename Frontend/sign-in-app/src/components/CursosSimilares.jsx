@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Box, Table, TableBody, TableCell, TableContainer, TableRow, Paper, Typography, IconButton } from '@mui/material';
+import { Box, Table, TableBody, TableCell, TableContainer, TableRow, Paper, Typography, IconButton, Divider } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { CursosContext } from '../context/GlobalContext';
 
@@ -16,7 +16,7 @@ const CursosSimilares = () => {
   const cursosArray = Object.values(cursos);
 
   return (
-    <Box sx={{ width: '100%', border: '2px solid black', borderRadius: 2, mt: 3, p: 0 }}>
+    <Box sx={{ width: '100%', border: '2px solid black', borderRadius: 2, mt: 5, p: 0 }}>
       <Typography variant="h6" sx={{ p: 2 }}>
         Cursos Similares
       </Typography>
@@ -33,54 +33,66 @@ const CursosSimilares = () => {
                   </TableCell>
                 </TableRow>
               ) : (
-                cursosArray.map((curso, index) => (
+                cursosArray.map((curso, index) => ( 
                   index.toString() === courseId ? (
-                    <TableRow
-                      key={index}
-                      sx={{
-                        backgroundColor: index % 2 === 0 ? '#F1EDED' : 'white',
-                        '&:hover': { backgroundColor: '#e0e0e0' },
-                      }}
-                      onClick={() => handleEditCurso(index)}
-                    >
-                      <TableCell sx={{ width: '80%' }}>
-                        <Typography variant="body1">
-                          {curso.nombre}
-                        </Typography>
-                      </TableCell>
-                      <TableCell sx={{ width: '20%' }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <Typography variant="body1" sx={{ color: 'blue' }}>
-                            Actual
+                    <React.Fragment key={index}>
+                      <TableRow
+                        sx={{
+                          backgroundColor: 'white',
+                          '&:hover': { backgroundColor: '#e0e0e0' },
+                        }}
+                        onClick={() => handleEditCurso(index)}
+                      >
+                        <TableCell sx={{ width: '80%', borderBottom: 'none' }}>
+                          <Typography variant="body1">
+                            {curso.nombre}
                           </Typography>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
+                        </TableCell>
+                        <TableCell sx={{ width: '20%', borderBottom: 'none' }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Typography variant="body1" sx={{ color: 'blue' }}>
+                              Actual
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell colSpan={2} sx={{ padding: 0 }}>
+                          <Divider />
+                        </TableCell>
+                      </TableRow>
+                    </React.Fragment>
                   ) : (
-                    <TableRow
-                      key={index}
-                      sx={{
-                        backgroundColor: index % 2 === 0 ? '#F1EDED' : 'white',
-                        '&:hover': { backgroundColor: '#e0e0e0' },
-                      }}
-                      onClick={() => handleEditCurso(index)}
-                    >
-                      <TableCell sx={{ width: '80%' }}>
-                        <Typography variant="body1">
-                          {curso.nombre}
-                        </Typography>
-                      </TableCell>
-                      <TableCell sx={{ width: '20%' }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <IconButton
-                            color="primary"
-                            sx={{ padding: 0 }}
-                          >
-                            <VisibilityIcon />
-                          </IconButton>
-                        </Box>
-                      </TableCell>
-                    </TableRow>
+                    <React.Fragment key={index}>
+                      <TableRow
+                        sx={{
+                          backgroundColor: 'white',
+                          '&:hover': { backgroundColor: '#f5f5f5' },
+                        }}
+                        onClick={() => handleEditCurso(index)}
+                      >
+                        <TableCell sx={{ width: '80%' }}>
+                          <Typography variant="body1">
+                            {curso.nombre}
+                          </Typography>
+                        </TableCell>
+                        <TableCell sx={{ width: '20%' }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <IconButton
+                              color="primary"
+                              sx={{ padding: 0 }}
+                            >
+                              <VisibilityIcon />
+                            </IconButton>
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell colSpan={2} sx={{ padding: 0 }}>
+                          <Divider />
+                        </TableCell>
+                      </TableRow>
+                    </React.Fragment>
                   )
                 ))
               )}
