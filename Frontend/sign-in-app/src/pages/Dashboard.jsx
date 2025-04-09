@@ -12,9 +12,6 @@ const Dashboard = () => {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         {/* Breadcrumbs */}
         <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 2 }}>
-          <Link underline="hover" color="inherit" href="/dashboard">
-            Dashboard
-          </Link>
           <Typography color="text.primary">Inicio</Typography>
         </Breadcrumbs>
 
