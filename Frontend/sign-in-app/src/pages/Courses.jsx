@@ -486,9 +486,9 @@ function Courses() {
                 <CourseDetailsList courseLessons={courseLessons} course={course} />
               </Box>
             </Stack>
-            <Box sx={{ pt: 3 }}>
+            {/* <Box sx={{ pt: 3 }}>
               <ProgressSection course={course} courseLessons={courseLessons} />
-            </Box>
+            </Box> */}
           </Box>
           <Box sx={{ pt: 7 }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
