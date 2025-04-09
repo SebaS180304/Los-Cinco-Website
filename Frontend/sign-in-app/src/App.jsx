@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Dashboard from './pages/Dashboard';
 import Courses from './pages/Courses';
 import Lecture from './pages/Lecture';
-import Login from './pages/Login';
+import Login from './pages/LoginMain';
 import Learn from './pages/Learn';
 import { GlobalProvider } from './context/GlobalContext';
 import EnrolledCourse from './pages/EnrolledCourse';
@@ -14,13 +14,13 @@ const PrivateRoute = ({ children }) => {
 };
 
 const AdminRoute = ({ children }) => {
-  const userId = localStorage.getItem('userId');
-  return userId === 'admin' ? children : <Navigate to='/learn' />;
+  const rol = localStorage.getItem('rol');
+  return rol === '1' ? children : <Navigate to='/learn' />;
 };
 
 const TechnicianRoute = ({ children }) => {
-  const userId = localStorage.getItem('userId');
-  return userId === 'tecnico' ? children : <Navigate to='/dashboard' />;
+  const rol = localStorage.getItem('rol');
+  return rol === '0' ? children : <Navigate to='/dashboard' />;
 };
 
 function App() {
@@ -28,10 +28,10 @@ function App() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const userId = localStorage.getItem('userId');
-    if (token && userId) {
-      setSession({ token, userId });
-      console.log('Usuario persistido:', { token, userId });
+    const rol = localStorage.getItem('rol');
+    if (token && rol) {
+      setSession({ token, rol });
+      console.log('Usuario persistido:', { token, rol });
     }
   }, []);
 
