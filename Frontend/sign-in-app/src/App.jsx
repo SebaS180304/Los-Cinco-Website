@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import Dashboard from './pages/Dashboard';
 import Courses from './pages/Courses';
 import Lecture from './pages/Lecture';
-import Login from './pages/LoginMain';
+import Login from './pages/Login';
 import Learn from './pages/Learn';
 import { GlobalProvider } from './context/GlobalContext';
 import EnrolledCourse from './pages/EnrolledCourse';

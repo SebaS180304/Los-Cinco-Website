@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logoA from './../assets/logoA.png';
 import './Login.css';
-import axios from './api/axios';
+import axios from '../api/axios';
 
 const LOGIN_URL = '/LogIn';
 
