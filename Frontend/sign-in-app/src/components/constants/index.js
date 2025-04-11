@@ -214,36 +214,42 @@ export const course_data = [
         id: 1,
         title: 'Curso 1',
         category: 'Mecánica',
+        description: 'Este es un curso introductorio a la mecánica de electrodomésticos de Whirlpool.',
         progress: 10
     },
     {
         id: 2,
         title: 'Curso 2',
         category: 'Seguridad',
+        description: 'Este es un curso introductorio a la seguridad de electrodomésticos de Whirlpool.',
         progress: 20
     },
     {
         id: 3,
         title: 'Curso 3',
         category: 'Electrónica',
+        description: 'Este es un curso introductorio a la electrónica de electrodomésticos de Whirlpool.',
         progress: 30
     },
     {
         id: 4,
         title: 'Curso 4',
         category: 'Atención al Cliente',
+        description: 'Este es un curso introductorio a la atención al cliente de Whirlpool.',
         progress: 40
     },
     {
         id: 5,
         title: 'Curso 5',
         category: 'Mecánica',
+        description: 'Este es un curso introductorio a la mecánica de electrodomésticos de Whirlpool.',
         progress: 100
     },
     {
         id: 6,
         title: 'Curso 6',
         category: 'Seguridad',
+        description: 'Este es un curso introductorio a la seguridad de electrodomésticos de Whirlpool.',
         progress: 100
     }
 ]

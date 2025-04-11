@@ -1,11 +1,16 @@
 import React from 'react';
-import { Box, Typography, Card, CardContent, LinearProgress, Button, Stack, Divider } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Box, Typography, Card, CardContent, CardActionArea, LinearProgress, Button, Stack, Divider } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
+import { course_data } from './constants';
 
 const CUSTOM_COLOR = '#FFB300';
 
 function PanelContent( { onVerAprender }) {
+    const firstCourse = course_data[0];
+    const navigate = useNavigate();
+
     return ( 
         <Box sx={{ flexGrow: 1 }}>
             <Box p={3}>
@@ -17,10 +22,10 @@ function PanelContent( { onVerAprender }) {
                         <Stack spacing={2} divider={<Divider flexItem sx={{border: '1px solid #000'}} />}>
                             <Box>
                                 <Typography variant="body2" color="text.secondary" gutterBottom>
-                                    Progreso: <strong>20%</strong>
+                                    Progreso: <strong>{firstCourse.progress}%</strong>
                                 </Typography>
                                 <LinearProgress variant="determinate" 
-                                    value={20} 
+                                    value={firstCourse.progress} 
                                     sx={{ 
                                         height: '20px',
                                         borderRadius: '10px',
@@ -32,17 +37,26 @@ function PanelContent( { onVerAprender }) {
                                     }} 
                                 />
                             </Box>
-                            <Box p={2}>
-                                <Typography color="text.secondary">
-                                    Tipo de Curso
-                                </Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2}}>
-                                    Título del Curso
-                                </Typography>
-                                <Typography variant="body1" sx={{ mb: 2}}>
-                                    Lección Actual: Título de la Lección
-                                </Typography>
-                            </Box>
+                                <CardActionArea onClick={ () => navigate(`/enrolled/${firstCourse.id}`)}>
+                                    <Box p={2}>
+                                        <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={3}>
+                                            <Box flex={2}>
+                                                <Typography color="text.secondary">
+                                                    Categoría: {firstCourse.category}
+                                                </Typography>
+                                                <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2}}>
+                                                    Título: {firstCourse.title}
+                                                </Typography>
+                                                <Typography variant="body1" sx={{ mb: 2}}>
+                                                    Descripción: {firstCourse.description}
+                                                </Typography>
+                                            </Box>
+                                            <Box flex={1} sx={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
+                                                <ArrowForwardIosRoundedIcon sx={{ fontSize: 40, color: 'black' }} />
+                                            </Box>
+                                        </Stack>
+                                    </Box>
+                                </CardActionArea>
                             <Box>
                                 <Button 
                                     component={Link} 

@@ -188,11 +188,11 @@ const ProgressSection = ({ course, courseLessons }) => {
                     </Box>
                     {isMobile ? (
                         <Typography variant="body1" sx={{ color: 'white', textAlign: 'center', width: '100%' }}>
-                            {expanded ? 'Hide details' : 'Show details'}
+                            {expanded ? 'Ocultar Detalles' : 'Mostrar Detalles'}
                         </Typography>
                     ) : (
                         <Typography variant="body1" sx={{ color: 'white', width: '150px' }}>
-                            {expanded ? 'Hide details' : 'Show details'}
+                            {expanded ? 'Ocultar Detalles' : 'Mostrar Detalles'}
                         </Typography>
                     )}
                 </Box>

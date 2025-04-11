@@ -4,6 +4,7 @@ import CoPresentOutlinedIcon from '@mui/icons-material/CoPresentOutlined';
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined';
+import { course_data } from './constants';
 
 const CUSTOM_COLOR = '#FFB300';
 
@@ -15,6 +16,8 @@ const menuItems = [
 ];
 
 function Sidebar({ selectedTab, onChange }) {
+    const firstCourse = course_data[0];
+
     return (
         <Box component="nav">
             <Drawer
@@ -69,7 +72,7 @@ function Sidebar({ selectedTab, onChange }) {
                 <Box p={2}>
                     <LinearProgress 
                         variant="determinate" 
-                        value={20} 
+                        value={firstCourse.progress} 
                         sx={{ 
                             height: '20px',
                             borderRadius: '10px',
@@ -81,7 +84,7 @@ function Sidebar({ selectedTab, onChange }) {
                         }} 
                     />
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                        Progreso del curso más reciente: <strong>20%</strong>   
+                        Progreso del curso más reciente: <strong>{firstCourse.progress}%</strong>   
                     </Typography>
                 </Box>
                 <Divider />
