@@ -52,11 +52,12 @@ builder.Services.AddAuthentication(x =>
 
 builder.Services.AddAuthorization();
 
+
 //Dependency Injection
 builder.Services.AddScoped<ICursosDeAlumnoService, CursosDeAlumnosService>();
 builder.Services.AddScoped<IUserLogin>(provider => 
     new UserLogin(provider.GetRequiredService<WebsiteContext>(), encodingKey, Issuer, Audience, TokenExpirationTime));
-
+builder.Services.AddScoped<ICursosService, CursosService>();
 // Configure Entity Framework with MySQL
 
 builder.Services.AddDbContext<WebsiteContext>(options =>
@@ -77,7 +78,8 @@ builder.Services.AddCors(options =>
         });
 });
 
-builder.WebHost.UseUrls( "https://0.0.0.0:5001");
+
+builder.WebHost.UseUrls( "http://0.0.0.0:5011");
 
 var app = builder.Build();
 
@@ -88,7 +90,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors("AllowAllOrigins");
 app.UseAuthentication();

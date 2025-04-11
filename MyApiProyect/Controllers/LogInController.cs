@@ -18,7 +18,7 @@ namespace MyApiProyect.Controllers
         private readonly IUserLogin _userLoginService;
         public LogInController(IUserLogin userLoginService) => _userLoginService = userLoginService;
 
-        [HttpGet]
+        [HttpPost]
         public async Task<ActionResult<LogInResponse>> LogIn( LogInRequest logInRequest)
         {
             var response = await _userLoginService.Authentification(logInRequest);

@@ -57,6 +57,7 @@ namespace MyApiProyect.Services
             return new LogInResponse{
                 Name = user.NombreCompleto,
                 Token = accessToken,
+                Rol = user.Rol,
                 TimeExpires = (int)EndingTime.Subtract(DateTime.UtcNow).TotalSeconds
             };
         }

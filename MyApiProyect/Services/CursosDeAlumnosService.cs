@@ -23,8 +23,10 @@ namespace MyApiProyect.Services
                 .Select(i => i.IdCurso)
                 .ToListAsync();
             List<Curso> cursos = await _context.Cursos.
-                                Where(c =>  SelectedCursos.Contains(c.IdCurso))
-                                .ToListAsync();
+                                Where(c =>  SelectedCursos.Contains(c.IdCurso)).
+                                Include(c => c.IdInstructorNavigation).
+                                Include(c => c.Lecciones).
+                                ToListAsync();
             return cursos;
         }
     }

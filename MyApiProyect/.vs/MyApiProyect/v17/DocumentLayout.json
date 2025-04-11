@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "E:\\Codigos_Grandes\\Gits\\Los-Cinco-Website\\MyApiProyect\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{E97B5884-B13D-E1C4-8683-C3D2B0B4D412}|MyApiProyect.csproj|e:\\codigos_grandes\\gits\\los-cinco-website\\myapiproyect\\myapiproyect.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
+      "RelativeMoniker": "D:0:0:{E97B5884-B13D-E1C4-8683-C3D2B0B4D412}|MyApiProyect.csproj|solutionrelative:myapiproyect.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{E97B5884-B13D-E1C4-8683-C3D2B0B4D412}|MyApiProyect.csproj|e:\\codigos_grandes\\gits\\los-cinco-website\\myapiproyect\\myapiproyect.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
       "RelativeMoniker": "D:0:0:{E97B5884-B13D-E1C4-8683-C3D2B0B4D412}|MyApiProyect.csproj|solutionrelative:myapiproyect.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
     },
@@ -22,7 +26,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 67,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -34,7 +38,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
+              "Title": "MyApiProyect",
+              "DocumentMoniker": "E:\\Codigos_Grandes\\Gits\\Los-Cinco-Website\\MyApiProyect\\MyApiProyect.csproj",
+              "RelativeDocumentMoniker": "MyApiProyect.csproj",
+              "ToolTip": "E:\\Codigos_Grandes\\Gits\\Los-Cinco-Website\\MyApiProyect\\MyApiProyect.csproj",
+              "RelativeToolTip": "MyApiProyect.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-04-08T06:55:42.052Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "appsettings.json",
               "DocumentMoniker": "E:\\Codigos_Grandes\\Gits\\Los-Cinco-Website\\MyApiProyect\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
@@ -42,12 +58,11 @@
               "RelativeToolTip": "appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-04-04T01:35:57.819Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-04T01:35:57.819Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "Program.cs",
               "DocumentMoniker": "E:\\Codigos_Grandes\\Gits\\Los-Cinco-Website\\MyApiProyect\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
@@ -55,12 +70,11 @@
               "RelativeToolTip": "Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-04T01:33:41.083Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-04T01:33:41.083Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "MyApiProyect.csproj",
               "DocumentMoniker": "E:\\Codigos_Grandes\\Gits\\Los-Cinco-Website\\MyApiProyect\\MyApiProyect.csproj",
               "RelativeDocumentMoniker": "MyApiProyect.csproj",

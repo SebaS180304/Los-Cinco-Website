@@ -10,6 +10,7 @@ namespace MyApiProyect.DTO
     {
         public string? Name { get; set; }
         public string? Token { get; set; } = string.Empty;
+        public int Rol { get; set; } = 0;
         public int TimeExpires { get; set; } = 0;
 
     }
