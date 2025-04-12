@@ -7,7 +7,7 @@ public partial class Pregunta
 {
     public int IdPregunta { get; set; }
 
-    public string TextoPregunta { get; set; } = null!;
+    public string? TextoPregunta { get; set; }
 
     public int IdQuiz { get; set; }
 

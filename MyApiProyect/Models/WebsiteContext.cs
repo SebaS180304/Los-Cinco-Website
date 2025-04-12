@@ -153,6 +153,9 @@ public partial class WebsiteContext : DbContext
             entity.HasIndex(e => e.IdPregunta, "id_pregunta");
 
             entity.Property(e => e.IdOpcion).HasColumnName("id_opcion");
+            entity.Property(e => e.Correcta)
+                .HasDefaultValueSql("'1'")
+                .HasColumnName("correcta");
             entity.Property(e => e.IdPregunta).HasColumnName("id_pregunta");
             entity.Property(e => e.TextoOpcion)
                 .HasMaxLength(100)
@@ -176,6 +179,7 @@ public partial class WebsiteContext : DbContext
             entity.Property(e => e.IdQuiz).HasColumnName("id_quiz");
             entity.Property(e => e.TextoPregunta)
                 .HasMaxLength(100)
+                .HasDefaultValueSql("'NA'")
                 .HasColumnName("texto_pregunta");
 
             entity.HasOne(d => d.IdQuizNavigation).WithMany(p => p.Pregunta)

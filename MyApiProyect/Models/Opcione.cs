@@ -11,5 +11,7 @@ public partial class Opcione
 
     public int IdPregunta { get; set; }
 
+    public bool? Correcta { get; set; }
+
     public virtual Pregunta IdPreguntaNavigation { get; set; } = null!;
 }
