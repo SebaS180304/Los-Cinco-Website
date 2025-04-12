@@ -151,7 +151,7 @@ function EnrolledCourse() {
                                 {course?.title || 'Curso no encontrado'}
                             </Typography>
                             <Typography variant="body1" sx={{ mt: 3, mb: 2, color: 'white' }}>
-                                Descripción del curso
+                                {course?.description}
                             </Typography>
                             <Box
                                 sx={{
