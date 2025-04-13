@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using MyApiProyect.Services;
 using MyApiProyect.DTO;
 
-namespace MyApiProyect.Controllers
+namespace MyApiProyect.Controllersq
 {
     [ApiController]
     [Route("[controller]")]

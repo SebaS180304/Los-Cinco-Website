@@ -9,15 +9,12 @@ using MyApiProyect.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+var connectionString = builder.Configuration.GetConnectionString("WhirlpoolDBConnectionString");
+var encodingKey = builder.Configuration["WhirlpoolDBEncodingKey"];
 
-var connectionString = Environment.GetEnvironmentVariable("WhirlpoolDBConnectionString");
-var encodingKey = Environment.GetEnvironmentVariable("WhirlpoolDBEncodingKey");
-
-if(encodingKey is null || connectionString is null || encodingKey == "" || connectionString == "")
+if (string.IsNullOrEmpty(encodingKey) || string.IsNullOrEmpty(connectionString))
 {
-    throw new Exception("Environment variables not set. Please set 'WhirlpoolDBConnectionString' and 'WhirlpoolDBEncodingKey'.");
+    throw new Exception("Missing configuration. Please set 'WhirlpoolDBConnectionString' and 'WhirlpoolDBEncodingKey' in appsettings.json.");
 }
 
 builder.Services.AddControllers();
@@ -28,7 +25,7 @@ string Audience = builder.Configuration["JwtSettings:Audience"] ?? string.Empty;
 string Issuer = builder.Configuration["JwtSettings:Issuer"] ?? string.Empty;
 int TokenExpirationTime = int.Parse(builder.Configuration["JwtSettings:Time"] ?? "0");
 
-builder.Services.AddAuthentication(x => 
+builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -37,10 +34,10 @@ builder.Services.AddAuthentication(x =>
 {
     x.RequireHttpsMetadata = true;
     x.SaveToken = true;
-    
+
     x.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateAudience =true,
+        ValidateAudience = true,
         ValidateIssuer = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
@@ -52,46 +49,41 @@ builder.Services.AddAuthentication(x =>
 
 builder.Services.AddAuthorization();
 
-
-//Dependency Injection
+// ✅ Inyectar servicios
 builder.Services.AddScoped<ICursosDeAlumnoService, CursosDeAlumnosService>();
-builder.Services.AddScoped<IUserLogin>(provider => 
+builder.Services.AddScoped<IUserLogin>(provider =>
     new UserLogin(provider.GetRequiredService<WebsiteContext>(), encodingKey, Issuer, Audience, TokenExpirationTime));
 builder.Services.AddScoped<ICursosService, CursosService>();
 builder.Services.AddScoped<IQuizService, QuizService>();
-// Configure Entity Framework with MySQL
 
+// ✅ Configurar EF Core con MySQL
 builder.Services.AddDbContext<WebsiteContext>(options =>
     options.UseMySql(
         connectionString,
-        new MySqlServerVersion(new Version(8, 0, 32)) // Adjust MySQL version as needed
+        new MySqlServerVersion(new Version(8, 0, 32))
     ));
-
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins",
-        builder =>
+        policy =>
         {
-            builder.AllowAnyOrigin()
-                   .AllowAnyMethod()
-                   .AllowAnyHeader();
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
         });
 });
 
-
-builder.WebHost.UseUrls( "http://0.0.0.0:5011");
+builder.WebHost.UseUrls("http://0.0.0.0:5011");
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-//app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors("AllowAllOrigins");
 app.UseAuthentication();
