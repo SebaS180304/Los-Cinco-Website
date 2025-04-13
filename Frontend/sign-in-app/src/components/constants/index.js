@@ -253,3 +253,57 @@ export const course_data = [
         progress: 100
     }
 ]
+
+export const week_data = [
+    {
+        label: 'D',
+        lecciones: '3',
+    },
+    {
+        label: 'L',
+        lecciones: '4',
+    },
+    {
+        label: 'Ma',
+        lecciones: '2',
+    },
+    {
+        label: 'Mi',
+        lecciones: '5',
+    },
+    {
+        label: 'J',
+        lecciones: '1',
+    },
+    {
+        label: 'V',
+        lecciones: '3',
+    },
+    {
+        label: 'S',
+        lecciones: '4',
+    }
+]
+
+export const quiz_data = [
+    {
+        label: 'Quiz1',
+        value: 70
+    },
+    {
+        label: 'Quiz2',
+        value: 40
+    },
+    {
+        label: 'Quiz3',
+        value: 57
+    },
+    {
+        label: 'Quiz4',
+        value: 33
+    },
+    {
+        label: 'Quiz5',
+        value: 100
+    }
+]
