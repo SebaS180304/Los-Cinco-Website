@@ -19,7 +19,8 @@ if(encodingKey is null || connectionString is null || encodingKey == "" || conne
 {
     throw new Exception("Environment variables not set. Please set 'WhirlpoolDBConnectionString' and 'WhirlpoolDBEncodingKey'.");
 }
-
+Console.WriteLine($"ConnectionString: {connectionString}");
+Console.WriteLine($"EncodingKey: {encodingKey}");
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

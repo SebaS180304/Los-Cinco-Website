@@ -9,5 +9,6 @@ namespace MyApiProyect.Services
     public interface ICursosService
     {
         public Task<List<DetallesBaseCurso>> GetCursosDeProfesor(int Id);
+       //public Task<bool> CrearCurso(CursoDTO curso, int IdInstructor);
     }
 }
