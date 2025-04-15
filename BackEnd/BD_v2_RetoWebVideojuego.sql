@@ -13,7 +13,8 @@ create table Usuarios (
 create table Cursos (
 	id_curso int not null auto_increment,
     titulo_curso varchar(100) not null,
-    categoria varchar(100),
+    categoria int default 0,
+    descripcion varchar(600) default null,
     id_instructor int not null,
     intentos_max int not null,
     primary key(id_curso),
@@ -36,20 +37,31 @@ create table Lecciones (
 	id_leccion int not null auto_increment,
     titulo_leccion varchar(100) not null,
     contenido text not null,
-    tipo_media varchar(100) not null,
+    tipo_media int not null,
     url_media varchar(255),
     id_curso int not null,
     primary key(id_leccion),
     foreign key(id_curso) references Cursos(id_curso)
 );
+create table LeccionAprendida(
+	id_leccion_aprendida int not null auto_increment,
+	id_leccion int not null,
+	id_usuario int not null,
+	fecha_acabada timestamp default CURRENT_TIMESTAMP,
+	primary key(id_leccion_aprendida),
+	foreign key (id_leccion) references Lecciones(id_leccion),
+	foreign key (id_usuario) references Usuarios (id_usuario)
+	
+);
+
 create table Lecciones_Completadas(
     id_leccion_completada int not null auto_increment,
     id_leccion int not null,
     id_usuario int not null,
-    terminado bool default false,
     fecha_acabada timestamp default CURRENT_TIMESTAMP,
     primary key(id_leccion_completada),
-    foreign key(id_leccion) references Lecciones(id_leccion)
+    foreign key(id_leccion) references Lecciones(id_leccion),
+    foreign key (id_usuario) references Usuarios(id_usuario)
 );
 
 
@@ -74,8 +86,13 @@ insert into Usuarios (nombre_completo, rol, contrasena) values
 ("Romeo Juanin", 0, "123456" ),
 ("Romeo Mejor Juanin", 1, "123456");
 
-insert into Cursos(titulo_curso, categoria, id_instructor, intentos_max) values 
-("Lavadoras 3", "electronica", 1001, 2);
+insert into Cursos(titulo_curso, categoria, id_instructor, intentos_max, descripcion) values 
+("Lavadoras 3", 2, 1001, 2, "curso avanzado sobre lavadoras industriales");
+insert into Lecciones(titulo_leccion, contenido, tipo_media, url_media, id_curso) values
+("Componentes Necesarios", "Informacion relevente, realmente relevantes, muy levenate y confidencial. Whirlpool :)", 
+0, "https://www.lg.com/content/dam/channel/wcms/mx/images/lavadoras-y-secadoras/wm22vv2s6gr_asselat_enms_mx_c/gallery/DZ_01.jpg", 
+1);
+
 
 insert into Inscripciones ( id_estudiante, id_curso) values
 (1000,1);

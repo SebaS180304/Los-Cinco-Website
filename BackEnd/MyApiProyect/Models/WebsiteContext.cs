@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
 
 namespace MyApiProyect.Models;
 
@@ -19,6 +20,8 @@ public partial class WebsiteContext : DbContext
 
     public virtual DbSet<Inscripcione> Inscripciones { get; set; }
 
+    public virtual DbSet<LeccionAprendidum> LeccionAprendida { get; set; }
+
     public virtual DbSet<Leccione> Lecciones { get; set; }
 
     public virtual DbSet<LeccionesCompletada> LeccionesCompletadas { get; set; }
@@ -28,7 +31,6 @@ public partial class WebsiteContext : DbContext
     public virtual DbSet<Pregunta> Preguntas { get; set; }
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
-
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -40,14 +42,15 @@ public partial class WebsiteContext : DbContext
         {
             entity.HasKey(e => e.IdCurso).HasName("PRIMARY");
 
-            entity.ToTable("cursos");
-
             entity.HasIndex(e => e.IdInstructor, "id_instructor");
 
             entity.Property(e => e.IdCurso).HasColumnName("id_curso");
             entity.Property(e => e.Categoria)
-                .HasMaxLength(100)
+                .HasDefaultValueSql("'0'")
                 .HasColumnName("categoria");
+            entity.Property(e => e.Descripcion)
+                .HasMaxLength(600)
+                .HasColumnName("descripcion");
             entity.Property(e => e.IdInstructor).HasColumnName("id_instructor");
             entity.Property(e => e.IntentosMax).HasColumnName("intentos_max");
             entity.Property(e => e.TituloCurso)
@@ -63,8 +66,6 @@ public partial class WebsiteContext : DbContext
         modelBuilder.Entity<Inscripcione>(entity =>
         {
             entity.HasKey(e => e.IdInscripcion).HasName("PRIMARY");
-
-            entity.ToTable("inscripciones");
 
             entity.HasIndex(e => e.IdCurso, "id_curso");
 
@@ -90,11 +91,36 @@ public partial class WebsiteContext : DbContext
                 .HasConstraintName("inscripciones_ibfk_1");
         });
 
+        modelBuilder.Entity<LeccionAprendidum>(entity =>
+        {
+            entity.HasKey(e => e.IdLeccionAprendida).HasName("PRIMARY");
+
+            entity.HasIndex(e => e.IdLeccion, "id_leccion");
+
+            entity.HasIndex(e => e.IdUsuario, "id_usuario");
+
+            entity.Property(e => e.IdLeccionAprendida).HasColumnName("id_leccion_aprendida");
+            entity.Property(e => e.FechaAcabada)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP")
+                .HasColumnType("timestamp")
+                .HasColumnName("fecha_acabada");
+            entity.Property(e => e.IdLeccion).HasColumnName("id_leccion");
+            entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
+
+            entity.HasOne(d => d.IdLeccionNavigation).WithMany(p => p.LeccionAprendida)
+                .HasForeignKey(d => d.IdLeccion)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("leccionaprendida_ibfk_1");
+
+            entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.LeccionAprendida)
+                .HasForeignKey(d => d.IdUsuario)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("leccionaprendida_ibfk_2");
+        });
+
         modelBuilder.Entity<Leccione>(entity =>
         {
             entity.HasKey(e => e.IdLeccion).HasName("PRIMARY");
-
-            entity.ToTable("lecciones");
 
             entity.HasIndex(e => e.IdCurso, "id_curso");
 
@@ -103,9 +129,7 @@ public partial class WebsiteContext : DbContext
                 .HasColumnType("text")
                 .HasColumnName("contenido");
             entity.Property(e => e.IdCurso).HasColumnName("id_curso");
-            entity.Property(e => e.TipoMedia)
-                .HasMaxLength(100)
-                .HasColumnName("tipo_media");
+            entity.Property(e => e.TipoMedia).HasColumnName("tipo_media");
             entity.Property(e => e.TituloLeccion)
                 .HasMaxLength(100)
                 .HasColumnName("titulo_leccion");
@@ -123,9 +147,11 @@ public partial class WebsiteContext : DbContext
         {
             entity.HasKey(e => e.IdLeccionCompletada).HasName("PRIMARY");
 
-            entity.ToTable("lecciones_completadas");
+            entity.ToTable("Lecciones_Completadas");
 
             entity.HasIndex(e => e.IdLeccion, "id_leccion");
+
+            entity.HasIndex(e => e.IdUsuario, "id_usuario");
 
             entity.Property(e => e.IdLeccionCompletada).HasColumnName("id_leccion_completada");
             entity.Property(e => e.FechaAcabada)
@@ -134,21 +160,21 @@ public partial class WebsiteContext : DbContext
                 .HasColumnName("fecha_acabada");
             entity.Property(e => e.IdLeccion).HasColumnName("id_leccion");
             entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
-            entity.Property(e => e.Terminado)
-                .HasDefaultValueSql("'0'")
-                .HasColumnName("terminado");
 
             entity.HasOne(d => d.IdLeccionNavigation).WithMany(p => p.LeccionesCompletada)
                 .HasForeignKey(d => d.IdLeccion)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("lecciones_completadas_ibfk_1");
+
+            entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.LeccionesCompletada)
+                .HasForeignKey(d => d.IdUsuario)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("lecciones_completadas_ibfk_2");
         });
 
         modelBuilder.Entity<Opcione>(entity =>
         {
             entity.HasKey(e => e.IdOpcion).HasName("PRIMARY");
-
-            entity.ToTable("opciones");
 
             entity.HasIndex(e => e.IdPregunta, "id_pregunta");
 
@@ -171,8 +197,6 @@ public partial class WebsiteContext : DbContext
         {
             entity.HasKey(e => e.IdPregunta).HasName("PRIMARY");
 
-            entity.ToTable("preguntas");
-
             entity.HasIndex(e => e.IdQuiz, "id_quiz");
 
             entity.Property(e => e.IdPregunta).HasColumnName("id_pregunta");
@@ -191,8 +215,6 @@ public partial class WebsiteContext : DbContext
         modelBuilder.Entity<Usuario>(entity =>
         {
             entity.HasKey(e => e.IdUsuario).HasName("PRIMARY");
-
-            entity.ToTable("usuarios");
 
             entity.Property(e => e.IdUsuario).HasColumnName("id_usuario");
             entity.Property(e => e.Contrasena)

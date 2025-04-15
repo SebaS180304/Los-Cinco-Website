@@ -9,7 +9,9 @@ public partial class Curso
 
     public string TituloCurso { get; set; } = null!;
 
-    public string? Categoria { get; set; }
+    public int? Categoria { get; set; }
+
+    public string? Descripcion { get; set; }
 
     public int IdInstructor { get; set; }
 

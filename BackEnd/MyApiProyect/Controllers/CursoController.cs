@@ -11,11 +11,11 @@ namespace MyApiProyect.Controllers
     [ApiController]
     [Route("[controller]")]
     [Authorize]
-    public class CursosController : ControllerBase
+    public class CursoController : ControllerBase
     {
         private readonly ICursosDeAlumnoService _cursosDeAlumnoService;
         private readonly ICursosService _cursosService;
-        public CursosController(ICursosDeAlumnoService cursosDeAlumnoService, ICursosService coursosService) {
+        public CursoController(ICursosDeAlumnoService cursosDeAlumnoService, ICursosService coursosService) {
             _cursosDeAlumnoService = cursosDeAlumnoService;
             _cursosService = coursosService;
         }
@@ -37,5 +37,28 @@ namespace MyApiProyect.Controllers
             
         } 
 
+        [HttpGet]
+        [Route("Full")]
+        [Authorize]
+        public async Task<ActionResult<CursoFullDTO>> GetFull(int IdCurso) {
+            var id = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (id is null)
+                return Unauthorized();
+            var curso = await _cursosService.GetCursoFull(IdCurso);
+            if (curso == null) return NotFound();
+            return curso;
+        }
+
+        [HttpPost]
+        [Route("NuevoCurso")]
+        [Authorize(Roles = "1")]
+        public async Task<ActionResult> CrearCurso([FromBody] DetallesBaseCurso curso) {
+            var id = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (id is null)
+                return Unauthorized();
+            var IdCurso = await _cursosService.CrearCurso(curso, int.Parse(id));
+
+            return Ok(new { IdCurso });
+        }
     }
 }

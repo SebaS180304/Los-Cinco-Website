@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace MyApiProyect.Models;
 
-public partial class LeccionesCompletada
+public partial class LeccionAprendidum
 {
-    public int IdLeccionCompletada { get; set; }
+    public int IdLeccionAprendida { get; set; }
 
     public int IdLeccion { get; set; }
 
