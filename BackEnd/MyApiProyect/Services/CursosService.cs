@@ -26,5 +26,7 @@ namespace MyApiProyect.Services
                 Categoria = c.Categoria
             }).ToList();
         }
+
+       // public async Task<B
     }
 }

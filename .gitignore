@@ -129,5 +129,10 @@ out
 .yarn/install-state.gz
 .pnp.*
 
+
+.fake
+
 # macOS system files
 .DS_Store
+
+

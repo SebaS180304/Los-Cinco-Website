@@ -1,32 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "E:\\Codigos_Grandes\\Gits\\Los-Cinco-Website\\MyApiProyect\\MyApiProyect.csproj": {}
+    "/Users/elenavazquez/Documents/GitHub/Los-Cinco-Website/BackEnd/MyApiProyect/MyApiProyect.csproj": {}
   },
   "projects": {
-    "E:\\Codigos_Grandes\\Gits\\Los-Cinco-Website\\MyApiProyect\\MyApiProyect.csproj": {
+    "/Users/elenavazquez/Documents/GitHub/Los-Cinco-Website/BackEnd/MyApiProyect/MyApiProyect.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\Codigos_Grandes\\Gits\\Los-Cinco-Website\\MyApiProyect\\MyApiProyect.csproj",
+        "projectUniqueName": "/Users/elenavazquez/Documents/GitHub/Los-Cinco-Website/BackEnd/MyApiProyect/MyApiProyect.csproj",
         "projectName": "MyApiProyect",
-        "projectPath": "E:\\Codigos_Grandes\\Gits\\Los-Cinco-Website\\MyApiProyect\\MyApiProyect.csproj",
-        "packagesPath": "C:\\Users\\hachi\\.nuget\\packages\\",
-        "outputPath": "E:\\Codigos_Grandes\\Gits\\Los-Cinco-Website\\MyApiProyect\\obj\\",
+        "projectPath": "/Users/elenavazquez/Documents/GitHub/Los-Cinco-Website/BackEnd/MyApiProyect/MyApiProyect.csproj",
+        "packagesPath": "/Users/elenavazquez/.nuget/packages/",
+        "outputPath": "/Users/elenavazquez/Documents/GitHub/Los-Cinco-Website/BackEnd/MyApiProyect/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\hachi\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/elenavazquez/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "net7.0"
+          "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net7.0": {
-            "targetAlias": "net7.0",
+          "net8.0": {
+            "targetAlias": "net8.0",
             "projectReferences": {}
           }
         },
@@ -39,41 +37,38 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
-        "net7.0": {
-          "targetAlias": "net7.0",
+        "net8.0": {
+          "targetAlias": "net8.0",
           "dependencies": {
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
-              "version": "[7.0.5, )"
+              "version": "[8.0.0, )"
             },
             "Microsoft.AspNetCore.OpenApi": {
               "target": "Package",
-              "version": "[7.0.0, )"
+              "version": "[8.0.0, )"
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[7.0.5, )"
-            },
-            "Microsoft.EntityFrameworkCore.SqlServer": {
-              "target": "Package",
-              "version": "[7.0.5, )"
+              "version": "[8.0.0, )"
             },
             "Microsoft.EntityFrameworkCore.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[7.0.5, )"
+              "version": "[8.0.0, )"
             },
             "Pomelo.EntityFrameworkCore.MySql": {
               "target": "Package",
-              "version": "[7.0.0, )"
+              "version": "[8.0.0, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
-              "version": "[6.6.2, )"
+              "version": "[8.1.1, )"
             },
             "System.Net.Http": {
               "target": "Package",
@@ -99,7 +94,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.403\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/x64/sdk/9.0.203/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
