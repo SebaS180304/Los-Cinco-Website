@@ -9,7 +9,7 @@ namespace MyApiProyect.DTO
     {
         public int IdCurso { get; set; } = 0;
         public string TituloCurso { get; set; } = null!;
-        public string DescripcionCurso { get; set; } = null!;
-        public string? Categoria { get; set; }
+        public string? DescripcionCurso { get; set; } = null!;
+        public int? Categoria { get; set; } = 0;
     }
 }

@@ -11,13 +11,15 @@ public partial class Leccione
 
     public string Contenido { get; set; } = null!;
 
-    public string TipoMedia { get; set; } = null!;
+    public int TipoMedia { get; set; }
 
     public string? UrlMedia { get; set; }
 
     public int IdCurso { get; set; }
 
     public virtual Curso IdCursoNavigation { get; set; } = null!;
+
+    public virtual ICollection<LeccionAprendidum> LeccionAprendida { get; set; } = new List<LeccionAprendidum>();
 
     public virtual ICollection<LeccionesCompletada> LeccionesCompletada { get; set; } = new List<LeccionesCompletada>();
 }
