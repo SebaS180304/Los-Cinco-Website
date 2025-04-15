@@ -26,8 +26,8 @@ create table Inscripciones (
     id_estudiante int not null,
     id_curso int not null,
     puntaje int,
-    fecha_completado datetime ,
-    esta_completado bool,
+    fecha_completado datetime default null ,
+    esta_completado bool default 0,
     primary key(id_inscripcion),
     foreign key(id_estudiante) references Usuarios(id_usuario),
 	foreign key(id_curso) references Cursos(id_curso)
