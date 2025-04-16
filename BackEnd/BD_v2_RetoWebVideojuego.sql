@@ -56,7 +56,7 @@ create table LeccionCompletada(
 
 create table RegistroLeccionCompletada(
     id_leccion_completada int not null,
-    fecha_acabada datetime default (CURRENT_DATE()),
+    fecha_acabada datetime not null default (CURRENT_DATE()),
     foreign key(id_leccion_completada) references LeccionCompletada(id_leccion_completada)
 );
 
@@ -77,7 +77,7 @@ create table Opciones (
     primary key(id_opcion),
     foreign key(id_pregunta) references Preguntas(id_pregunta)
 );
-
+delimiter //
 create Trigger UpdateLeccionCompletada before update on LeccionCompletada
 for each row 
 	Begin
@@ -85,36 +85,43 @@ for each row
 			insert into RegistroLeccionCompletada(id_leccion_completada) values (new.id_leccion_completada);
 		end if;
 	END;
-
+delimiter //
+delimiter $$
 create Trigger InsertIntoIncripcion after insert on Inscripciones
 for each row 
 	begin
 		insert into LeccionCompletada (id_leccion, id_usuario, valida) 
 		select id_leccion,  new.id_estudiante, 0 from Lecciones where (id_curso = new.id_curso) ;
 	end;
-	
+delimiter $$	
+delimiter @@
 
 insert into Usuarios (nombre_completo, rol, contrasena) values
 ("Romeo Juanin", 0, "123456" ),
 ("Romeo Mejor Juanin", 1, "123456");
-
+delimiter @@
+delimiter $$ 
 insert into Cursos(titulo_curso, categoria, id_instructor, intentos_max, descripcion) values 
 ("Lavadoras 3", 2, 1001, 2, "curso avanzado sobre lavadoras industriales");
+delimiter $$
+delimiter //
 insert into Lecciones(titulo_leccion, contenido, tipo_media, url_media, id_curso) values
 ("Componentes Necesarios", "Informacion relevente, realmente relevantes, muy levenate y confidencial. Whirlpool :)", 
 0, "https://www.lg.com/content/dam/channel/wcms/mx/images/lavadoras-y-secadoras/wm22vv2s6gr_asselat_enms_mx_c/gallery/DZ_01.jpg", 1),
 ("Verdades de la mecanica", "La mecanica puede ser muy intimidante aveces, pero recuerda ....", 1, "https://nullc.com", 1),
 ("Lavadoras, artefactos o ciencia", "entre las caracteristicas más importantes de las lavadoras es su capacidad de...", 1, "https://nullc.com", 1);
-
-
+delimiter //
+delimiter @@
 insert into Inscripciones ( id_estudiante, id_curso) values
 (1000,1);
-
+delimiter @@
+delimiter $$
 
 insert into Preguntas (texto_pregunta, id_quiz) values 
 ("¿Cuales son las mejores opciones para lavadoras?", 1 ),
 ("Cuales electrodomesticos son los más peligrosos de instalar erroneamente?", 1);
-
+delimiter $$
+delimiter //
 insert into Opciones(texto_opcion, id_pregunta, correcta) values 
 ("Whirlpool", 		1, 1),
 ("Samsung", 		1 ,0),
@@ -123,11 +130,10 @@ insert into Opciones(texto_opcion, id_pregunta, correcta) values
 ("Secadoras",		2, 1),
 ("Refrigeradores", 	2, 0),
 ("Horno", 			2, 1);
-
+delimiter //
+delimiter @@
 update LeccionCompletada set valida = 1 where id_leccion_completada = 1;
-
-select * from cursos;
-
-select* from preguntas;
-select * from LeccionCompletada;
-select * from RegistroLeccionCompletada;
+delimiter @@
+delimiter @@
+update LeccionCompletada set valida = 1 where id_leccion_completada = 2;
+delimiter @@
