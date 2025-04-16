@@ -7,7 +7,7 @@ export const lecture_data = [
         title: 'Lección 1',
         course: 'Curso 1',
         mediaType: 'model3d',
-        progress: 20,
+        isCompleted: 1,
         src: '/computer/computer.gltf',
         content: `Contenido de la Lección <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde
@@ -48,7 +48,7 @@ export const lecture_data = [
         title: 'Lección 2',
         course: 'Curso 1',
         mediaType: 'image',
-        progress: 40,
+        isCompleted: 1,
         src: imagenPrueba,
         content: `Contenido de la Lección <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde
@@ -89,7 +89,7 @@ export const lecture_data = [
         title: 'Lección 3',
         course: 'Curso 1',
         mediaType: 'video',
-        progress: 60,
+        isCompleted: 0,
         src: videoPrueba,
         content: `Contenido de la Lección <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde
@@ -130,7 +130,7 @@ export const lecture_data = [
         title: 'Lección 4',
         course: 'Curso 1',
         mediaType: 'none',
-        progress: 80,
+        isCompleted: 0,
         src: '',
         content: `Contenido de la Lección <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde
@@ -171,7 +171,7 @@ export const lecture_data = [
         title: 'Lección 5',
         course: 'Curso 1',
         mediaType: 'none',
-        progress: 100,
+        isCompleted: 0,
         src: '',
         content: `Contenido de la Lección <br/>
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Similique unde
@@ -215,42 +215,60 @@ export const course_data = [
         title: 'Curso 1',
         category: 'Mecánica',
         description: 'Este es un curso introductorio a la mecánica de electrodomésticos de Whirlpool.',
-        progress: 10
+        progress: 10,
+        quizTries: 3,
+        try: 2,
+        grade: 80,
     },
     {
         id: 2,
         title: 'Curso 2',
         category: 'Seguridad',
         description: 'Este es un curso introductorio a la seguridad de electrodomésticos de Whirlpool.',
-        progress: 20
+        progress: 20,
+        quizTries: 3,
+        try: 1,
+        grade: 50,
     },
     {
         id: 3,
         title: 'Curso 3',
         category: 'Electrónica',
         description: 'Este es un curso introductorio a la electrónica de electrodomésticos de Whirlpool.',
-        progress: 30
+        progress: 30,
+        quizTries: 3,
+        try: 1,
+        grade: 70,
     },
     {
         id: 4,
         title: 'Curso 4',
         category: 'Atención al Cliente',
         description: 'Este es un curso introductorio a la atención al cliente de Whirlpool.',
-        progress: 40
+        progress: 40,
+        quizTries: 3,
+        try: 0,
+        grade: 0
     },
     {
         id: 5,
         title: 'Curso 5',
         category: 'Mecánica',
         description: 'Este es un curso introductorio a la mecánica de electrodomésticos de Whirlpool.',
-        progress: 100
+        progress: 100,
+        quizTries: 3,
+        try: 0,
+        grade: 0
     },
     {
         id: 6,
         title: 'Curso 6',
         category: 'Seguridad',
         description: 'Este es un curso introductorio a la seguridad de electrodomésticos de Whirlpool.',
-        progress: 100
+        progress: 100,
+        quizTries: 3,
+        try: 0,
+        grade: 0
     }
 ]
 
@@ -282,28 +300,5 @@ export const week_data = [
     {
         label: 'S',
         lecciones: '4',
-    }
-]
-
-export const quiz_data = [
-    {
-        label: 'Quiz1',
-        value: 70
-    },
-    {
-        label: 'Quiz2',
-        value: 40
-    },
-    {
-        label: 'Quiz3',
-        value: 57
-    },
-    {
-        label: 'Quiz4',
-        value: 33
-    },
-    {
-        label: 'Quiz5',
-        value: 100
     }
 ]

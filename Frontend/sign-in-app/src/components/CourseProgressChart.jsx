@@ -6,10 +6,13 @@ import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
-import { course_data } from './constants';
+
+{ /* Se necesita informacion de los cursos activos del tecnico. Para esto es necesario conseguir la informacion de a cuales cursos esta inscrito el 
+  tecnico. Los datos necesarios son el id del curso, nombre, categoria y progreso. Los datos tienen que estar ordenados de menor a mayor progreso. */ }
 
 const CUSTOM_COLOR = '#FFB300';
 const SECONDARY_COLOR = '#0c1633';
+
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const categoryIconMapping = {
@@ -19,15 +22,15 @@ const categoryIconMapping = {
   'Atención al Cliente': <SupportAgentIcon />
 };
 
-const CourseProgressChart = () => {
-  const chartHeight = course_data.length * 50 + 32;
+const CourseProgressChart = ({ course }) => {
+  const chartHeight = course.length * 50 + 32;
 
   const data = {
-    labels: course_data.map(course => course.title),
+    labels: course.map(course => course.title),
     datasets: [
       {
         label: 'Progreso',
-        data: course_data.map(course => course.progress),
+        data: course.map(course => course.progress),
         backgroundColor: `${CUSTOM_COLOR}70`,
         barThickness: 30,
         borderRadius: 16,
@@ -71,7 +74,7 @@ const CourseProgressChart = () => {
   return (
     <Box sx={{ display: 'flex' }}>
       <Box sx={{ width: '100px', borderRight: '1px solid #ccc', pr: 2 }}>
-        {course_data.map((course, index) => {
+        {course.map((course, index) => {
           const isEven = index % 2 === 0;
           return (
             <Box
