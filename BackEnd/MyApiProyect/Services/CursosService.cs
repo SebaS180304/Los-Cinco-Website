@@ -16,14 +16,14 @@ namespace MyApiProyect.Services
         {
             _context = context;
         }
-        public async Task<List<DetallesBaseCurso>> GetCursosDeProfesor(int Id)
+        public async Task<List<CursoFullDTO>> GetCursosDeProfesor(int Id)
         {
             var cursos = await _context.Cursos.Where(x => x.IdInstructor == Id).ToListAsync();
-            return cursos.Select(c=> new DetallesBaseCurso
+            return cursos.Select(c=> new CursoFullDTO
             {
                 IdCurso = c.IdCurso,
                 TituloCurso = c.TituloCurso,
-                DescripcionCurso = c.Descripcion,
+                DescripcionCurso = c.Descripcion ?? "NA",
                 Categoria = c.Categoria
             }).ToList();
         }
@@ -36,8 +36,9 @@ namespace MyApiProyect.Services
             {
                 IdCurso = curso.IdCurso,
                 TituloCurso = curso.TituloCurso,
-                DescripcionCurso = curso.Descripcion,
+                DescripcionCurso = curso.Descripcion ?? "NA",
                 Categoria = curso.Categoria,
+                IntentosMax = curso.IntentosMax,
                 Lecciones = curso.Lecciones.Select(l => new LeccionFullDTO
                 {
                     IdLeccion = l.IdLeccion,
@@ -50,14 +51,15 @@ namespace MyApiProyect.Services
             
         }
 
-        public async Task<int> CrearCurso(DetallesBaseCurso curso, int idInstructor)
+        public async Task<int> CrearCurso(CursoFullDTO curso, int idInstructor)
         {
             var nuevoCurso = new Curso
             {
                 TituloCurso = curso.TituloCurso,
                 Descripcion = curso.DescripcionCurso,
                 Categoria = curso.Categoria,
-                IdInstructor = idInstructor
+                IdInstructor = idInstructor,
+                IntentosMax = curso.IntentosMax
             };
             try
             {
@@ -98,7 +100,7 @@ namespace MyApiProyect.Services
             }
         }
 
-        public async Task<bool> EditarCurso(DetallesBaseCurso curso){
+        public async Task<bool> EditarCurso(CursoFullDTO curso){
 
             var updateData = await _context.Cursos.Where(c=>c.IdCurso == curso.IdCurso).FirstOrDefaultAsync();
             if(updateData is null){
@@ -107,6 +109,7 @@ namespace MyApiProyect.Services
             updateData.Categoria = curso.Categoria;
             updateData.Descripcion = curso.DescripcionCurso;
             updateData.TituloCurso = curso.TituloCurso;
+            updateData.IntentosMax = curso.IntentosMax;
             try{
                 _context.Update(updateData);
                 await _context.SaveChangesAsync();
@@ -136,13 +139,7 @@ namespace MyApiProyect.Services
             }
         }
         public async Task<bool> EditarCursoCompleto (CursoFullDTO curso){
-            var cursoInc = new DetallesBaseCurso{
-                IdCurso = curso.IdCurso,
-                TituloCurso = curso.TituloCurso,
-                Categoria = curso.Categoria,
-                DescripcionCurso = curso.DescripcionCurso
-            };
-            var b = await EditarCurso(cursoInc);
+            var b = await EditarCurso(curso);
             if(!b) {return false;}
             foreach(LeccionFullDTO leccion in curso.Lecciones){
                 await EditarLeccion(leccion);

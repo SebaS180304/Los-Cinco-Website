@@ -10,24 +10,19 @@ namespace MyApiProyect.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize]
-    public class CursoController : ControllerBase
+    [Authorize(Roles = "1")]
+    public class CursoAdminController : ControllerBase
     {
-        private readonly ICursosDeAlumnoService _cursosDeAlumnoService;
         private readonly ICursosService _cursosService;
-        public CursoController(ICursosDeAlumnoService cursosDeAlumnoService, ICursosService coursosService) {
-            _cursosDeAlumnoService = cursosDeAlumnoService;
+        public CursoAdminController(ICursosService coursosService) {
+         
             _cursosService = coursosService;
         }
-        //Default
-        [HttpGet]
-        public async Task<ActionResult<List<Curso>>> Get(int Id) => await _cursosDeAlumnoService.GetCursos(Id);
 
         
         [HttpGet]
         [Route("All")]
-        [Authorize(Roles = "1")]
-        public async Task<ActionResult<List<DetallesBaseCurso>>> GetCoursAdmin() {
+        public async Task<ActionResult<List<CursoFullDTO>>> GetCoursAdmin() {
             var id = User.FindFirst(ClaimTypes.Name)?.Value;
             Console.WriteLine(id);
             if (id is null)
@@ -39,7 +34,6 @@ namespace MyApiProyect.Controllers
 
         [HttpGet]
         [Route("Single")]
-        [Authorize]
         public async Task<ActionResult<CursoFullDTO>> GetFull(int IdCurso) {
             var id = User.FindFirst(ClaimTypes.Name)?.Value;
             if (id is null)
@@ -51,8 +45,7 @@ namespace MyApiProyect.Controllers
 
         [HttpPost]
         [Route("Nuevo")]
-        [Authorize(Roles = "1")]
-        public async Task<ActionResult> CrearCurso([FromBody] DetallesBaseCurso curso) {
+        public async Task<ActionResult> CrearCurso([FromBody] CursoFullDTO curso) {
             var id = User.FindFirst(ClaimTypes.Name)?.Value;
             if (id is null)
                 return Unauthorized();
@@ -65,7 +58,6 @@ namespace MyApiProyect.Controllers
 
         [HttpPost]
         [Route("Leccion/Nuevo")]
-        [Authorize(Roles = "1")]
         public async Task<ActionResult> CrearLeccion([FromBody] LeccionFullDTO leccion, int IdCurso) {
             var id = User.FindFirst(ClaimTypes.Name)?.Value;
             if (id is null )
@@ -79,8 +71,7 @@ namespace MyApiProyect.Controllers
 
         [HttpPatch]
         [Route("Edit")]
-        [Authorize(Roles ="1")]
-        public async Task<ActionResult> EditarCurso ([FromBody] DetallesBaseCurso curso){
+        public async Task<ActionResult> EditarCurso ([FromBody] CursoFullDTO curso){
             var id = User.FindFirst(ClaimTypes.Name)?.Value;
             if (id is null)
                 return Unauthorized();
@@ -97,7 +88,6 @@ namespace MyApiProyect.Controllers
 
         [HttpPatch]
         [Route("Leccion/Edit")]
-        [Authorize(Roles = "1")]
         public async Task<ActionResult> EditarLeccion([FromBody] LeccionFullDTO leccion){
             var id = User.FindFirst(ClaimTypes.Name)?.Value;
             if (id is null)
