@@ -78,7 +78,6 @@ create table Opciones (
     foreign key(id_pregunta) references Preguntas(id_pregunta)
 );
 
-start transaction;
 create Trigger UpdateLeccionCompletada before update on LeccionCompletada
 for each row 
 	Begin
@@ -86,17 +85,13 @@ for each row
 			insert into RegistroLeccionCompletada(id_leccion_completada) values (new.id_leccion_completada);
 		end if;
 	END;
-commit;
-
-start transaction;
 
 create Trigger InsertIntoIncripcion after insert on Inscripciones
 for each row 
 	begin
 		insert into LeccionCompletada (id_leccion, id_usuario, valida) 
-		select id_leccion,  new.id_estudiante, new.id_curso from Lecciones where (id_curso = new.id_curso) ;
+		select id_leccion,  new.id_estudiante, 0 from Lecciones where (id_curso = new.id_curso) ;
 	end;
-commit;
 	
 
 insert into Usuarios (nombre_completo, rol, contrasena) values
@@ -128,6 +123,11 @@ insert into Opciones(texto_opcion, id_pregunta, correcta) values
 ("Secadoras",		2, 1),
 ("Refrigeradores", 	2, 0),
 ("Horno", 			2, 1);
+
+update LeccionCompletada set valida = 1 where id_leccion_completada = 1;
+
 select * from cursos;
 
 select* from preguntas;
+select * from LeccionCompletada;
+select * from RegistroLeccionCompletada;
