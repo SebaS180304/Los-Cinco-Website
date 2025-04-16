@@ -4,7 +4,10 @@ import CoPresentOutlinedIcon from '@mui/icons-material/CoPresentOutlined';
 import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined';
-import { course_data } from './constants';
+
+{ /* Se necesita informacion del curso mas reciente para mostrar el progreso. Para esto es necesario conseguir la informacion de cual fue la 
+    ultima leccion realizada por el usuario de la tabla lecciones_completadas y verificar de que curso pertenece esa leccion y mandar los datos 
+    del progreso de dicho curso. */ }
 
 const CUSTOM_COLOR = '#FFB300';
 
@@ -15,8 +18,8 @@ const menuItems = [
     { text: 'Practicar', icon: <RocketLaunchOutlinedIcon /> }
 ];
 
-function Sidebar({ selectedTab, onChange }) {
-    const firstCourse = course_data[0];
+function Sidebar({ selectedTab, onChange, course }) {
+    const firstCourse = course[0];
 
     return (
         <Box component="nav">

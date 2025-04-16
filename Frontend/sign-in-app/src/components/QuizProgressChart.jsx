@@ -1,26 +1,41 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { Line } from 'react-chartjs-2';
-import { quiz_data } from './constants';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Legend } from 'chart.js';
+
+{ /* Se necesita la informacion de las 5 evaluaciones mas recientes. Para esto es necesario conseguir la calificacion de las lecciones_completadas
+  mas recientes. Es necesario el nombre de la leccion y su calificacion. */ }
 
 const CUSTOM_COLOR = '#FFB300';
 const SECONDARY_COLOR = '#0c1633';
+
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Legend);
 
-const QuizProgressChart = () => {
-  const avg = quiz_data.reduce((acc, curr) => acc + curr.value, 0) / quiz_data.length;
+const QuizProgressChart = ({ course }) => {
+  const filtCourse = course.filter(item => item.try > 0);
+
+  if (filtCourse.length === 0) {
+    return (
+      <Box sx={{ p: 2 }}>
+        <Typography>No hay evaluaciones con intentos.</Typography>
+      </Box>
+    );
+  }
+
+  const avg =
+    filtCourse.reduce((acc, curr) => acc + curr.grade, 0) /
+    filtCourse.length;
 
   const data = {
-    labels: quiz_data.map(item => item.label),
+    labels: filtCourse.map(item => item.title),
     datasets: [
       {
         label: 'Calificación',
-        data: quiz_data.map(item => item.value),
+        data: filtCourse.map(item => item.grade),
       },
       {
         label: 'Promedio',
-        data: Array(quiz_data.length).fill(avg),
+        data: Array(filtCourse.length).fill(avg),
       },
     ],
   };

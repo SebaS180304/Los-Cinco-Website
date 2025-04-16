@@ -4,6 +4,10 @@ import { Line } from 'react-chartjs-2';
 import { week_data } from './constants';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement } from 'chart.js';
 
+{ /* Se necesita informacion de las lecciones completadas por el usuario en la semana. Para esto es necesario conseguir la informacion de la tabla 
+    lecciones_completadas y regresar los datos de las lecciones completadas en los ultimos 7 dias. Los datos necesarios son el dia de la semana y 
+    las lecciones completadas en dicho dia. */ }
+
 const CUSTOM_COLOR = '#FFB300';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement);

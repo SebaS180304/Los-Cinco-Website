@@ -7,6 +7,7 @@ import LeagueContent from '../components/LeagueContent';
 import PracticeContent from '../components/PracticeContent';
 import { Box, useMediaQuery, useTheme } from '@mui/material';
 import LearnBottBar from '../components/LearnBottBar';
+import { course_data } from '../components/constants';
 
 function Learn() {
     const theme = useTheme();
@@ -15,11 +16,11 @@ function Learn() {
 
     const renderContent = () => {
         switch (selectedTab) {
-            case 'Panel': return <PanelContent onVerAprender={() => setSelectedTab('Aprender')} />;
-            case 'Aprender': return <LearnContent />;
+            case 'Panel': return <PanelContent onVerAprender={() => setSelectedTab('Aprender')} course={course_data} />;
+            case 'Aprender': return <LearnContent course={course_data} />;
             case 'Liga': return <LeagueContent />;
             case 'Practicar': return <PracticeContent />;
-            default: return <PanelContent onVerAprender={() => setSelectedTab('Aprender')} />;
+            default: return <PanelContent onVerAprender={() => setSelectedTab('Aprender')} course={course_data} />;
         }
     }
 
@@ -33,7 +34,7 @@ function Learn() {
                 </Box>
             ) : (
                 <Box component="main" sx={{ flexGrow: 1, display: 'flex', ml: '300px' }}>
-                    <Sidebar selectedTab={selectedTab} onChange={setSelectedTab} />
+                    <Sidebar selectedTab={selectedTab} onChange={setSelectedTab} course={course_data} />
                     {renderContent()}
                 </Box>
             )}
