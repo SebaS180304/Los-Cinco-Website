@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MyApiProyect.DTO;
 using MyApiProyect.Models;
 
@@ -78,6 +79,44 @@ namespace MyApiProyect.Services
             cursoDTO.Porcentaje = (int)((float)cursoDTO.lecciones.Where(l=>l.completada).Count() /cursoDTO.lecciones.Count() * 80);
             cursoDTO.Porcentaje += cursoDTO.CalificacionExamen > 80 ? 20: 0;
             return cursoDTO;
+        }
+
+        public async Task<CursoInscripcionDTO?> GetCursoReciente(int id_estudiante){
+            var leccionesCompletadas = await _context.LeccionCompletada.
+                                                Where(c=>c.IdUsuario == id_estudiante).
+                                                ToListAsync();
+            var IDLeccionesC = leccionesCompletadas.Select(l=> l.IdLeccionCompletada).ToList();
+            var fecha = await _context.RegistroLeccionCompletada.
+                                Where(l=> IDLeccionesC.Contains(l.IdLeccionCompletada)).
+                                OrderBy(l=>l.FechaAcabada).
+                                Select(l=>l.IdLeccionCompletada).
+                                FirstOrDefaultAsync();
+            var IDLeccion = leccionesCompletadas.
+                            Where(l=>l.IdLeccionCompletada == fecha).
+                            Select(l=>l.IdLeccion).FirstOrDefault();
+            var IDCurso = await _context.Lecciones.
+                                    Where(l=>l.IdLeccion == IDLeccion).
+                                    Select(l=>l.IdCurso).
+                                    FirstOrDefaultAsync();
+            return await GetCurso(id_estudiante, IDCurso);
+        }
+
+        public async Task<EstadisticasSemana> GetEstadisticas(int id_estudiante){
+            var lecciones = await _context.LeccionCompletada.
+                                    Where(l=>l.IdUsuario== id_estudiante).
+                                    Select(l=>l.IdLeccionCompletada).
+                                    ToListAsync();
+            var TodoRegistro = await _context.RegistroLeccionCompletada.
+                                    Where(r=> lecciones.Contains(r.IdLeccionCompletada) && r.FechaAcabada > DateTime.Today.AddDays(-7)).
+                                    ToListAsync();
+            var registros = TodoRegistro.GroupBy(r=>r.FechaAcabada.DayOfWeek).ToList();
+            var Estadisticas = registros.Select(r=> new Estadistica{
+                    dia = r.Key.ToString(),
+                    cantidad = r.Count()
+            }).ToList();
+            return new EstadisticasSemana {estadisticas = Estadisticas};
+                                    
+                                
         }
     }
 }

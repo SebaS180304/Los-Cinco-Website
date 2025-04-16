@@ -38,5 +38,27 @@ namespace MyApiProyect.Controllers
             return single;
         }
 
+        [HttpGet]
+        [Route("Recent")]
+
+        public async Task<ActionResult<CursoInscripcionDTO>> getRecent(){
+            var I =  User.FindFirstValue(ClaimTypes.Name);
+            if(I is null) return BadRequest();
+            int id = int.Parse(I);
+            var recent = await cursosDeAlumnoService.GetCursoReciente(id);
+            if(recent is null) return NoContent();
+            return recent;
+        }
+
+        [HttpGet]
+        [Route("Estadisticas")]
+
+        public async Task<ActionResult<EstadisticasSemana>> getEstadistcas(){
+            var I =  User.FindFirstValue(ClaimTypes.Name);
+            if(I is null) return BadRequest();
+            int id = int.Parse(I);
+            return await cursosDeAlumnoService.GetEstadisticas(id); 
+        }
+
     }
 }
