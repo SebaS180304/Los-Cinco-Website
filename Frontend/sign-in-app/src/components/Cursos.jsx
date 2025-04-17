@@ -1,23 +1,58 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Table, TableBody, TableCell, TableContainer, TableRow, Paper, Typography, Divider, TextField, IconButton } from '@mui/material';
+import { Box, Table, TableBody, TableCell, TableContainer, TableRow, Paper, Typography, Divider, TextField } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddIcon from '@mui/icons-material/Add';
 import { CursosContext } from '../context/GlobalContext';
+import axios from '../api/axios';
 
 const Cursos = () => {
   const { cursos, setCursos } = useContext(CursosContext);
   const [newCurso, setNewCurso] = useState('');
-  const [showInput, setShowInput] = useState(false); // Estado para controlar la visibilidad del TextField
+  const [showInput, setShowInput] = useState(false);
   const navigate = useNavigate();
 
-  const handleAddCurso = () => {
+  // Inicializa cursos como un array vacío si no está definido
+  useEffect(() => {
+    if (!Array.isArray(cursos)) {
+      setCursos([]);
+    }
+  }, [cursos, setCursos]);
+
+  // Obtener cursos desde el backend
+  useEffect(() => {
+    const fetchCursos = async () => {
+      try {
+        const response = await axios.get('/Curso/All', {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        });
+        // Asegúrate de que la respuesta sea un array
+        setCursos(Array.isArray(response.data) ? response.data : []);
+      } catch (error) {
+        console.error('Error al obtener los cursos:', error);
+        setCursos([]); // En caso de error, inicializa como un array vacío
+      }
+    };
+    fetchCursos();
+  }, [setCursos]);
+
+  const handleAddCurso = async () => {
     if (newCurso.trim()) {
-      const newIndex = Object.keys(cursos).length;
-      const updatedCursos = { ...cursos, [newIndex]: { nombre: newCurso, lecciones: [], quiz: null } };
-      setCursos(updatedCursos);
-      setNewCurso('');
-      navigate(`/courses/${newIndex}`); // Redirigir a la página de cursos con el ID del curso
+      try {
+        const response = await axios.post(
+          '/Curso/Nuevo',
+          { TituloCurso: newCurso, DescripcionCurso: '', Categoria: 1 },
+          { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+        );
+        const newCursoId = response.data.idCurso;
+        const updatedCursos = [...cursos, { IdCurso: newCursoId, TituloCurso: newCurso }];
+        setCursos(updatedCursos);
+        setNewCurso('');
+        console.log("Nuevo curso creado:", newCursoId);
+        navigate(`/courses/${newCursoId}`);
+      } catch (error) {
+        console.error('Error al crear el curso:', error);
+      }
     }
   };
 
@@ -28,10 +63,8 @@ const Cursos = () => {
   };
 
   const handleShowInput = () => {
-    setShowInput(true); // Mostrar el TextField
+    setShowInput(true);
   };
-
-  const cursosArray = Object.values(cursos);
 
   return (
     <Box sx={{ width: '100%', border: '2px solid black', borderRadius: 2, mt: 2, p: 0 }}>
@@ -39,21 +72,21 @@ const Cursos = () => {
         Cursos
       </Typography>
       <Divider sx={{ mx: 2 }} />
-      <Box sx={{ height: 350, overflow: 'auto', px: 2, pb: 4 }}> {/* Ajusta la altura para el scroll */}
+      <Box sx={{ height: 350, overflow: 'auto', px: 2, pb: 4 }}>
         <TableContainer component={Paper}>
           <Table sx={{ tableLayout: 'fixed', borderCollapse: 'separate', borderSpacing: 0 }} aria-label="simple table">
             <TableBody>
-              {cursosArray.map((curso, index) => (
+              {Array.isArray(cursos) && cursos.map((curso, index) => (
                 <React.Fragment key={index}>
                   <TableRow
-                    onClick={() => navigate(`/courses/${index}`)}
+                    onClick={() => navigate(`/courses/${curso.idCurso}`)}
                     sx={{
                       backgroundColor: 'white',
                       '&:hover': { backgroundColor: '#e0e0e0', cursor: 'pointer' },
                     }}
                   >
                     <TableCell sx={{ width: '80%', borderBottom: 'none' }}>
-                      <Typography variant="body1">{curso.nombre}</Typography>
+                      <Typography variant="body1">{curso.tituloCurso}</Typography>
                     </TableCell>
                     <TableCell sx={{ width: '20%', borderBottom: 'none' }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

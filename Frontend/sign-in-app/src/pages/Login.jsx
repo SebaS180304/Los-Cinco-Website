@@ -1,159 +1,176 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logoA from './../assets/logoA.png';
 import './Login.css';
+import axios from '../api/axios';
+
+const LOGIN_URL = '/LogIn';
 
 const Login = () => {
-    const navigate = useNavigate();
-    
-    const [formData, setFormData] = useState({
-        user: '',
-        password: ''
-    });
-    const [errorMessage, setErrorMessage] = useState('');
-    const [userError, setUserError] = useState(false);
-    const [passwordError, setPasswordError] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const userRef = useRef();
+  const errRef = useRef();
 
-    // Credenciales predefinidas
-    const credentials = {
-        admin: { user: 'admin', password: '1234' },
-        technician: { user: 'tecnico', password: '1234' }
+  const [UserID, setUserID] = useState('');
+  const [Password, setPassword] = useState('');
+  const [errMsg, setErrMsg] = useState('');
+  const [userIDError, setUserIDError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+
+  useEffect(() => {
+    userRef.current.focus();
+    localStorage.clear();
+  }, []);
+
+  useEffect(() => {
+    setErrMsg('');
+  }, [UserID, Password]);
+
+  const handleUser = () => {
+    if (!UserID || UserID.length < 3) {
+      setUserIDError(true);
+      return;
+    }
+    setUserIDError(false);
+  };
+
+  const handlePassword = () => {
+    if (!Password || Password.length < 5 || Password.length > 20) {
+      setPasswordError(true);
+      return;
+    }
+    setPasswordError(false);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrMsg('');
+    setIsLoading(true);
+
+    const requestBody = { 
+      UserID: parseInt(UserID, 10), 
+      Password 
     };
 
-    // Verificar si ya hay una sesión activa
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const rol = localStorage.getItem('rol');
-        if (token && rol) {
-            if (rol === '1') {
-                navigate('/dashboard');
-            } else if (rol === '0') {
-                navigate('/learn');
-            }
+    try {
+        const response = await axios.post(
+            LOGIN_URL, 
+            requestBody,
+            { headers: { 'Content-Type': 'application/json' } }
+        );
+        const token = response?.data?.token;
+        const rol = response?.data?.rol;
+        setUserID('');
+        setPassword('');
+        localStorage.setItem('token', token);
+        localStorage.setItem('rol', rol.toString());
+        if (rol === 1) {
+            setSuccessMsg('✅ Inicio de sesión exitoso! Redirigiendo a panel de administrador...');
+            setTimeout(() => {
+            navigate('/dashboard');
+            }, 1500);
+        } else if (rol === 0) {
+            setSuccessMsg('✅ Inicio de sesión exitoso! Redirigiendo a panel técnico...');
+            setTimeout(() => {
+            navigate('/learn');
+            }, 1500);
+        } else {
+            setSuccessMsg('✅ Inicio de sesión exitoso! Redirigiendo...');
+            setTimeout(() => {
+            navigate('/');
+            }, 1500);
         }
-    }, [navigate]);
+        setSuccess(true);
+    } catch (err) {
+      if (!err?.response) {
+          setErrMsg('No hay Respuesta del Servidor.');
+      } else if (err.response?.status === 400) {
+          setErrMsg('Id de Usuario o Contraseña Faltantes.');
+      } else if (err.response?.status === 401) {
+          setErrMsg('Usuario No Autorizado.');
+      } else {
+          setErrMsg('Inicio de Sesión Fallido.');
+      }
+      errRef.current.focus();
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    const handleUser = () => {
-        if (!formData.user || formData.user.length < 3) {
-            setUserError(true);
-            return;
-        }
-        setUserError(false);
-    };
-
-    const handlePassword = () => {
-        if (!formData.password || formData.password.length < 3 || formData.password.length > 20) {
-            setPasswordError(true);
-            return;
-        }
-        setPasswordError(false);
-    };
-
-    const handleInputChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
-        setErrorMessage('');
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        setErrorMessage('');
-        setIsLoading(true);
-
-        try {
-            const { user, password } = formData;
-            if (user === credentials.admin.user && password === credentials.admin.password) {
-                const token = 'dummy-token-admin';
-                const rol = '1';
-                localStorage.setItem('token', token);
-                localStorage.setItem('rol', rol);
-                
-                setErrorMessage('✅ Login exitoso! Redirigiendo a panel de administrador...');
-                setTimeout(() => {
-                    navigate('/dashboard');
-                }, 1500);
-            } else if (user === credentials.technician.user && password === credentials.technician.password) {
-                const token = 'dummy-token-technician';
-                const rol = '0';
-                localStorage.setItem('token', token);
-                localStorage.setItem('rol', rol);
-                
-                setErrorMessage('✅ Login exitoso! Redirigiendo a panel técnico...');
-                setTimeout(() => {
-                    navigate('/learn');
-                }, 1500);
-            } else {
-                setErrorMessage('❌ Usuario o contraseña incorrectos');
-            }
-        } catch (error) {
-            setErrorMessage('❌ Error: ' + error.message);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
+  if (success) {
     return (
-        <div className="login-page">
-            <div className='wrapper'>
-                <form onSubmit={handleSubmit}>
-                    <div className="whirlpoolImage">
-                        <img src={logoA} alt="Logo de Whirlpool" />
-                    </div>
-
-                    <h1>Iniciar Sesión</h1>
-
-                    <div className="inputbox">
-                        <input 
-                            type="text"
-                            name="user" 
-                            value={formData.user}
-                            onChange={handleInputChange}
-                            onBlur={handleUser}
-                            placeholder="Usuario" 
-                            required 
-                            disabled={isLoading}
-                        />
-                    </div>
-                    {userError && (
-                        <div className="error-message">
-                            Usuario Inválido. Debe de incluir al menos 3 caracters. Por favor, intente de nuevo.
-                        </div>
-                    )}
-                    <div className="inputbox">
-                        <input 
-                            type="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleInputChange}
-                            onBlur={handlePassword}
-                            placeholder="Contraseña" 
-                            required 
-                            disabled={isLoading}
-                        />
-                    </div>
-                    {passwordError && (
-                        <div className="error-message">
-                            Contraseña Inválida. Debe de incluir entre 3 y 20 caracteres. Por favor, intente de nuevo.
-                        </div>
-                    )}
-                    {errorMessage && (
-                        <div className={errorMessage.includes('✅') ? 'success-message' : 'error-message'}>
-                            {errorMessage}
-                        </div>
-                    )}
-
-                    <div className="loginSubmit">
-                        <button type="submit" disabled={isLoading}>
-                            {isLoading ? 'Procesando...' : 'Iniciar Sesión'}
-                        </button>
-                    </div>
-                </form>
-            </div>
+      <div className="login-page">
+        <div className="wrapper">
+          <div className="whirlpoolImage">
+            <img src={logoA} alt="Logo de Whirlpool" />
+          </div>
+          <h1>Iniciar Sesión</h1>
+          <div className="success-message">
+            {successMsg}
+          </div>
         </div>
+      </div>
     );
+  }
+
+  return(
+    <div className="login-page">
+      <div className='wrapper'>
+        <form onSubmit={handleSubmit}>
+          <div className="whirlpoolImage">
+            <img src={logoA} alt="Logo de Whirlpool" />
+          </div>
+          <h1>Iniciar Sesión</h1>
+          <div className="inputbox">
+            <input 
+              type="text"
+              id="userId" 
+              ref={userRef}
+              autoComplete="off"
+              value={UserID}
+              onChange={(e) => setUserID(e.target.value)}
+              onBlur={handleUser}
+              placeholder='Id de Usuario'
+              required 
+              disabled={isLoading}
+            />
+          </div>
+          {userIDError && (
+            <div className="error-message">
+              Id de Usuario Inválido. Debe de incluir al menos 3 números. Por favor, intente de nuevo.
+            </div>
+          )}
+          <div className="inputbox">
+            <input 
+              type="password"
+              id="Password" 
+              autoComplete="off"
+              value={Password}
+              onChange={(e) => setPassword(e.target.value)}
+              onBlur={handlePassword}
+              placeholder='Contraseña' 
+              required 
+              disabled={isLoading}
+            />
+          </div>
+          {passwordError && (
+            <div className="error-message">
+              Contraseña Inválida. Debe de incluir entre 3 y 20 caracteres. Por favor, intente de nuevo.
+            </div>
+          )}
+          <p ref={errRef} className={errMsg ? "errMsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
+          <div className="loginSubmit">
+            <button type="submit" disabled={isLoading}>
+              {isLoading ? 'Procesando...' : 'Iniciar Sesión'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
 };
 
 export default Login;

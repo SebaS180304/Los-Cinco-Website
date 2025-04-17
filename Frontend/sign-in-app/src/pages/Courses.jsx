@@ -1,5 +1,6 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import axios from '../api/axios';
 import { Box, Divider, List, ListItem, ListItemIcon, Stack, Typography, Button, useTheme, useMediaQuery, Accordion, AccordionSummary, AccordionDetails, CircularProgress, Dialog, DialogContent, DialogTitle, TextField, Breadcrumbs, IconButton, FormControlLabel, Checkbox, MenuItem } from '@mui/material';
 import { Link as LinkComp} from '@mui/material';
 import Navbar from '../components/NavbarAdmin';
@@ -12,8 +13,8 @@ import DownloadIcon from '@mui/icons-material/Download';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
-import { CursosContext } from '../context/GlobalContext';
 import ProgressSection from '../components/ProgressSection';
+import CheckMark from '@mui/icons-material/Check';
 
 const CUSTOM_COLOR = '#FFB300';
 
@@ -128,7 +129,7 @@ function LessonAccordion({ lecture, panel, expanded, handleChange, handleOpenEdi
                 }}
               />
               <Typography variant="h5" sx={{ fontWeight: 'bold', ml: 3 }}>
-                {lecture.title}
+                {lecture.TituloLeccion}
               </Typography>
             </Box>
           </Box>
@@ -153,7 +154,7 @@ function LessonAccordion({ lecture, panel, expanded, handleChange, handleOpenEdi
                     Lección:
                 </Typography>
                 <Typography variant="body2" sx={{ ml: 3 }}>
-                    {lecture.title}
+                    {lecture.TituloLeccion}
                 </Typography>
               </Box>
               {/* Contenido de la lección con límite y scroll */}
@@ -175,7 +176,7 @@ function LessonAccordion({ lecture, panel, expanded, handleChange, handleOpenEdi
                     }}
                 >
                     <Typography variant="body2">
-                    {lecture.content || 'Sin contenido disponible'}
+                    {lecture.Contenido || 'Sin contenido disponible'}
                     </Typography>
                 </Box>
               </Box>
@@ -248,13 +249,16 @@ function LessonAccordion({ lecture, panel, expanded, handleChange, handleOpenEdi
 
 function Courses() {
     const { courseId } = useParams();
-    const { cursos, setCursos } = useContext(CursosContext);
+    const [cursos, setCursos] = useState([]);
+    const [course, setCourse] = useState(null);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     // Verificar si el curso existe
-    const course = cursos?.[courseId];
     const courseLessons = course?.lecciones || [];
+
+    const [editableCourse, setEditableCourse] = useState(null); // Estado temporal para el curso editable
+    const [editableLessons, setEditableLessons] = useState([]); // Estado temporal para las lecciones editables
 
     // Estados
     const [lessonExpanded, setLessonExpanded] = useState(false);
@@ -263,23 +267,36 @@ function Courses() {
     const [editingIndex, setEditingIndex] = useState(null);
     const [editingTitle, setEditingTitle] = useState('');
     const [editingContent, setEditingContent] = useState('');
-    const [newLesson, setNewLesson] = useState({ title: '', content: '' });
+    const [newLesson, setNewLesson] = useState({ TituloLeccion: '', Contenido: '' });
     const [openQuestions, setOpenQuestions] = useState(false);
     const [currentLecture, setCurrentLecture] = useState(null);
-    const [editedName, setEditedName] = useState(course?.nombre || '');
-    const [editedDescription, setEditedDescription] = useState(course?.descripcion || '');
+    const [isEditing, setIsEditing] = useState(false); // Nuevo estado para controlar el modo de edición
+    const [originalCourse, setOriginalCourse] = useState(null); // Guardar el curso original
 
-    const handleSaveName = () => {
-        const updatedCursos = { ...cursos };
-        updatedCursos[courseId].nombre = editedName;
-        setCursos(updatedCursos);
-    };
-
-    const handleSaveDescription = () => {
-        const updatedCursos = { ...cursos };
-        updatedCursos[courseId].descripcion = editedDescription;
-        setCursos(updatedCursos);
-    };
+    // Obtener detalles del curso
+    useEffect(() => {
+      const fetchCourse = async () => {
+        try {
+          const response = await axios.get(`/Curso/Single?IdCurso=${courseId}`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          });
+          setCourse(response.data);
+          setEditableCourse({
+            TituloCurso: response.data.tituloCurso,
+            DescripcionCurso: response.data.descripcionCurso,
+            Categoria: response.data.categoria,
+          });
+          setEditableLessons(response.data.lecciones.map((lesson) => ({
+            IdLeccion: lesson.idLeccion,
+            TituloLeccion: lesson.tituloLeccion,
+            Contenido: lesson.contenido,
+          })));
+        } catch (error) {
+          console.error('Error al obtener el curso:', error);
+        }
+      };
+      fetchCourse();
+    }, [courseId]);
 
     const handleOpenQuestions = (lecture) => {
         setCurrentLecture(lecture);
@@ -313,23 +330,61 @@ function Courses() {
 
     const handleCloseAdd = () => {
         setOpenAdd(false);
-        setNewLesson({ title: '', content: '' });
+        setNewLesson({ TituloLeccion: '', Contenido: '' });
     };
 
-    const handleAddLesson = () => {
-        const updatedCursos = { ...cursos };
-        if (!updatedCursos[courseId].lecciones) {
-            updatedCursos[courseId].lecciones = [];
+    const handleAddLesson = async () => {
+      try {
+        // Validar los datos antes de enviar la solicitud
+        if (!newLesson.TituloLeccion || !newLesson.Contenido) {
+          alert('Por favor, completa todos los campos antes de agregar la lección.');
+          return;
         }
-        updatedCursos[courseId].lecciones.push(newLesson);
-        setCursos(updatedCursos);
+    
+        console.log({
+          TituloLeccion: newLesson.TituloLeccion,
+          Contenido: newLesson.Contenido,
+          IdCurso: courseId
+        });
+    
+        // Crear la nueva lección en el backend
+        const response = await axios.post(
+          `/Curso/Leccion/Nuevo?IdCurso=${courseId}`,
+          {
+            TituloLeccion: newLesson.TituloLeccion,
+            Contenido: newLesson.Contenido,
+          },
+          {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          }
+        );
+    
+        // Agregar la nueva lección con el ID asignado por el backend
+        const updatedLessons = [...editableLessons];
+        updatedLessons.push({
+          IdLeccion: response.data.idLeccion, // ID asignado por el backend
+          TituloLeccion: newLesson.TituloLeccion,
+          Contenido: newLesson.Contenido,
+        });
+    
+        // Actualizar el estado con las lecciones modificadas
+        setEditableLessons(updatedLessons);
+    
+        // Limpiar el formulario de nueva lección
+        setNewLesson({ TituloLeccion: '', Contenido: '' });
+    
+        // Cerrar el diálogo de agregar lección
         handleCloseAdd();
+      } catch (error) {
+        console.error('Error al agregar la lección:', error.response?.data || error.message);
+        alert('Hubo un error al agregar la lección.');
+      }
     };
 
     const handleOpenEdit = (lesson, index) => {
         setEditingIndex(index);
-        setEditingTitle(lesson.title);
-        setEditingContent(lesson.content);
+        setEditingTitle(lesson.TituloLeccion);
+        setEditingContent(lesson.Contenido);
         setOpenEdit(true);
     };
 
@@ -340,16 +395,90 @@ function Courses() {
         setEditingContent('');
     };
 
+    const handleEditOrSave = () => {
+      if (isEditing) {
+        // Si está en modo edición, guarda los cambios y desactiva el modo edición
+        handleSaveChanges();
+        setIsEditing(false);
+      } else {
+        // Si no está en modo edición, guarda los valores originales y activa el modo edición
+        setOriginalCourse({ ...editableCourse });
+        setIsEditing(true);
+      }
+    };
+
+    const handleCancel = () => {
+      setEditableCourse({ ...originalCourse }); // Restaura el curso original
+      setIsEditing(false); // Desactiva el modo edición
+    };
+
     const handleSaveEdit = () => {
         if (editingIndex !== null) {
-            const updatedCursos = { ...cursos };
-            updatedCursos[courseId].lecciones[editingIndex] = {
-                title: editingTitle,
-                content: editingContent,
+            // Crear una copia de las lecciones editables
+            const updatedLessons = [...editableLessons];
+            
+            // Actualizar la lección específica
+            updatedLessons[editingIndex] = {
+                ...updatedLessons[editingIndex],
+                TituloLeccion: editingTitle,
+                Contenido: editingContent,
             };
-            setCursos(updatedCursos);
+
+            // Actualizar el estado con las lecciones modificadas
+            setEditableLessons(updatedLessons);
         }
         handleCloseEdit();
+    };
+    
+    const handleSaveChanges = async () => {
+      try {
+        // Actualizar el curso
+        await axios.patch(
+          '/Curso/Edit',
+          {
+            IdCurso: courseId,
+            TituloCurso: editableCourse.TituloCurso,
+            DescripcionCurso: editableCourse.DescripcionCurso,
+            Categoria: editableCourse.Categoria,
+          },
+          {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          }
+        );
+    
+        // Actualizar las lecciones
+        for (const lesson of editableLessons) {
+          await axios.patch(
+            '/Curso/Leccion/Edit',
+            lesson,
+            {
+              headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+            }
+          );
+        }
+    
+        // Mostrar un pop-up de confirmación
+        const confirmationPopup = document.createElement('div');
+        confirmationPopup.textContent = 'Los cambios se han guardado correctamente.';
+        confirmationPopup.style.position = 'fixed';
+        confirmationPopup.style.bottom = '20px';
+        confirmationPopup.style.right = '20px';
+        confirmationPopup.style.backgroundColor = '#4caf50';
+        confirmationPopup.style.color = 'white';
+        confirmationPopup.style.padding = '10px 20px';
+        confirmationPopup.style.borderRadius = '5px';
+        confirmationPopup.style.boxShadow = '0px 4px 6px rgba(0, 0, 0, 0.1)';
+        confirmationPopup.style.zIndex = '1000';
+        document.body.appendChild(confirmationPopup);
+
+        setTimeout(() => {
+          document.body.removeChild(confirmationPopup);
+          // window.location.reload(); // Refrescar el sitio
+        }, 3000);
+      } catch (error) {
+        console.error('Error al guardar los cambios:', error);
+        alert('Hubo un error al guardar los cambios.');
+      }
     };
 
     if (!course) {
@@ -369,13 +498,47 @@ function Courses() {
       <Box sx={{ display: 'flex', mt: '64px' }}>
         <Navbar />
         <Box component="main" sx={{ p: 3, display: 'flex', flexDirection: 'column', width: '100%' }}>
-          {/* Breadcrumbs */}
-          <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 2 }}>
-            <LinkComp underline="hover" color="inherit" component={Link} to="/dashboard">
-              Inicio
-            </LinkComp>
-            <Typography color="text.primary">{course?.nombre}</Typography>
-          </Breadcrumbs>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            {/* Breadcrumbs */}
+            <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 2 }}>
+              <LinkComp underline="hover" color="inherit" component={Link} to="/dashboard">
+                Inicio
+              </LinkComp>
+              <Typography color="text.primary">{editableCourse?.TituloCurso}</Typography>
+            </Breadcrumbs>
+            {!isEditing && (
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<EditIcon />}
+              onClick={handleEditOrSave}
+              sx={{ mb:'1rem' }}
+            >
+              Editar
+            </Button>
+            )}
+            {isEditing && (
+              <Box sx={{ display: 'flex', gap: 2 }}>
+                <Button
+                  variant="contained"
+                  color="success"
+                  startIcon={<CheckMark />}
+                  onClick={handleEditOrSave}
+                  sx={{ mb: '1rem' }}
+                >
+                  Guardar
+                </Button>
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={handleCancel} // Llama a la función handleCancel
+                  sx={{ mb: '1rem' }}
+                >
+                  Cancelar
+                </Button>
+              </Box>
+            )}
+          </Box>
           <Box sx={{ backgroundColor: '#0c1633', borderRadius: '20px' }}>
             <Stack
               direction={isMobile ? 'column' : 'row'}
@@ -388,33 +551,41 @@ function Courses() {
                 <Box
                   sx={{ display: 'flex', alignItems: 'center', position: 'relative', py: 1 }}
                 >
-                  <EditIcon sx={{ color: 'white', fontSize: 30, mr: 1, my: 0.5 }} />
+                  {isEditing && ( // Mostrar el ícono solo si está en modo edición
+                    <EditIcon sx={{ color: 'white', fontSize: 30, mr: 1.5, my: 0 }} />
+                  )}
                   <TextField
                     variant="standard"
-                    value={editedName}
-                    onChange={(e) => setEditedName(e.target.value)}
-                    onBlur={handleSaveName}
+                    value={editableCourse?.TituloCurso || 'Hubo un error al cargar el curso'}
+                    onChange={(e) => setEditableCourse({ ...editableCourse, TituloCurso: e.target.value })}
+                    // onBlur={handleSaveName}
                     inputRef={(input) => {
-                      if (input) {
+                      if (input && isEditing) {
                           input.onmouseenter = () => input.focus(); // Hace focus al pasar el cursor
                       }
                     }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
-                          handleSaveName();
                           e.target.blur(); // Quita el focus del input
                           e.preventDefault(); // Evita el comportamiento predeterminado del Enter
                       }
                     }}
                     InputProps={{
+                      readOnly: !isEditing,
                       style: { color: 'white', fontSize: '3rem' }, // Aumentar el tamaño de la fuente
                     }}
                     sx={{
                       '& .MuiInput-underline:before': {
-                        borderBottomColor: 'none',
+                        borderBottomColor: isEditing ? 'white' : 'transparent',
                       },
                       '& .MuiInput-underline:after': {
-                        borderBottomColor: 'white',
+                        borderBottomColor: isEditing ? 'white' : 'transparent',
+                      },
+                      '& .MuiInput-underline:hover:before': {
+                        borderBottomColor: isEditing ? 'white' : 'transparent',
+                      },
+                      '& .MuiInput-underline:hover:after': {
+                        borderBottomColor: isEditing ? 'white' : 'transparent',
                       },
                     }}
                   />
@@ -424,12 +595,13 @@ function Courses() {
                 <Box
                   sx={{ display: 'flex', alignItems: 'center', position: 'relative', pb: 2 }}
                 >
-                  <EditIcon sx={{ color: 'white', fontSize: 30, mr: 1, my: 0.5 }} />
+                  {isEditing && ( // Mostrar el ícono solo si está en modo edición
+                    <EditIcon sx={{ color: 'white', fontSize: 30, mr: 1.5, my: 0 }} />
+                  )}
                   <TextField
                     variant="standard"
-                    value={editedDescription}
-                    onChange={(e) => setEditedDescription(e.target.value)}
-                    onBlur={handleSaveDescription}
+                    value={editableCourse?.DescripcionCurso || ''}
+                    onChange={(e) => setEditableCourse({ ...editableCourse, DescripcionCurso: e.target.value })}
                     fullWidth
                     placeholder="Agrega descripción del curso"
                     inputRef={(input) => {
@@ -439,20 +611,26 @@ function Courses() {
                     }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
-                        handleSaveDescription();
                         e.target.blur(); // Quita el focus del input
                         e.preventDefault(); // Evita el comportamiento predeterminado del Enter
                       }
                     }}
                     InputProps={{
+                      readOnly: !isEditing,
                       style: { color: 'white', fontSize: '1rem' }, // Aumentar el tamaño de la fuente
                     }}
                     sx={{
                       '& .MuiInput-underline:before': {
-                        borderBottomColor: 'none',
+                        borderBottomColor: isEditing ? 'white' : 'transparent',
                       },
                       '& .MuiInput-underline:after': {
-                        borderBottomColor: 'white',
+                        borderBottomColor: isEditing ? 'white' : 'transparent',
+                      },
+                      '& .MuiInput-underline:hover:before': {
+                        borderBottomColor: isEditing ? 'white' : 'transparent',
+                      },
+                      '& .MuiInput-underline:hover:after': {
+                        borderBottomColor: isEditing ? 'white' : 'transparent',
                       },
                     }}
                   />
@@ -504,21 +682,21 @@ function Courses() {
                 Agregar Lección
               </Button>
             </Box>
-            {courseLessons.length === 0 ? (
+            {editableLessons.length === 0 ? (
               <Box sx={{ textAlign: 'center', mt: 3 }}>
                 <Typography variant="body1" sx={{ mb: 2 }}>
                   No hay lecciones disponibles.
                 </Typography>
               </Box>
             ) : (
-              courseLessons.map((lecture, index) => (
+              editableLessons.map((lesson, index) => (
                 <LessonAccordion
                   key={index}
-                  lecture={lecture}
+                  lecture={lesson}
                   panel={`panel-${index}`}
                   expanded={lessonExpanded}
                   handleChange={handleLessonChange}
-                  handleOpenEdit={() => handleOpenEdit(lecture, index)} // Pasar índice
+                  handleOpenEdit={() => handleOpenEdit(lesson, index)} // Pasar índice
                   handleOpenQuestions={handleOpenQuestions}
                   isMobile={isMobile}
                 />
@@ -533,8 +711,8 @@ function Courses() {
                 label="Título de la lección"
                 variant="outlined"
                 fullWidth
-                value={newLesson.title}
-                onChange={(e) => setNewLesson({ ...newLesson, title: e.target.value })}
+                value={newLesson.TituloLeccion}
+                onChange={(e) => setNewLesson({ ...newLesson, TituloLeccion: e.target.value })}
                 sx={{ mb: 2, mt: 2 }}
               />
               <TextField
@@ -543,8 +721,8 @@ function Courses() {
                 fullWidth
                 multiline
                 rows={4}
-                value={newLesson.content}
-                onChange={(e) => setNewLesson({ ...newLesson, content: e.target.value })}
+                value={newLesson.Contenido}
+                onChange={(e) => setNewLesson({ ...newLesson, Contenido: e.target.value })}
               />
               <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
                 <Button variant="contained" color="primary" onClick={handleAddLesson}>
