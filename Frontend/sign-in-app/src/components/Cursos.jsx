@@ -23,7 +23,7 @@ const Cursos = () => {
   useEffect(() => {
     const fetchCursos = async () => {
       try {
-        const response = await axios.get('/Curso/All', {
+        const response = await axios.get('/CursoAdmin/All', {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
         // Asegúrate de que la respuesta sea un array
@@ -40,7 +40,7 @@ const Cursos = () => {
     if (newCurso.trim()) {
       try {
         const response = await axios.post(
-          '/Curso/Nuevo',
+          '/CursoAdmin/Nuevo',
           { TituloCurso: newCurso, DescripcionCurso: '', Categoria: 1 },
           { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
         );

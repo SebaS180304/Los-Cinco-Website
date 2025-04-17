@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import axios from '../api/axios';
 import { Box, Divider, List, ListItem, ListItemIcon, Stack, Typography, Button, useTheme, useMediaQuery, Accordion, AccordionSummary, AccordionDetails, CircularProgress, Dialog, DialogContent, DialogTitle, TextField, Breadcrumbs, IconButton, FormControlLabel, Checkbox, MenuItem } from '@mui/material';
@@ -277,7 +277,7 @@ function Courses() {
     useEffect(() => {
       const fetchCourse = async () => {
         try {
-          const response = await axios.get(`/Curso/Single?IdCurso=${courseId}`, {
+          const response = await axios.get(`/CursoAdmin/Single?IdCurso=${courseId}`, {
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
           });
           setCourse(response.data);
@@ -349,7 +349,7 @@ function Courses() {
     
         // Crear la nueva lección en el backend
         const response = await axios.post(
-          `/Curso/Leccion/Nuevo?IdCurso=${courseId}`,
+          `/CursoAdmin/Leccion/Nuevo?IdCurso=${courseId}`,
           {
             TituloLeccion: newLesson.TituloLeccion,
             Contenido: newLesson.Contenido,
@@ -434,7 +434,7 @@ function Courses() {
       try {
         // Actualizar el curso
         await axios.patch(
-          '/Curso/Edit',
+          '/CursoAdmin/Edit',
           {
             IdCurso: courseId,
             TituloCurso: editableCourse.TituloCurso,
@@ -449,7 +449,7 @@ function Courses() {
         // Actualizar las lecciones
         for (const lesson of editableLessons) {
           await axios.patch(
-            '/Curso/Leccion/Edit',
+            '/CursoAdmin/Leccion/Edit',
             lesson,
             {
               headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
@@ -507,15 +507,19 @@ function Courses() {
               <Typography color="text.primary">{editableCourse?.TituloCurso}</Typography>
             </Breadcrumbs>
             {!isEditing && (
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<EditIcon />}
-              onClick={handleEditOrSave}
-              sx={{ mb:'1rem' }}
-            >
-              Editar
-            </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<EditIcon />}
+                onClick={handleEditOrSave}
+                sx={{
+                  mb: '1rem',
+                  transition: 'opacity 0.3s ease, transform 0.3s ease',
+                  '&:hover': { transform: 'scale(1.05)' }, // Efecto de hover
+                }}
+              >
+                Editar Curso
+              </Button>
             )}
             {isEditing && (
               <Box sx={{ display: 'flex', gap: 2 }}>
@@ -524,15 +528,23 @@ function Courses() {
                   color="success"
                   startIcon={<CheckMark />}
                   onClick={handleEditOrSave}
-                  sx={{ mb: '1rem' }}
+                  sx={{
+                    mb: '1rem',
+                    transition: 'opacity 0.3s ease, transform 0.3s ease',
+                    '&:hover': { transform: 'scale(1.05)' }, // Efecto de hover
+                  }}
                 >
                   Guardar
                 </Button>
                 <Button
                   variant="contained"
                   color="error"
-                  onClick={handleCancel} // Llama a la función handleCancel
-                  sx={{ mb: '1rem' }}
+                  onClick={handleCancel}
+                  sx={{
+                    mb: '1rem',
+                    transition: 'opacity 0.3s ease, transform 0.3s ease',
+                    '&:hover': { transform: 'scale(1.05)' }, // Efecto de hover
+                  }}
                 >
                   Cancelar
                 </Button>
