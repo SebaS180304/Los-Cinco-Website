@@ -23,10 +23,10 @@ const CourseHeader = ({ course, courseLessons, isMobile }) => {
         >
             <Box {...(!isMobile ? { flex: 3 } : {})} sx={{ mt: 2 }}>
                 <Typography variant="h3" sx={{ fontWeight: 'bold', mt: 2, mb: 2, color: 'white' }}>
-                    {course?.title || 'Curso no encontrado'}
+                    {course?.tituloCurso}
                 </Typography>
                 <Typography variant="body1" sx={{ mt: 3, mb: 2, color: 'white' }}>
-                    {course?.description}
+                    {course?.descripcionCurso}
                 </Typography>
                 <Box
                     sx={{
