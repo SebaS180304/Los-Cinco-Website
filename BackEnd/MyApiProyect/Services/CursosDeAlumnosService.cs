@@ -113,13 +113,16 @@ namespace MyApiProyect.Services
             var TodoRegistro = await _context.RegistroLeccionCompletada.
                                     Where(r=> lecciones.Contains(r.IdLeccionCompletada) && r.FechaAcabada > DateTime.Today.AddDays(-7)).
                                     ToListAsync();
-            var registros = TodoRegistro.GroupBy(r=>r.FechaAcabada.DayOfWeek).ToList();
+            var registros = TodoRegistro.GroupBy(r=>r.FechaAcabada.DayOfWeek).ToDictionary(
+                                                    group => group.Key, // Key: Day of the week
+                                                    group => group.Select(g=>g.FechaAcabada).Count() // Value: Count of distinct elements
+                                                );
             List<Estadistica> Estadisticas = new List<Estadistica>();
             for(int i = 0; i < 7; i++){
                 var day =  DateTime.Today.AddDays(-i).DayOfWeek;
                 Estadisticas.Add( new Estadistica{
                     dia = day.ToString(),
-                    cantidad = registros.Where(r=>r.Key == day).Count()
+                    cantidad = registros.ContainsKey(day) ? registros[day] : 0
                 });
             }
             return new EstadisticasSemana {estadisticas = Estadisticas};

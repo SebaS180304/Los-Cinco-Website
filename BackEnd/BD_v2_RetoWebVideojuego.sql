@@ -114,6 +114,7 @@ create table Opciones (
     primary key(id_opcion),
     foreign key(id_pregunta) references Preguntas(id_pregunta)
 );
+#----------------------------------------------Update-----------------------------#
 delimiter //
 create Trigger UpdateLeccionCompletada before update on LeccionCompletada
 for each row 
@@ -124,6 +125,7 @@ for each row
 		end if;
 	END;
 delimiter //
+#--------------------------------------Insert--------------------------------------#
 delimiter $$
 create Trigger InsertIntoInscripcionLeccion after insert on InscripcionCurso
 for each row 
@@ -148,23 +150,58 @@ begin
 	select puntaje into lastCal from InscripcionCurso 
 			where (id_inscripcion_curso = new.id_inscripcion_curso);
 	
-	update InscripcionCurso set intento = intento +1 where id_inscripcion_curso = new.id_inscripcion_curso;
+	update InscripcionCurso set intento = intento +1 
+					where id_inscripcion_curso = new.id_inscripcion_curso;
 	if new.calificacion > lastCal then
-		update InscripcionCurso set puntaje = new.calificacion where id_inscripcion_curso = new.id_inscripcion_curso;
+		update InscripcionCurso set puntaje = new.calificacion 
+						where id_inscripcion_curso = new.id_inscripcion_curso;
 	end if;
 end;
 delimiter //
-
+#---------------------------------------------delete-------------------------------------#
+delimiter $$
+create trigger deleteInscripcion 
+		before delete on InscripcionInstructor
+for each row
+begin 
+	delete from InscripcionCurso where (id_curso in (select id_curso from Cursos
+												where old.id_instructor = id_instructor ) 
+								and old.id_estudiante = id_estudiante);
+end;
+delimiter $$
+delimiter //
+create trigger deleteInscripcionSubmitionAndLecciones
+			before delete on InscripcionCurso
+for each row
+begin
+	delete from LeccionCompletada where old.id_estudiante = id_usuario and id_leccion in 
+											(select id_leccion from Lecciones where id_curso = old.id_curso);
+	delete from QuizSubmition where id_inscripcion_curso = old.id_inscripcion_curso;
+end;
+delimiter //
+delimiter @@
+create trigger deleteRegistrosLecciones 
+			before delete on LeccionCompletada
+for each row 
+begin
+	delete from RegistroLeccionCompletada where old.id_leccion_completada = id_leccion_completada;
+end
 
 delimiter @@
+#----------------------------------------MiniDB-----------------------------------#
+
+delimiter //
 
 insert into Usuarios (nombre_completo, rol, contrasena) values
 ("Romeo Juanin", 0, "123456" ),
-("Romeo Mejor Juanin", 1, "123456");
-delimiter @@
+("Romeo Mejor Juanin", 1, "123456"),
+("Otro Instructor", 1, "abcde");
+delimiter //
 delimiter $$ 
 insert into Cursos(titulo_curso, categoria, id_instructor, intentos_max, descripcion) values 
-("Lavadoras 3", 2, 1001, 2, "curso avanzado sobre lavadoras industriales");
+("Lavadoras 3", 2, 1001, 2, "curso avanzado sobre lavadoras industriales"),
+("Lavadoras 2", 2, 1002, 4, "curso menos avanzado sobre lavadoras industriales"),
+("Lavadoras 1", 2, 1001, 4, "curso para principantes sobre lavadoras industriales");
 delimiter $$
 delimiter //
 insert into Lecciones(titulo_leccion, contenido, tipo_media, url_media, id_curso) values
@@ -175,7 +212,8 @@ insert into Lecciones(titulo_leccion, contenido, tipo_media, url_media, id_curso
 delimiter //
 delimiter @@
 insert into InscripcionInstructor ( id_estudiante, id_instructor) values
-(1000,1001);
+(1000,1001),
+(1000, 1002);
 delimiter @@
 delimiter $$
 insert into Preguntas (texto_pregunta, id_curso) values 
@@ -201,5 +239,6 @@ delimiter @@
 delimiter //
 insert into QuizSubmition(id_inscripcion_curso, calificacion) values(1,60);
 delimiter //
-select * from InscripcionCurso;
+
+
 
