@@ -5,10 +5,6 @@ import ShieldOutlinedIcon from '@mui/icons-material/ShieldOutlined';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 import RocketLaunchOutlinedIcon from '@mui/icons-material/RocketLaunchOutlined';
 
-{ /* Se necesita informacion del curso mas reciente para mostrar el progreso. Para esto es necesario conseguir la informacion de cual fue la 
-    ultima leccion realizada por el usuario de la tabla lecciones_completadas y verificar de que curso pertenece esa leccion y mandar los datos 
-    del progreso de dicho curso. */ }
-
 const CUSTOM_COLOR = '#FFB300';
 
 const menuItems = [
@@ -19,8 +15,6 @@ const menuItems = [
 ];
 
 function Sidebar({ selectedTab, onChange, course }) {
-    const firstCourse = course[0];
-
     return (
         <Box component="nav">
             <Drawer
@@ -55,7 +49,6 @@ function Sidebar({ selectedTab, onChange, course }) {
                                     '& .MuiListItemText-primary': {
                                         color: selectedTab === text ? CUSTOM_COLOR : 'inherit',
                                         fontWeight: selectedTab === text ? 'bold' : 'normal',
-
                                     },
                                     '& .MuiListItemIcon-root': {
                                         color: selectedTab === text ? CUSTOM_COLOR : 'inherit',
@@ -75,7 +68,7 @@ function Sidebar({ selectedTab, onChange, course }) {
                 <Box p={2}>
                     <LinearProgress 
                         variant="determinate" 
-                        value={firstCourse.progress} 
+                        value={course.porcentaje} 
                         sx={{ 
                             height: '20px',
                             borderRadius: '10px',
@@ -87,7 +80,7 @@ function Sidebar({ selectedTab, onChange, course }) {
                         }} 
                     />
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                        Progreso del curso más reciente: <strong>{firstCourse.progress}%</strong>   
+                        Progreso del curso más reciente: <strong>{course.porcentaje}%</strong>   
                     </Typography>
                 </Box>
                 <Divider />

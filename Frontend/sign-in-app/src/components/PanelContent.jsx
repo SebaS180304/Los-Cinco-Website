@@ -3,16 +3,14 @@ import { Box, Typography, Grid } from '@mui/material';
 import ProgressCharts from './ProgressCharts';
 import CourseCard from './CourseCard';
 
-const PanelContent = ({ onVerAprender, course }) => {
-    const firstCourse = course[0];
-
+const PanelContent = ({ onVerAprender, course, recentCourse }) => {
     return ( 
         <Box sx={{ flexGrow: 1 }}>
             <Box p={3}>
                 <Typography variant="h4" component="h1" sx={{fontWeight: 'bold', mb: 3}}>
                     Sigue Aprendiendo
                 </Typography>
-                <CourseCard course={firstCourse} />
+                <CourseCard course={recentCourse} />
                 <Typography
                     variant="body1"
                     sx={{
