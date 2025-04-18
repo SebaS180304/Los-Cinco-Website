@@ -68,7 +68,7 @@ function Sidebar({ selectedTab, onChange, course }) {
                 <Box p={2}>
                     <LinearProgress 
                         variant="determinate" 
-                        value={course.porcentaje} 
+                        value={course?.porcentaje || 0} 
                         sx={{ 
                             height: '20px',
                             borderRadius: '10px',
@@ -80,7 +80,7 @@ function Sidebar({ selectedTab, onChange, course }) {
                         }} 
                     />
                     <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                        Progreso del curso más reciente: <strong>{course.porcentaje}%</strong>   
+                        Progreso del curso más reciente: <strong>{course?.porcentaje || 0}%</strong>   
                     </Typography>
                 </Box>
                 <Divider />

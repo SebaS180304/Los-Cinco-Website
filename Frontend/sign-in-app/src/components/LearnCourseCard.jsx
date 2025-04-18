@@ -6,6 +6,7 @@ import mechanical from '../assets/images/mechanical-course.jpg';
 import electronics from '../assets/images/electrical-course.jpg';
 import security from '../assets/images/security-course.jpg';
 import courseBg from '../assets/images/courseBg.png';
+import categoryMapping from './constants/categoryMapping';
 
 const CUSTOM_COLOR = '#FFB300';
 
@@ -18,7 +19,9 @@ const courseBackground = [
 
 const LearnCourseCard = ({ course }) => {
     const navigate = useNavigate();
-    const bgImage = courseBackground.find(item => item.text === course.category)?.src || courseBg;
+    const categoryName = categoryMapping[course?.categoria] || "Indefinida";
+    const bgImage = courseBackground.find(item => item.text === categoryName)?.src || courseBg;
+    
     return (
         <Card
             sx={{
@@ -28,7 +31,7 @@ const LearnCourseCard = ({ course }) => {
                 border: '1px solid #000',
             }}
         >
-            <CardActionArea onClick={() => navigate(`/enrolled/${course.id}`)}>
+            <CardActionArea onClick={() => navigate(`/enrolled/${course?.idCurso}`)}>
                 <CardMedia 
                     component="img" 
                     height="125px" 
@@ -39,10 +42,10 @@ const LearnCourseCard = ({ course }) => {
                 <CardContent sx={{ p: 1.5 }}>
                     <Box>
                         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-                            {course.title}
+                            {course?.tituloCurso}
                         </Typography>
                         <Typography color="text.secondary">
-                            {course.category}
+                            {categoryName}
                         </Typography>
                     </Box>
                 </CardContent>
@@ -51,11 +54,11 @@ const LearnCourseCard = ({ course }) => {
             <CardContent sx={{ p: 1.5 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Typography variant="body2" color="text.secondary" sx={{ mr: 2 }}>
-                        Progreso: <strong>{course.progress}%</strong>
+                        Progreso: <strong>{course?.porcentaje || 0}%</strong>
                     </Typography>
                     <LinearProgress 
                         variant="determinate" 
-                        value={course.progress} 
+                        value={course?.porcentaje || 0} 
                         sx={{
                             width: '50%',
                             height: '10px',

@@ -11,12 +11,14 @@ import { course_data } from '../components/constants';
 import axios from '../api/axios';
 
 const RECENT_URL = '/CursoEstudiante/Recent';
+const COURSES_URL = '/CursoEstudiante/All';
 
 function Learn() {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const [selectedTab, setSelectedTab] = useState('Panel');
     const [recentCourse, setRecentCourse] = useState(null);
+    const [allCourses, setAllCourses] = useState(null);
 
     useEffect(() => {
         const fetchRecentCourse = async () => {
@@ -29,22 +31,37 @@ function Learn() {
                 console.error('Error al obtener el curso más reciente: ', error.message);
             }
         };
+
+        const fetchAllCourses = async () => {
+            try {
+                const response = await axios.get(COURSES_URL, {
+                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+                });
+                setAllCourses(response.data);
+            } catch (error) {
+                console.error('Error al obtener la información del curso: ', error.message);
+            }
+        };
+
         fetchRecentCourse();
+        fetchAllCourses();
     }, []);
 
     const renderContent = () => {
         switch (selectedTab) {
             // Aquí se usan los datos de la API (recentCourse) para afectar a PanelContent/CourseCard
-            case 'Panel': return <PanelContent onVerAprender={() => setSelectedTab('Aprender')} course={recentCourse} recentCourse={recentCourse} />;
-            case 'Aprender': return <LearnContent course={course_data} />;
+            // También se usan los datos de la API (allCourses) para afectar a PanelContent/ProgressCharts tanto a QuizProgressChart como a CourseProgressChart
+            case 'Panel': return <PanelContent onVerAprender={() => setSelectedTab('Aprender')} course={allCourses} recentCourse={recentCourse} />;
+            // Aquí se usan los datos de la API (allCourses) para afectar a LearnContent/ tanto a LearnCourseCard como a CourseAccordion
+            case 'Aprender': return <LearnContent course={allCourses} />;
             case 'Liga': return <LeagueContent />;
             case 'Practicar': return <PracticeContent />;
-            default: return <PanelContent onVerAprender={() => setSelectedTab('Aprender')} course={recentCourse} recentCourse={recentCourse} />;
+            default: return <PanelContent onVerAprender={() => setSelectedTab('Aprender')} course={allCourses} recentCourse={recentCourse} />;
         }
     };
 
-    // Si aún no se cargó la data de la API, muestra un loader
-    if (!recentCourse) return <div>Cargando...</div>;
+    // Si aún no se cargó la data de las APIs, muestra un loader
+    if (!recentCourse && !allCourses) return <div>Cargando...</div>;
 
     return ( 
         <Box sx={{ display: 'flex', mt: '64px' }}>
