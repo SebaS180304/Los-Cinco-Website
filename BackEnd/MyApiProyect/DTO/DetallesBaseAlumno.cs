@@ -7,6 +7,7 @@ namespace MyApiProyect.DTO
 {
     public class DetallesBaseAlumno
     {
+        public int IdInscripcion {get;set;} =0;
         public int IdAlumno { get; set; } = 0;
         public string Nombre {get; set;} = null!;
     }

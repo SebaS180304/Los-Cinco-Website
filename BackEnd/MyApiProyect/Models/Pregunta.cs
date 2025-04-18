@@ -9,9 +9,9 @@ public partial class Pregunta
 
     public string? TextoPregunta { get; set; }
 
-    public int IdQuiz { get; set; }
+    public int IdCurso { get; set; }
 
-    public virtual Curso IdQuizNavigation { get; set; } = null!;
+    public virtual Curso IdCursoNavigation { get; set; } = null!;
 
     public virtual ICollection<Opcione> Opciones { get; set; } = new List<Opcione>();
 }

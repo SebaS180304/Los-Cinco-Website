@@ -20,17 +20,37 @@ create table Cursos (
     primary key(id_curso),
     foreign key(id_instructor) references Usuarios(id_usuario)
 );
+
+create table InscripcionInstructor(
+	id_inscripcion_instructor int not null auto_increment,
+	id_estudiante int not null ,
+	id_instructor int not null,
+	primary key (id_inscripcion_instructor),
+	foreign key (id_estudiante) references Usuarios(id_usuario),
+	foreign key (id_instructor) references Usuarios(id_usuario)	
+);
     
-create table Inscripciones (
-	id_inscripcion int not null auto_increment,
+create table InscripcionCurso (
+	id_inscripcion_curso int not null auto_increment,
     id_estudiante int not null,
     id_curso int not null,
-    puntaje int default 0,
-    fecha_completado datetime default (CURRENT_DATE()),
-    esta_completado bool default 0,
-    primary key(id_inscripcion),
+    puntaje int default 0 not null,
+    intento int default 0 not null,
+    valido bool default false not null,
+    fecha_terminado dateTime default null,
+    primary key(id_inscripcion_curso),
     foreign key(id_estudiante) references Usuarios(id_usuario),
 	foreign key(id_curso) references Cursos(id_curso)
+);
+
+create table QuizSubmition(
+	id_submition int not null auto_increment,
+	id_inscripcion_curso int not null,
+	fecha_submition datetime default (Current_Date()),
+	calificacion int not null,
+	primary key (id_submition),
+	foreign key (id_inscripcion_curso) references InscripcionCurso(id_inscripcion_curso)
+
 );
 
 create table Lecciones (
@@ -55,18 +75,35 @@ create table LeccionCompletada(
 );
 
 create table RegistroLeccionCompletada(
-    id_leccion_completada int not null,
+    id_leccion_completada int not null auto_increment,
     fecha_acabada datetime not null default (CURRENT_DATE()),
     foreign key(id_leccion_completada) references LeccionCompletada(id_leccion_completada)
 );
+
+create table PreguntaLeccion(
+	id_pregunta_leccion int not null auto_increment,
+	id_leccion int not null,
+	texto_pregunta varchar (100) default "null" not null,
+	primary key(id_pregunta_leccion),
+	foreign key (id_leccion) references Lecciones(id_leccion)
+);
+
+create table OpcionLeccion(
+	id_opcion_leccion int not null auto_increment,
+	id_pregunta_leccion int not null,
+	texto_opcion varchar (100) default "null" not null,
+	primary key(id_opcion_leccion),
+	foreign key(id_pregunta_leccion) references PreguntaLeccion(id_pregunta_leccion)
+);
+
 
 
 create table Preguntas (
 	id_pregunta int not null auto_increment,
     texto_pregunta varchar(100) default "NA",
-    id_quiz int not null,
+    id_curso int not null,
     primary key(id_pregunta),
-    foreign key(id_quiz) references Cursos(id_curso)
+    foreign key(id_curso) references Cursos(id_curso)
 );
 
 create table Opciones (
@@ -82,18 +119,43 @@ create Trigger UpdateLeccionCompletada before update on LeccionCompletada
 for each row 
 	Begin
 		if(not old.valida and new.valida) then
-			insert into RegistroLeccionCompletada(id_leccion_completada) values (new.id_leccion_completada);
+			insert into RegistroLeccionCompletada(id_leccion_completada) values
+					(new.id_leccion_completada);
 		end if;
 	END;
 delimiter //
 delimiter $$
-create Trigger InsertIntoIncripcion after insert on Inscripciones
+create Trigger InsertIntoInscripcionLeccion after insert on InscripcionCurso
 for each row 
 	begin
 		insert into LeccionCompletada (id_leccion, id_usuario, valida) 
 		select id_leccion,  new.id_estudiante, 0 from Lecciones where (id_curso = new.id_curso) ;
 	end;
 delimiter $$	
+delimiter $$
+create Trigger InsertIntoInscripcionCurso after insert on InscripcionInstructor
+for each row
+	begin	
+		insert into InscripcionCurso (id_estudiante, id_curso) 
+		select new.id_estudiante, id_curso from cursos where (id_instructor = new.id_instructor);
+	end;
+delimiter $$
+delimiter //
+create trigger InsertIntoSubmition after insert on QuizSubmition
+for each row 
+begin	
+	declare lastCal int;
+	select puntaje into lastCal from InscripcionCurso 
+			where (id_inscripcion_curso = new.id_inscripcion_curso);
+	
+	update InscripcionCurso set intento = intento +1 where id_inscripcion_curso = new.id_inscripcion_curso;
+	if new.calificacion > lastCal then
+		update InscripcionCurso set puntaje = new.calificacion where id_inscripcion_curso = new.id_inscripcion_curso;
+	end if;
+end;
+delimiter //
+
+
 delimiter @@
 
 insert into Usuarios (nombre_completo, rol, contrasena) values
@@ -112,12 +174,11 @@ insert into Lecciones(titulo_leccion, contenido, tipo_media, url_media, id_curso
 ("Lavadoras, artefactos o ciencia", "entre las caracteristicas más importantes de las lavadoras es su capacidad de...", 1, "https://nullc.com", 1);
 delimiter //
 delimiter @@
-insert into Inscripciones ( id_estudiante, id_curso) values
-(1000,1);
+insert into InscripcionInstructor ( id_estudiante, id_instructor) values
+(1000,1001);
 delimiter @@
 delimiter $$
-
-insert into Preguntas (texto_pregunta, id_quiz) values 
+insert into Preguntas (texto_pregunta, id_curso) values 
 ("¿Cuales son las mejores opciones para lavadoras?", 1 ),
 ("Cuales electrodomesticos son los más peligrosos de instalar erroneamente?", 1);
 delimiter $$
@@ -137,3 +198,8 @@ delimiter @@
 delimiter @@
 update LeccionCompletada set valida = 1 where id_leccion_completada = 2;
 delimiter @@
+delimiter //
+insert into QuizSubmition(id_inscripcion_curso, calificacion) values(1,60);
+delimiter //
+select * from InscripcionCurso;
+

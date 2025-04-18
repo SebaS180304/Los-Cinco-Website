@@ -19,7 +19,7 @@ public partial class Curso
 
     public virtual Usuario IdInstructorNavigation { get; set; } = null!;
 
-    public virtual ICollection<Inscripcione> Inscripciones { get; set; } = new List<Inscripcione>();
+    public virtual ICollection<InscripcionCurso> InscripcionCursos { get; set; } = new List<InscripcionCurso>();
 
     public virtual ICollection<Leccione> Lecciones { get; set; } = new List<Leccione>();
 

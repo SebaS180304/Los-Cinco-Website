@@ -20,4 +20,6 @@ public partial class Leccione
     public virtual Curso IdCursoNavigation { get; set; } = null!;
 
     public virtual ICollection<LeccionCompletadum> LeccionCompletada { get; set; } = new List<LeccionCompletadum>();
+
+    public virtual ICollection<PreguntaLeccion> PreguntaLeccions { get; set; } = new List<PreguntaLeccion>();
 }

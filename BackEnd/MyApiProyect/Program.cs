@@ -60,7 +60,7 @@ builder.Services.AddScoped<IUserLogin>(provider =>
     new UserLogin(provider.GetRequiredService<WebsiteContext>(), encodingKey, Issuer, Audience, TokenExpirationTime));
 builder.Services.AddScoped<ICursosService, CursosService>();
 builder.Services.AddScoped<IQuizService, QuizService>();
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAlumnosService, AlumnosService>();
 // Configure Entity Framework with MySQL
 
 builder.Services.AddDbContext<WebsiteContext>(options =>

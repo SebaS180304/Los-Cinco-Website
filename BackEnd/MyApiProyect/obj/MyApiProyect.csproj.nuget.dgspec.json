@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\drdom\\OneDrive\\Documentos\\Cuarto Semestre\\Construción de Software y Toma de Decisiones\\Los-Cinco-Website\\BackEnd\\MyApiProyect\\MyApiProyect.csproj": {}
+    "/Users/elenavazquez/Documents/GitHub/Los-Cinco-Website/BackEnd/MyApiProyect/MyApiProyect.csproj": {}
   },
   "projects": {
-    "C:\\Users\\drdom\\OneDrive\\Documentos\\Cuarto Semestre\\Construción de Software y Toma de Decisiones\\Los-Cinco-Website\\BackEnd\\MyApiProyect\\MyApiProyect.csproj": {
+    "/Users/elenavazquez/Documents/GitHub/Los-Cinco-Website/BackEnd/MyApiProyect/MyApiProyect.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\drdom\\OneDrive\\Documentos\\Cuarto Semestre\\Construción de Software y Toma de Decisiones\\Los-Cinco-Website\\BackEnd\\MyApiProyect\\MyApiProyect.csproj",
+        "projectUniqueName": "/Users/elenavazquez/Documents/GitHub/Los-Cinco-Website/BackEnd/MyApiProyect/MyApiProyect.csproj",
         "projectName": "MyApiProyect",
-        "projectPath": "C:\\Users\\drdom\\OneDrive\\Documentos\\Cuarto Semestre\\Construción de Software y Toma de Decisiones\\Los-Cinco-Website\\BackEnd\\MyApiProyect\\MyApiProyect.csproj",
-        "packagesPath": "C:\\Users\\drdom\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\drdom\\OneDrive\\Documentos\\Cuarto Semestre\\Construción de Software y Toma de Decisiones\\Los-Cinco-Website\\BackEnd\\MyApiProyect\\obj\\",
+        "projectPath": "/Users/elenavazquez/Documents/GitHub/Los-Cinco-Website/BackEnd/MyApiProyect/MyApiProyect.csproj",
+        "packagesPath": "/Users/elenavazquez/.nuget/packages/",
+        "outputPath": "/Users/elenavazquez/Documents/GitHub/Los-Cinco-Website/BackEnd/MyApiProyect/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\drdom\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/Users/elenavazquez/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -37,7 +37,8 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        }
+        },
+        "SdkAnalysisLevel": "9.0.200"
       },
       "frameworks": {
         "net8.0": {
@@ -93,7 +94,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.311/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/x64/sdk/9.0.203/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

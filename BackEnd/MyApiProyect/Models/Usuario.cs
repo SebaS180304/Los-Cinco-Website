@@ -15,7 +15,11 @@ public partial class Usuario
 
     public virtual ICollection<Curso> Cursos { get; set; } = new List<Curso>();
 
-    public virtual ICollection<Inscripcione> Inscripciones { get; set; } = new List<Inscripcione>();
+    public virtual ICollection<InscripcionCurso> InscripcionCursos { get; set; } = new List<InscripcionCurso>();
+
+    public virtual ICollection<InscripcionInstructor> InscripcionInstructorIdEstudianteNavigations { get; set; } = new List<InscripcionInstructor>();
+
+    public virtual ICollection<InscripcionInstructor> InscripcionInstructorIdInstructorNavigations { get; set; } = new List<InscripcionInstructor>();
 
     public virtual ICollection<LeccionCompletadum> LeccionCompletada { get; set; } = new List<LeccionCompletadum>();
 }

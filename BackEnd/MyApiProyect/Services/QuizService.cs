@@ -17,7 +17,7 @@ namespace MyApiProyect.Services
         }
         public async Task<List<PreguntaQuiz>?> GetQuizPreguntas(int id_curso, int id_alumno)
         {
-            var quizQuery = await context.Preguntas.Where(x => x.IdQuiz == id_curso).ToListAsync();
+            var quizQuery = await context.Preguntas.Where(x => x.IdCurso == id_curso).ToListAsync();
             if(quizQuery == null || quizQuery.Count == 0)
             {
                 return null;

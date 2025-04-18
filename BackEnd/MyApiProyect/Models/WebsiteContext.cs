@@ -18,19 +18,28 @@ public partial class WebsiteContext : DbContext
 
     public virtual DbSet<Curso> Cursos { get; set; }
 
-    public virtual DbSet<Inscripcione> Inscripciones { get; set; }
+    public virtual DbSet<InscripcionCurso> InscripcionCursos { get; set; }
+
+    public virtual DbSet<InscripcionInstructor> InscripcionInstructors { get; set; }
 
     public virtual DbSet<LeccionCompletadum> LeccionCompletada { get; set; }
 
     public virtual DbSet<Leccione> Lecciones { get; set; }
 
+    public virtual DbSet<OpcionLeccion> OpcionLeccions { get; set; }
+
     public virtual DbSet<Opcione> Opciones { get; set; }
 
     public virtual DbSet<Pregunta> Preguntas { get; set; }
 
+    public virtual DbSet<PreguntaLeccion> PreguntaLeccions { get; set; }
+
+    public virtual DbSet<QuizSubmition> QuizSubmitions { get; set; }
+
     public virtual DbSet<RegistroLeccionCompletadum> RegistroLeccionCompletada { get; set; }
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -64,37 +73,60 @@ public partial class WebsiteContext : DbContext
                 .HasConstraintName("cursos_ibfk_1");
         });
 
-        modelBuilder.Entity<Inscripcione>(entity =>
+        modelBuilder.Entity<InscripcionCurso>(entity =>
         {
-            entity.HasKey(e => e.IdInscripcion).HasName("PRIMARY");
+            entity.HasKey(e => e.IdInscripcionCurso).HasName("PRIMARY");
+
+            entity.ToTable("InscripcionCurso");
 
             entity.HasIndex(e => e.IdCurso, "id_curso");
 
             entity.HasIndex(e => e.IdEstudiante, "id_estudiante");
 
-            entity.Property(e => e.IdInscripcion).HasColumnName("id_inscripcion");
-            entity.Property(e => e.EstaCompletado)
-                .HasDefaultValueSql("'0'")
-                .HasColumnName("esta_completado");
-            entity.Property(e => e.FechaCompletado)
-                .HasDefaultValueSql("curdate()")
+            entity.Property(e => e.IdInscripcionCurso).HasColumnName("id_inscripcion_curso");
+            entity.Property(e => e.FechaTerminado)
                 .HasColumnType("datetime")
-                .HasColumnName("fecha_completado");
+                .HasColumnName("fecha_terminado");
             entity.Property(e => e.IdCurso).HasColumnName("id_curso");
             entity.Property(e => e.IdEstudiante).HasColumnName("id_estudiante");
-            entity.Property(e => e.Puntaje)
-                .HasDefaultValueSql("'0'")
-                .HasColumnName("puntaje");
+            entity.Property(e => e.Intento).HasColumnName("intento");
+            entity.Property(e => e.Puntaje).HasColumnName("puntaje");
+            entity.Property(e => e.Valido).HasColumnName("valido");
 
-            entity.HasOne(d => d.IdCursoNavigation).WithMany(p => p.Inscripciones)
+            entity.HasOne(d => d.IdCursoNavigation).WithMany(p => p.InscripcionCursos)
                 .HasForeignKey(d => d.IdCurso)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("inscripciones_ibfk_2");
+                .HasConstraintName("inscripcioncurso_ibfk_2");
 
-            entity.HasOne(d => d.IdEstudianteNavigation).WithMany(p => p.Inscripciones)
+            entity.HasOne(d => d.IdEstudianteNavigation).WithMany(p => p.InscripcionCursos)
                 .HasForeignKey(d => d.IdEstudiante)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("inscripciones_ibfk_1");
+                .HasConstraintName("inscripcioncurso_ibfk_1");
+        });
+
+        modelBuilder.Entity<InscripcionInstructor>(entity =>
+        {
+            entity.HasKey(e => e.IdInscripcionInstructor).HasName("PRIMARY");
+
+            entity.ToTable("InscripcionInstructor");
+
+            entity.HasIndex(e => e.IdEstudiante, "id_estudiante");
+
+            entity.HasIndex(e => e.IdInstructor, "id_instructor");
+
+            entity.Property(e => e.IdInscripcionInstructor).HasColumnName("id_inscripcion_instructor");
+            entity.Property(e => e.IdEstudiante).HasColumnName("id_estudiante");
+            entity.Property(e => e.IdInstructor).HasColumnName("id_instructor");
+
+            entity.HasOne(d => d.IdEstudianteNavigation).WithMany(p => p.InscripcionInstructorIdEstudianteNavigations)
+                .HasForeignKey(d => d.IdEstudiante)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("inscripcioninstructor_ibfk_1");
+
+            entity.HasOne(d => d.IdInstructorNavigation).WithMany(p => p.InscripcionInstructorIdInstructorNavigations)
+                .HasForeignKey(d => d.IdInstructor)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("inscripcioninstructor_ibfk_2");
         });
 
         modelBuilder.Entity<LeccionCompletadum>(entity =>
@@ -149,6 +181,27 @@ public partial class WebsiteContext : DbContext
                 .HasConstraintName("lecciones_ibfk_1");
         });
 
+        modelBuilder.Entity<OpcionLeccion>(entity =>
+        {
+            entity.HasKey(e => e.IdOpcionLeccion).HasName("PRIMARY");
+
+            entity.ToTable("OpcionLeccion");
+
+            entity.HasIndex(e => e.IdPreguntaLeccion, "id_pregunta_leccion");
+
+            entity.Property(e => e.IdOpcionLeccion).HasColumnName("id_opcion_leccion");
+            entity.Property(e => e.IdPreguntaLeccion).HasColumnName("id_pregunta_leccion");
+            entity.Property(e => e.TextoOpcion)
+                .HasMaxLength(100)
+                .HasDefaultValueSql("'null'")
+                .HasColumnName("texto_opcion");
+
+            entity.HasOne(d => d.IdPreguntaLeccionNavigation).WithMany(p => p.OpcionLeccions)
+                .HasForeignKey(d => d.IdPreguntaLeccion)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("opcionleccion_ibfk_1");
+        });
+
         modelBuilder.Entity<Opcione>(entity =>
         {
             entity.HasKey(e => e.IdOpcion).HasName("PRIMARY");
@@ -174,19 +227,62 @@ public partial class WebsiteContext : DbContext
         {
             entity.HasKey(e => e.IdPregunta).HasName("PRIMARY");
 
-            entity.HasIndex(e => e.IdQuiz, "id_quiz");
+            entity.HasIndex(e => e.IdCurso, "id_curso");
 
             entity.Property(e => e.IdPregunta).HasColumnName("id_pregunta");
-            entity.Property(e => e.IdQuiz).HasColumnName("id_quiz");
+            entity.Property(e => e.IdCurso).HasColumnName("id_curso");
             entity.Property(e => e.TextoPregunta)
                 .HasMaxLength(100)
                 .HasDefaultValueSql("'NA'")
                 .HasColumnName("texto_pregunta");
 
-            entity.HasOne(d => d.IdQuizNavigation).WithMany(p => p.Pregunta)
-                .HasForeignKey(d => d.IdQuiz)
+            entity.HasOne(d => d.IdCursoNavigation).WithMany(p => p.Pregunta)
+                .HasForeignKey(d => d.IdCurso)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("preguntas_ibfk_1");
+        });
+
+        modelBuilder.Entity<PreguntaLeccion>(entity =>
+        {
+            entity.HasKey(e => e.IdPreguntaLeccion).HasName("PRIMARY");
+
+            entity.ToTable("PreguntaLeccion");
+
+            entity.HasIndex(e => e.IdLeccion, "id_leccion");
+
+            entity.Property(e => e.IdPreguntaLeccion).HasColumnName("id_pregunta_leccion");
+            entity.Property(e => e.IdLeccion).HasColumnName("id_leccion");
+            entity.Property(e => e.TextoPregunta)
+                .HasMaxLength(100)
+                .HasDefaultValueSql("'null'")
+                .HasColumnName("texto_pregunta");
+
+            entity.HasOne(d => d.IdLeccionNavigation).WithMany(p => p.PreguntaLeccions)
+                .HasForeignKey(d => d.IdLeccion)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("preguntaleccion_ibfk_1");
+        });
+
+        modelBuilder.Entity<QuizSubmition>(entity =>
+        {
+            entity.HasKey(e => e.IdSubmition).HasName("PRIMARY");
+
+            entity.ToTable("QuizSubmition");
+
+            entity.HasIndex(e => e.IdInscripcionCurso, "id_inscripcion_curso");
+
+            entity.Property(e => e.IdSubmition).HasColumnName("id_submition");
+            entity.Property(e => e.Calificacion).HasColumnName("calificacion");
+            entity.Property(e => e.FechaSubmition)
+                .HasDefaultValueSql("curdate()")
+                .HasColumnType("datetime")
+                .HasColumnName("fecha_submition");
+            entity.Property(e => e.IdInscripcionCurso).HasColumnName("id_inscripcion_curso");
+
+            entity.HasOne(d => d.IdInscripcionCursoNavigation).WithMany(p => p.QuizSubmitions)
+                .HasForeignKey(d => d.IdInscripcionCurso)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("quizsubmition_ibfk_1");
         });
 
         modelBuilder.Entity<RegistroLeccionCompletadum>(entity =>
@@ -199,7 +295,9 @@ public partial class WebsiteContext : DbContext
                 .HasDefaultValueSql("curdate()")
                 .HasColumnType("datetime")
                 .HasColumnName("fecha_acabada");
-            entity.Property(e => e.IdLeccionCompletada).HasColumnName("id_leccion_completada");
+            entity.Property(e => e.IdLeccionCompletada)
+                .ValueGeneratedOnAdd()
+                .HasColumnName("id_leccion_completada");
 
             entity.HasOne(d => d.IdLeccionCompletadaNavigation).WithMany()
                 .HasForeignKey(d => d.IdLeccionCompletada)

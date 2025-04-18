@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
@@ -21,11 +22,12 @@ namespace MyApiProyect.Services
         }
         public async Task<List<CursoInscripcionDTO>> GetCursos(int id_estudiante)
         {
-            var SelectedCursos = await _context.Inscripciones
+            var SelectedCursos = await _context.InscripcionCursos
                 .Where(i => i.IdEstudiante == id_estudiante)
                 .Select(i => i.IdCurso)
                 .ToListAsync();
             var cursosCom = await _context.Cursos.
+                            Include(c=> c.InscripcionCursos).
                             Include(l=>l.Lecciones).
                             ThenInclude(l=> l.LeccionCompletada).
                             Where(c=> SelectedCursos.Contains(c.IdCurso)).
@@ -36,8 +38,10 @@ namespace MyApiProyect.Services
                 DescripcionCurso = c.Descripcion ?? "NA",
                 Categoria = c.Categoria,
                 IntentosMax = c.IntentosMax,
-                Intentos = 0,
-                CalificacionExamen = 0,
+                Intentos = c.InscripcionCursos.Where(i=>i.IdEstudiante == id_estudiante ).
+                                                Select(i=>i.Intento).FirstOrDefault(),
+                CalificacionExamen = c.InscripcionCursos.Where(i=>i.IdEstudiante == id_estudiante ).
+                                                Select(i=>i.Puntaje).FirstOrDefault(),
                 lecciones = c.Lecciones.Select(l=>new LeccionInscripcionDTO{
                     IdLeccion = l.IdLeccion,
                     TituloLeccion = l.TituloLeccion,
@@ -110,10 +114,14 @@ namespace MyApiProyect.Services
                                     Where(r=> lecciones.Contains(r.IdLeccionCompletada) && r.FechaAcabada > DateTime.Today.AddDays(-7)).
                                     ToListAsync();
             var registros = TodoRegistro.GroupBy(r=>r.FechaAcabada.DayOfWeek).ToList();
-            var Estadisticas = registros.Select(r=> new Estadistica{
-                    dia = r.Key.ToString(),
-                    cantidad = r.Count()
-            }).ToList();
+            List<Estadistica> Estadisticas = new List<Estadistica>();
+            for(int i = 0; i < 7; i++){
+                var day =  DateTime.Today.AddDays(-i).DayOfWeek;
+                Estadisticas.Add( new Estadistica{
+                    dia = day.ToString(),
+                    cantidad = registros.Where(r=>r.Key == day).Count()
+                });
+            }
             return new EstadisticasSemana {estadisticas = Estadisticas};
                                     
                                 
