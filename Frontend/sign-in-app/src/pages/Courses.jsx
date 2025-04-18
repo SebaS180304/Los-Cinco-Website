@@ -7,7 +7,6 @@ import Navbar from '../components/NavbarAdmin';
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DownloadIcon from '@mui/icons-material/Download';
 import AddIcon from '@mui/icons-material/Add';
@@ -27,9 +26,26 @@ const categories = [
 ];
 
 // Lista de detalles del curso
-const CourseDetailsList = ({ courseLessons, course }) => {
+const CourseDetailsList = ({ courseLessons, course, handleSaveChanges, editableCourse, setEditableCourse, isEditing, setIsEditing, originalCourse, setOriginalCourse }) => {
   const [selectedCategory, setSelectedCategory] = useState(course?.category || 'seleccionar');
   const [customCategory, setCustomCategory] = useState('');
+
+  const handleEditOrSave = () => {
+    if (isEditing) {
+      // Si está en modo edición, guarda los cambios y desactiva el modo edición
+      handleSaveChanges();
+      setIsEditing(false);
+    } else {
+      // Si no está en modo edición, guarda los valores originales y activa el modo edición
+      setOriginalCourse({ ...editableCourse });
+      setIsEditing(true);
+    }
+  };
+
+  const handleCancel = () => {
+    setEditableCourse({ ...originalCourse }); // Restaura el curso original
+    setIsEditing(false); // Desactiva el modo edición
+  };
 
   const handleCategoryChange = (event) => {
     const value = event.target.value;
@@ -46,9 +62,55 @@ const CourseDetailsList = ({ courseLessons, course }) => {
 
   return (
     <Box sx={{ pb: 2 }}>
+      {!isEditing && (
+        <Box sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<EditIcon />}
+            onClick={handleEditOrSave}
+            sx={{
+              mb: '1rem',
+              transition: 'opacity 0.3s ease, transform 0.3s ease',
+              '&:hover': { transform: 'scale(1.05)' }, // Efecto de hover
+            }}
+          >
+            Editar Curso
+          </Button>
+        </Box>
+      )}
+      {isEditing && (
+        <Box sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center', gap: 2 }}>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleCancel}
+            sx={{
+              mb: '1rem',
+              transition: 'opacity 0.3s ease, transform 0.3s ease',
+              '&:hover': { transform: 'scale(1.05)' }, // Efecto de hover
+            }}
+          >
+            Cancelar
+          </Button>
+          <Button
+            variant="contained"
+            color="success"
+            startIcon={<CheckMark />}
+            onClick={handleEditOrSave}
+            sx={{
+              mb: '1rem',
+              transition: 'opacity 0.3s ease, transform 0.3s ease',
+              '&:hover': { transform: 'scale(1.05)' }, // Efecto de hover
+            }}
+          >
+            Guardar
+          </Button>
+        </Box>
+      )}
       <List>
         <React.Fragment>
-          <ListItem sx={{ p: 2 }}>
+          <ListItem sx={{ p: 2, pt: 0 }}>
             <ListItemIcon sx={{ color: CUSTOM_COLOR }}>
               <LibraryBooksOutlinedIcon />
             </ListItemIcon>
@@ -273,14 +335,19 @@ function Courses() {
     const [isEditing, setIsEditing] = useState(false); // Nuevo estado para controlar el modo de edición
     const [originalCourse, setOriginalCourse] = useState(null); // Guardar el curso original
 
+    const [loading, setLoading] = useState(true); // Estado para manejar la carga
+    const [error, setError] = useState(false); // Estado para manejar errores
+
     // Obtener detalles del curso
     useEffect(() => {
       const fetchCourse = async () => {
         try {
+          setLoading(true);
           const response = await axios.get(`/CursoAdmin/Single?IdCurso=${courseId}`, {
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
           });
           setCourse(response.data);
+          setError(false);
           setEditableCourse({
             TituloCurso: response.data.tituloCurso,
             DescripcionCurso: response.data.descripcionCurso,
@@ -293,6 +360,10 @@ function Courses() {
           })));
         } catch (error) {
           console.error('Error al obtener el curso:', error);
+          setError(true);
+        } finally {
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          setLoading(false);
         }
       };
       fetchCourse();
@@ -395,23 +466,6 @@ function Courses() {
         setEditingContent('');
     };
 
-    const handleEditOrSave = () => {
-      if (isEditing) {
-        // Si está en modo edición, guarda los cambios y desactiva el modo edición
-        handleSaveChanges();
-        setIsEditing(false);
-      } else {
-        // Si no está en modo edición, guarda los valores originales y activa el modo edición
-        setOriginalCourse({ ...editableCourse });
-        setIsEditing(true);
-      }
-    };
-
-    const handleCancel = () => {
-      setEditableCourse({ ...originalCourse }); // Restaura el curso original
-      setIsEditing(false); // Desactiva el modo edición
-    };
-
     const handleSaveEdit = () => {
         if (editingIndex !== null) {
             // Crear una copia de las lecciones editables
@@ -481,17 +535,30 @@ function Courses() {
       }
     };
 
-    if (!course) {
-        return (
-            <Box sx={{ display: 'flex', mt: '64px' }}>
-                <Navbar />
-                <Box component="main" sx={{ p: 3, textAlign: 'center' }}>
-                    <Typography variant="h4" sx={{ color: 'black' }}>
-                        Curso no encontrado
-                    </Typography>
-                </Box>
-            </Box>
-        );
+    if (loading) {
+      return (
+          <Dialog open={true} PaperProps={{ sx: { textAlign: 'center', padding: 4 } }}>
+              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                <CircularProgress />
+              </Box>
+              <Typography variant="h6" sx={{ mt: 2 }}>
+                  Cargando curso...
+              </Typography>
+          </Dialog>
+      );
+    }
+
+    if (error) {
+      return (
+          <Box sx={{ display: 'flex', mt: '64px' }}>
+              <Navbar />
+              <Box component="main" sx={{ p: 3, textAlign: 'center' }}>
+                  <Typography variant="h4" sx={{ color: 'black' }}>
+                      Curso no encontrado
+                  </Typography>
+              </Box>
+          </Box>
+      );
     }
   
     return (
@@ -502,63 +569,19 @@ function Courses() {
             {/* Breadcrumbs */}
             <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 2 }}>
               <LinkComp underline="hover" color="inherit" component={Link} to="/dashboard">
-                Inicio
+                Cursos
               </LinkComp>
               <Typography color="text.primary">{editableCourse?.TituloCurso}</Typography>
             </Breadcrumbs>
-            {!isEditing && (
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<EditIcon />}
-                onClick={handleEditOrSave}
-                sx={{
-                  mb: '1rem',
-                  transition: 'opacity 0.3s ease, transform 0.3s ease',
-                  '&:hover': { transform: 'scale(1.05)' }, // Efecto de hover
-                }}
-              >
-                Editar Curso
-              </Button>
-            )}
-            {isEditing && (
-              <Box sx={{ display: 'flex', gap: 2 }}>
-                <Button
-                  variant="contained"
-                  color="success"
-                  startIcon={<CheckMark />}
-                  onClick={handleEditOrSave}
-                  sx={{
-                    mb: '1rem',
-                    transition: 'opacity 0.3s ease, transform 0.3s ease',
-                    '&:hover': { transform: 'scale(1.05)' }, // Efecto de hover
-                  }}
-                >
-                  Guardar
-                </Button>
-                <Button
-                  variant="contained"
-                  color="error"
-                  onClick={handleCancel}
-                  sx={{
-                    mb: '1rem',
-                    transition: 'opacity 0.3s ease, transform 0.3s ease',
-                    '&:hover': { transform: 'scale(1.05)' }, // Efecto de hover
-                  }}
-                >
-                  Cancelar
-                </Button>
-              </Box>
-            )}
           </Box>
           <Box sx={{ backgroundColor: '#0c1633', borderRadius: '20px' }}>
             <Stack
               direction={isMobile ? 'column' : 'row'}
               spacing={3}
               justifyContent="space-between"
-              sx={{ px: 7, pt: 7 }}
+              sx={{ px: 7, pt: 2 }}
             >
-              <Box {...(!isMobile ? { flex: 3 } : {})} sx={{ mt: 2 }}>
+              <Box {...(!isMobile ? { flex: 3 } : {})} sx={{ mt: 2, pt: 5 }}>
                {/* Nombre del curso */}
                 <Box
                   sx={{ display: 'flex', alignItems: 'center', position: 'relative', py: 1 }}
@@ -673,7 +696,7 @@ function Courses() {
                 </Box>
               </Box>
               <Box {...(!isMobile ? { flex: 2 } : {})}>
-                <CourseDetailsList courseLessons={courseLessons} course={course} />
+                <CourseDetailsList courseLessons={courseLessons} course={course} handleSaveChanges={handleSaveChanges} editableCourse={editableCourse} setEditableCourse={setEditableCourse} isEditing={isEditing} setIsEditing={setIsEditing} originalCourse={originalCourse} setOriginalCourse={setOriginalCourse} />
               </Box>
             </Stack>
             {/* <Box sx={{ pt: 3 }}>
