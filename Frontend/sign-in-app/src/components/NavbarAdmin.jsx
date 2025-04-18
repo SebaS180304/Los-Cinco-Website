@@ -1,8 +1,7 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { AppBar, Toolbar, Box, Button, Tooltip, Menu, Typography, MenuItem, Divider } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/images/logo.png'; // Importa la imagen del logo
-import { CursosContext } from '../context/GlobalContext'; // Importa el contexto de cursos
 import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
 
 const settings = ['Cerrar Sesión'];
@@ -10,16 +9,6 @@ const settings = ['Cerrar Sesión'];
 const NavbarAdmin = () => {
   const navigate = useNavigate();
   const [anchorElUser, setAnchorElUser] = useState(null);
-  const { cursos } = useContext(CursosContext);
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -43,35 +32,11 @@ const NavbarAdmin = () => {
           <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
             <Box component="img" src={logo} alt="Logo" sx={{ height: '40px' }} />
             <Typography variant="h6" component={Link} to="/dashboard" sx={{ ml: 2, textDecoration: 'none', color: 'black' }}>
-              Inicio
-            </Typography>
-            <Typography
-              variant="h6"
-              sx={{ ml: 2, textDecoration: 'none', color: 'black', cursor: 'pointer' }}
-              onClick={handleMenuOpen}
-            >
               Cursos
             </Typography>
-            <Menu
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleMenuClose}
-            >
-              {Object.keys(cursos).length > 0 ? (
-                Object.values(cursos).map((curso, index) => (
-                  <MenuItem
-                    key={index}
-                    component={Link}
-                    to={`/courses/${index}`}
-                    onClick={handleMenuClose}
-                  >
-                    {curso.nombre}
-                  </MenuItem>
-                ))
-              ) : (
-                <MenuItem disabled>No hay cursos</MenuItem>
-              )}
-            </Menu>
+            <Typography variant="h6" component={Link} to="/dashboard" sx={{ ml: 2, textDecoration: 'none', color: 'black' }}>
+              Alumnos
+            </Typography>
           </Box>
           <Box>
             <Tooltip title="Abrir Configuración" arrow>
