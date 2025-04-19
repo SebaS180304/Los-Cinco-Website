@@ -6,6 +6,7 @@ import Content from '../components/Content';
 import Bottombar from '../components/Bottombar';
 import { lecture_data } from '../components/constants';
 
+import Quiz from './quiz';
 
 function Lecture() {
     const [currentLecture, setCurrentLecture] = useState(0);
@@ -13,6 +14,7 @@ function Lecture() {
     const lecture = lecture_data[currentLecture];
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+    const isQuiz = !!lecture.quiz;
 
     const disableMedia = lecture.mediaType === 'none' || lecture.src === '';
 
@@ -20,17 +22,22 @@ function Lecture() {
         if (disableMedia && selectedView === 'model') {
             setSelectedView('content');
         }
-    }, [disableMedia, selectedView]);
+    }, [disableMedia, selectedView, isQuiz]);
 
     return (
-        <Box sx={{ display: 'flex', mt: '64px', mb: '64px'}}>
+        <Box sx={{ display: 'flex', mt: '64px', mb: '64px', width: '100vw', overflowX: 'hidden',backgroundColor: '#0F172A'}}>
             <Lectbar 
                 selectedView={selectedView} 
                 setSelectedView={setSelectedView} 
                 disableMedia={disableMedia} 
             />
             <Box component="main" sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-                {isMobile ? (
+                {isQuiz ? (
+                    <Quiz
+                        questions={lecture.quiz}
+                        onFinish={() => setCurrentLecture(prev => prev + 1)} // pasa al siguiente tema cuando terminas el quiz
+                    />
+                ) : isMobile ? (
                     selectedView === 'content' ? 
                         <Content currentLecture={currentLecture} setCurrentLecture={setCurrentLecture} /> :
                         <Media mediaType={lecture.mediaType} src={lecture.src} />
@@ -48,6 +55,7 @@ function Lecture() {
             currentLecture={currentLecture}
             setCurrentLecture={setCurrentLecture}
             isLast={currentLecture === lecture_data.length - 1}
+            hideNavigation={isQuiz}
             />
         </Box>
     );

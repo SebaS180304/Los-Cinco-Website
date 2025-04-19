@@ -3,25 +3,7 @@ import { Box, Stack, Typography, Button, useMediaQuery, useTheme } from '@mui/ma
 import Lectbar from '../components/LectBar';
 import Bottombar from '../components/Bottombar';
 
-const questions = [
-  {
-    text: "Pregunta Prueba 1",
-    options: ["Respuesta 1", "Respuesta 2 (correcta)", "Respuesta 3", "Respuesta 4"],
-    correct: 1,
-  },
-  {
-    text: "Pregunta Prueba 2",
-    options: ["Respuesta 1", "Respuesta 2", "Respuesta 3", "Respuesta 4 (correcta)"],
-    correct: 3,
-  },
-  {
-    text: "Pregunta Prueba 3",
-    options: ["Respuesta 1 (correcta)", "Respuesta 2 ", "Respuesta 3", "Respuesta 4"],
-    correct: 0,
-  }
-];
-
-const Quiz = ({ onFinish }) => {
+const Quiz = ({ questions, onFinish }) => { 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -32,7 +14,7 @@ const Quiz = ({ onFinish }) => {
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
 
-  const question = questions[current];
+  const question = questions[current]; 
 
   const handleSubmit = () => {
     const wasCorrect = selected === question.correct;
@@ -59,9 +41,9 @@ const Quiz = ({ onFinish }) => {
   };
 
   return (
-    <Box sx={{ display: 'flex', mt: '64px', mb: '64px', backgroundColor: '#0F172A', minHeight: '100vh' }}>
+    <Box sx={{ display: 'flex', mb: '64px', backgroundColor: '#0F172A', minHeight: '100vh', width: '100%' }}>
       <Lectbar selectedView="quiz" setSelectedView={() => {}} disableMedia={true} />
-      <Box component="main" sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center',alignItems: 'center',textAlign: 'center',  width: '100%' }}>
+      <Box component="main" sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', width: '100%' }}>
         <Box
           sx={{
             maxWidth: 800,
@@ -74,7 +56,7 @@ const Quiz = ({ onFinish }) => {
         >
           {finished ? (
             <Box textAlign="center">
-              <Typography variant="h4" gutterBottom sx={{ color: '#FFB300' ,fontSize: '40px'}}>
+              <Typography variant="h4" gutterBottom sx={{ color: '#FFB300', fontSize: '40px' }}>
                 ¡Felicidades!
               </Typography>
               <Typography variant="h6">
@@ -97,28 +79,28 @@ const Quiz = ({ onFinish }) => {
             </Box>
           ) : (
             <>
-            <Typography variant="h4" fontWeight="bold" gutterBottom sx={{ color: '#FFB300', fontSize: '32px' }}>
-            {question.text}
-            </Typography>
-            <Typography variant="subtitle1" gutterBottom sx={{ color: 'white', mt: 1 }}>
-            Pregunta {current + 1} de {questions.length}
-            </Typography>
+              <Typography variant="h4" fontWeight="bold" gutterBottom sx={{ color: '#FFB300', fontSize: '32px' }}>
+                {question.text}
+              </Typography>
+              <Typography variant="subtitle1" gutterBottom sx={{ color: 'white', mt: 1 }}>
+                Pregunta {current + 1} de {questions.length}
+              </Typography>
 
               <Stack spacing={3} mt={3} alignItems="center">
                 {question.options.map((opt, i) => {
-                    let bg = '#1E2A45';
-                    if (submitted) {
+                  let bg = '#1E2A45';
+                  if (submitted) {
                     if (i === question.correct) bg = '#4CAF50';
                     else if (i === selected) bg = '#F44336';
-                    } else if (i === selected) {
+                  } else if (i === selected) {
                     bg = '#27364F';
-                    }
+                  }
 
-                    return (
+                  return (
                     <Box
-                        key={i}
-                        onClick={() => !submitted && setSelected(i)}
-                        sx={{
+                      key={i}
+                      onClick={() => !submitted && setSelected(i)}
+                      sx={{
                         width: '100%',
                         maxWidth: 400,
                         backgroundColor: bg,
@@ -136,15 +118,15 @@ const Quiz = ({ onFinish }) => {
                         alignItems: 'center',
                         transition: 'background-color 0.2s ease-in-out',
                         '&:hover': {
-                            backgroundColor: !submitted ? '#2b3b5a' : bg,
+                          backgroundColor: !submitted ? '#2b3b5a' : bg,
                         },
-                        }}
+                      }}
                     >
-                        {opt}
+                      {opt}
                     </Box>
-                    );
+                  );
                 })}
-            </Stack>
+              </Stack>
 
               <Box mt={4} textAlign="center">
                 {!submitted ? (

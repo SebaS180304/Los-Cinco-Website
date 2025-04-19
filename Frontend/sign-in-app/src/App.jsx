@@ -84,16 +84,6 @@ function App() {
               </PrivateRoute>
             } 
           />
-          <Route 
-            path="/quiz" 
-            element={
-              <PrivateRoute>
-                <TechnicianRoute>
-                  <Quiz onFinish={() => window.location.href = "/lesson"} /> 
-                </TechnicianRoute>
-              </PrivateRoute>
-            }
-          />             
         </Routes>
       </Router>
     </GlobalProvider>

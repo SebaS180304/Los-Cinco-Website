@@ -43,6 +43,30 @@ export const lecture_data = [
                     dolores sunt inventore perferendis, aut sapiente modi nesciunt.`
     },
     {
+        id: '1.1',
+        title: 'Lección 1',
+        subtitle: 'Quiz Tema 1',
+        mediaType: 'none',
+        src: '',
+        quiz: [
+            {
+                text: "Pregunta 1 del Tema 1",
+                options: ["Respuesta 1", "Respuesta 2 (correcta)", "Respuesta 3", "Respuesta 4"],
+                correct: 1
+            },
+            {
+                text: "Pregunta 2 del Tema 1",
+                options: ["Respuesta 1", "Respuesta 2", "Respuesta 3", "Respuesta 4 (correcta)"],
+                correct: 3
+            },
+            {
+                text: "Pregunta 2 del Tema 1",
+                options: ["Respuesta 1 (correcta)", "Respuesta 2 ", "Respuesta 3", "Respuesta 4"],
+                correct: 0
+            }
+        ]
+    },
+    {
         id: 2,
         title: 'Lección 1',
         subtitle: 'Tema 2',
@@ -81,6 +105,30 @@ export const lecture_data = [
                     consequuntur dignissimos numquam at nisi porro a, quaerat rem repellendus.
                     Voluptates perspiciatis, in pariatur impedit, nam facilis libero dolorem
                     dolores sunt inventore perferendis, aut sapiente modi nesciunt.`
+    },
+    {
+        id: '2.1',
+        title: 'Lección 1',
+        subtitle: 'Quiz Tema 2',
+        mediaType: 'none',
+        src: '',
+        quiz: [
+            {
+                text: "Pregunta 1 Tema 2",
+                options: ["Respuesta 1", "Respuesta 2 (correcta)", "Respuesta 3", "Respuesta 4"],
+                correct: 1
+            },
+            {
+                text: "Pregunta 2 Tema 2",
+                options: ["Respuesta 1", "Respuesta 2", "Respuesta 3", "Respuesta 4 (correcta)"],
+                correct: 3
+            },
+            {
+                text: "Pregunta 3 Tema 2",
+                options: ["Respuesta 1 (correcta)", "Respuesta 2 ", "Respuesta 3", "Respuesta 4"],
+                correct: 0
+            }
+        ]
     },
     {
         id: 3,
@@ -123,6 +171,30 @@ export const lecture_data = [
                     dolores sunt inventore perferendis, aut sapiente modi nesciunt.`
     },
     {
+        id: '3.1',
+        title: 'Lección 1',
+        subtitle: 'Quiz Tema 3',
+        mediaType: 'none',
+        src: '',
+        quiz: [
+            {
+                text: "Pregunta 1 Tema 3",
+                options: ["Respuesta 1", "Respuesta 2 (correcta)", "Respuesta 3", "Respuesta 4"],
+                correct: 1
+            },
+            {
+                text: "Pregunta 1 Tema 3",
+                options: ["Respuesta 1", "Respuesta 2", "Respuesta 3", "Respuesta 4 (correcta)"],
+                correct: 3
+            },
+            {
+                text: "Pregunta 1 Tema 3",
+                options: ["Respuesta 1 (correcta)", "Respuesta 2 ", "Respuesta 3", "Respuesta 4"],
+                correct: 0
+            }
+        ]
+    },
+    {
         id: 4,
         title: 'Lección 1',
         subtitle: 'Tema 4',
@@ -163,6 +235,30 @@ export const lecture_data = [
                     dolores sunt inventore perferendis, aut sapiente modi nesciunt.`
     },
     {
+        id: '4.1',
+        title: 'Lección 1',
+        subtitle: 'Quiz Tema 4',
+        mediaType: 'none',
+        src: '',
+        quiz: [
+            {
+                text: "Pregunta 1 Tema 4",
+                options: ["Respuesta 1", "Respuesta 2 (correcta)", "Respuesta 3", "Respuesta 4"],
+                correct: 1
+            },
+            {
+                text: "Pregunta 2 Tema 4",
+                options: ["Respuesta 1", "Respuesta 2", "Respuesta 3", "Respuesta 4 (correcta)"],
+                correct: 3
+            },
+            {
+                text: "Pregunta 3 Tema 4",
+                options: ["Respuesta 1 (correcta)", "Respuesta 2 ", "Respuesta 3", "Respuesta 4"],
+                correct: 0
+            }
+        ]
+    },
+    {
         id: 5,
         title: 'Lección 1',
         subtitle: 'Tema 5',
@@ -201,6 +297,30 @@ export const lecture_data = [
                     consequuntur dignissimos numquam at nisi porro a, quaerat rem repellendus.
                     Voluptates perspiciatis, in pariatur impedit, nam facilis libero dolorem
                     dolores sunt inventore perferendis, aut sapiente modi nesciunt.`
+    },
+    {
+        id: '5.1',
+        title: 'Lección 1',
+        subtitle: 'Quiz Tema 5',
+        mediaType: 'none',
+        src: '',
+        quiz: [
+            {
+                text: "Pregunta 1 Tema 5",
+                options: ["Respuesta 1", "Respuesta 2 (correcta)", "Respuesta 3", "Respuesta 4"],
+                correct: 1
+            },
+            {
+                text: "Pregunta 1 Tema 5",
+                options: ["Respuesta 1", "Respuesta 2", "Respuesta 3", "Respuesta 4 (correcta)"],
+                correct: 3
+            },
+            {
+                text: "Pregunta 1 Tema 5",
+                options: ["Respuesta 1 (correcta)", "Respuesta 2 ", "Respuesta 3", "Respuesta 4"],
+                correct: 0
+            }
+        ]
     }
 ]
 
@@ -212,10 +332,22 @@ export const course_data = [
         progress: 10
     },
     {
+        id: '1.1',
+        title: 'Curso 1 - Quiz',
+        category: 'Mecánica',
+        progress: 0
+    },
+    {
         id: 2,
         title: 'Curso 2',
         category: 'Seguridad',
         progress: 20
+    },
+    {
+        id: '2.1',
+        title: 'Curso 2 - Quiz',
+        category: 'Seguridad',
+        progress: 0
     },
     {
         id: 3,
@@ -224,10 +356,22 @@ export const course_data = [
         progress: 30
     },
     {
+        id: '3.1',
+        title: 'Curso 3 - Quiz',
+        category: 'Electrónica',
+        progress: 0
+    },
+    {
         id: 4,
         title: 'Curso 4',
         category: 'Atención al Cliente',
         progress: 40
+    },
+    {
+        id: '4.1',
+        title: 'Curso 4 - Quiz',
+        category: 'Atención al Cliente',
+        progress: 0
     },
     {
         id: 5,
@@ -236,9 +380,21 @@ export const course_data = [
         progress: 100
     },
     {
+        id: '5.1',
+        title: 'Curso 5 - Quiz',
+        category: 'Mecánica',
+        progress: 0
+    },
+    {
         id: 6,
         title: 'Curso 6',
         category: 'Seguridad',
         progress: 100
+    },
+    {
+        id: '6.1',
+        title: 'Curso 6 - Quiz',
+        category: 'Seguridad',
+        progress: 0
     }
-]
+];
