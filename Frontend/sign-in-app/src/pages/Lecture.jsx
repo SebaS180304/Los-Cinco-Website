@@ -6,6 +6,7 @@ import Content from '../components/Content';
 import Bottombar from '../components/Bottombar';
 import { lecture_data } from '../components/constants';
 
+
 function Lecture() {
     const [currentLecture, setCurrentLecture] = useState(0);
     const [selectedView, setSelectedView] = useState('content');
@@ -40,7 +41,14 @@ function Lecture() {
                     </Stack>
                 )}
             </Box>
-            <Bottombar currentLecture={currentLecture} setCurrentLecture={setCurrentLecture} />
+            
+
+            {/* <Bottombar currentLecture={currentLecture} setCurrentLecture={setCurrentLecture} /> */}
+            <Bottombar
+            currentLecture={currentLecture}
+            setCurrentLecture={setCurrentLecture}
+            isLast={currentLecture === lecture_data.length - 1}
+            />
         </Box>
     );
 }

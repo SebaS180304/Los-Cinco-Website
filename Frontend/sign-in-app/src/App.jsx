@@ -6,6 +6,7 @@ import Lecture from './pages/Lecture';
 import Login from './pages/Login';
 import Learn from './pages/Learn';
 import { GlobalProvider } from './context/GlobalContext';
+import Quiz from './pages/quiz';
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -83,6 +84,16 @@ function App() {
               </PrivateRoute>
             } 
           />
+          <Route 
+            path="/quiz" 
+            element={
+              <PrivateRoute>
+                <TechnicianRoute>
+                  <Quiz onFinish={() => window.location.href = "/lesson"} /> 
+                </TechnicianRoute>
+              </PrivateRoute>
+            }
+          />             
         </Routes>
       </Router>
     </GlobalProvider>
