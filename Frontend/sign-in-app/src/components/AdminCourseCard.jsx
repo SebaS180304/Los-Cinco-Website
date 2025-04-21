@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Box, Card, Grid, CardActionArea, CardContent, CardMedia, Divider, LinearProgress, Typography, Button, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from '../api/axios';
@@ -21,55 +21,29 @@ const courseBackground = [
 const AdminCourseCard = ({ course, isAddCard, onAddCurso }) => {
     const navigate = useNavigate();
     const [newCurso, setNewCurso] = useState('');
-    const [showInput, setShowInput] = useState(false);
-    const cardRef = useRef(null);
 
     const handleAddCurso = async () => {
-        if (newCurso.trim()) {
-            try {
-                const response = await axios.post(
-                    '/CursoAdmin/Nuevo',
-                    { TituloCurso: newCurso, DescripcionCurso: '', Categoria: 1 },
-                    { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
-                );
-                const newCursoId = response.data.idCurso;
-                onAddCurso({ idCurso: newCursoId, tituloCurso: newCurso, progress: 0, categoria: 1 });
-                setNewCurso('');
-                setShowInput(false);
-                navigate(`/courses/${newCursoId}`);
-            } catch (error) {
-                console.error('Error al crear el curso:', error);
-            }
+        try {
+            const response = await axios.post(
+                '/CursoAdmin/Nuevo',
+                { TituloCurso: newCurso, DescripcionCurso: '', Categoria: 1 },
+                { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+            );
+            const newCursoId = response.data.idCurso;
+            onAddCurso({ idCurso: newCursoId, tituloCurso: newCurso, progress: 0, categoria: 1 });
+            setNewCurso('');
+            navigate(`/courses/${newCursoId}`);
+        } catch (error) {
+            console.error('Error al crear el curso:', error);
         }
     };
-
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (cardRef.current && !cardRef.current.contains(event.target)) {
-                setShowInput(false); // Cierra el input si el clic ocurre fuera de la tarjeta
-            }
-        };
-
-        if (showInput) {
-            document.addEventListener('mousedown', handleClickOutside);
-        } else {
-            document.removeEventListener('mousedown', handleClickOutside);
-        }
-
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [showInput]);
 
     if (isAddCard) {
         return (
             <Card
-                ref={cardRef}
                 onClick={() => {
-                    if (!showInput) {
-                        setShowInput(true);
-                        setNewCurso('');
-                    }
+                    setNewCurso('');
+                    handleAddCurso();
                 }}
                 sx={{
                     width: '100%',
@@ -81,60 +55,16 @@ const AdminCourseCard = ({ course, isAddCard, onAddCurso }) => {
                     alignItems: 'center',
                     justifyContent: 'center',
                     ":hover": {
-                        backgroundColor: showInput ? 'transparent' : `${CUSTOM_COLOR}20`,
+                        backgroundColor: `${CUSTOM_COLOR}20`,
                     },
-                    cursor: showInput ? 'auto' : 'pointer',
+                    cursor: 'pointer',
                     transition: 'background-color 0.3s',
                     '&:active': {
-                        backgroundColor: showInput ? 'transparent' : `${CUSTOM_COLOR}40`,
+                        backgroundColor: `${CUSTOM_COLOR}40`,
                     },
                 }}
             >
-                {showInput ? (
-                    <Box sx={{ display: 'flex', flexDirection: 'column', p: 3, width: '100%', height: '100%' }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'center', m: 2, pt: 2 }}>
-                            <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-                                Crear nuevo curso
-                            </Typography>
-                        </Box>
-                        <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
-                            <TextField
-                                value={newCurso}
-                                onChange={(e) => setNewCurso(e.target.value)}
-                                onKeyPress={(e) => e.key === 'Enter' && handleAddCurso()}
-                                placeholder="Título del curso"
-                                variant="outlined"
-                                inputRef={(input) => {
-                                    if (showInput && input) {
-                                        input.focus();
-                                    }
-                                }}
-                                InputProps={{
-                                    sx: { height: '40px', px: 2 },
-                                }}
-                            />
-                        </Box>
-                        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3, gap: 3 }}>
-                            <Button
-                                variant="outlined"
-                                color="secondary"
-                                onClick={() => setShowInput(false)}
-                            >
-                                Cancelar
-                            </Button>
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={handleAddCurso}
-                                sx={{ backgroundColor: CUSTOM_COLOR }}
-                            >
-                                Agregar
-                            </Button>
-                        </Box>
-                    </Box>
-                ) : (
-                    <AddIcon sx={{ fontSize: 50, color: CUSTOM_COLOR }} />
-                )}
+                <AddIcon sx={{ fontSize: 50, color: CUSTOM_COLOR }} />
             </Card>
         );
     }
@@ -161,10 +91,10 @@ const AdminCourseCard = ({ course, isAddCard, onAddCurso }) => {
                 <CardContent sx={{ p: 1.5 }}>
                     <Box>
                         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-                            {course.title}
+                            {course.title || 'Curso Indefinido'}
                         </Typography>
                         <Typography color="text.secondary">
-                            {course.category}
+                            {course.category || 'Indefinido'}
                         </Typography>
                     </Box>
                 </CardContent>

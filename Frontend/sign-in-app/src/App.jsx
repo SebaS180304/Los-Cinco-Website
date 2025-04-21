@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import Courses from './pages/Courses';
+import Students from './pages/Students';
 import Lecture from './pages/Lecture';
 import Login from './pages/Login';
 import Learn from './pages/Learn';
@@ -61,6 +62,16 @@ function App() {
                 </AdminRoute>
               </PrivateRoute>
             } 
+          />
+          <Route
+            path="/students"
+            element={
+              <PrivateRoute>
+                <AdminRoute>
+                  <Students />
+                </AdminRoute>
+              </PrivateRoute>
+            }
           />
 
           {/* Rutas exclusivas para técnicos */}
