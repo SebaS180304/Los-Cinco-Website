@@ -194,6 +194,7 @@ delimiter //
 
 insert into Usuarios (nombre_completo, rol, contrasena) values
 ("Romeo Juanin", 0, "123456" ),
+("Otro Alumno", 0, "abcde"),
 ("Romeo Mejor Juanin", 1, "123456"),
 ("Otro Instructor", 1, "abcde");
 delimiter //

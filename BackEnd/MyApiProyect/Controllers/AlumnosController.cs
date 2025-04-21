@@ -49,11 +49,11 @@ namespace MyApiProyect.Controllers
             var id = User.FindFirst(ClaimTypes.Name)?.Value;
             if (id is null)
                 return Unauthorized();
-            var response = await alumnoService.AddAlumnoInscr(IdEstudiante, int.Parse(id));
-            if(response > 1){
+            var IdInscripcion = await alumnoService.AddAlumnoInscr(IdEstudiante, int.Parse(id));
+            if(IdInscripcion < 1){
                 return StatusCode(500);
             }else {
-                return Ok(new {response});
+                return Ok(new {IdInscripcion});
             }
         }
 
