@@ -47,9 +47,16 @@ const Students = () => {
   const handleAddAlumno = async () => {
     if (selectedAlumno) {
       try {
+        console.log('Selected Alumno:', selectedAlumno.idAlumno);
+        const idEstudiante = selectedAlumno.idAlumno;
+        console.log('ID Estudiante:', idEstudiante);
         const response = await axios.post(
-          '/Alumnos/Add?IdEstudiante=' + selectedAlumno.idAlumno,
-          { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+          '/Alumnos/Add',
+          null, 
+          { 
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+            params: { IdEstudiante: idEstudiante }, 
+          },
         );
         if (response.status === 200) {
           setAlumnos((prev) => [...prev, selectedAlumno]);
@@ -70,7 +77,7 @@ const Students = () => {
         params: { id_inscripcion_instructor: idInscripcion },
       });
       if (response.status === 204) {
-        setAlumnos((prev) => prev.filter((alumno) => alumno.IdInscripcion !== idInscripcion));
+        setAlumnos((prev) => prev.filter((alumno) => alumno.idInscripcion !== idInscripcion));
       }
     } catch (error) {
       console.error('Error al eliminar el alumno:', error);
@@ -100,18 +107,18 @@ const Students = () => {
                   startAdornment: (
                     <>
                         <SearchIcon sx={{ mr: 1 }} />
-                        </>
-                    ),
+                    </>
+                  ),
                   endAdornment: (
                     <>
-                    <IconButton
-                        color="primary"
-                        onClick={handleAddAlumno}
-                        disabled={!selectedAlumno}
-                        sx={{ ml: 2 }}
-                    >
+                      <IconButton
+                          color="primary"
+                          onClick={handleAddAlumno}
+                          disabled={!selectedAlumno}
+                          sx={{ ml: 2 }}
+                      >
                         <AddIcon />
-                    </IconButton>
+                      </IconButton>
                       {params.InputProps.endAdornment}
                     </>
                   ),
@@ -129,8 +136,8 @@ const Students = () => {
             <TableContainer component={Paper} sx={{ boxShadow: 'none' }}>
               <Table sx={{ tableLayout: 'fixed', borderCollapse: 'separate', borderSpacing: 0 }} aria-label="simple table">
                 <TableBody>
-                  {alumnos.map((alumno) => (
-                    <React.Fragment key={alumno.idInscripcion}>
+                  {alumnos.map((alumno, index) => (
+                    <React.Fragment key={index}>
                       <TableRow>
                         <TableCell sx={{ width: '80%', backgroundColor: 'white', borderBottom: 'none' }}>
                           <Typography variant="body1">{alumno.nombre}</Typography>
