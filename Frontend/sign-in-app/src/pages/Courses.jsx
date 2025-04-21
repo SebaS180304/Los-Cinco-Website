@@ -83,7 +83,7 @@ const CourseDetailsList = ({ courseLessons, course, handleSaveChanges, editableC
         <Box sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center', gap: 2 }}>
           <Button
             variant="contained"
-            color="error"
+            color="primary"
             onClick={handleCancel}
             sx={{
               mb: '1rem',
@@ -95,13 +95,18 @@ const CourseDetailsList = ({ courseLessons, course, handleSaveChanges, editableC
           </Button>
           <Button
             variant="contained"
-            color="success"
             startIcon={<CheckMark />}
             onClick={handleEditOrSave}
             sx={{
               mb: '1rem',
               transition: 'opacity 0.3s ease, transform 0.3s ease',
-              '&:hover': { transform: 'scale(1.05)' }, // Efecto de hover
+              // '&:hover': { transform: 'scale(1.05)' }, // Efecto de hover
+              backgroundColor: CUSTOM_COLOR,
+              color: '#ffffff',
+              '&:hover': {
+                transform: 'scale(1.05)',
+                backgroundColor: '#FFA000',
+              },
             }}
           >
             Guardar
@@ -353,6 +358,9 @@ function Courses() {
             DescripcionCurso: response.data.descripcionCurso,
             Categoria: response.data.categoria,
           });
+          if (response.data.tituloCurso === '') {
+            setIsEditing(true); // Activar el modo de edición si no hay título
+          }
           setEditableLessons(response.data.lecciones.map((lesson) => ({
             IdLeccion: lesson.idLeccion,
             TituloLeccion: lesson.tituloLeccion,
@@ -571,7 +579,7 @@ function Courses() {
               <LinkComp underline="hover" color="inherit" component={Link} to="/dashboard">
                 Cursos
               </LinkComp>
-              <Typography color="text.primary">{editableCourse?.TituloCurso}</Typography>
+              <Typography color="text.primary">{course?.tituloCurso || 'Nuevo Curso'}</Typography>
             </Breadcrumbs>
           </Box>
           <Box sx={{ backgroundColor: '#0c1633', borderRadius: '20px' }}>
@@ -591,7 +599,7 @@ function Courses() {
                   )}
                   <TextField
                     variant="standard"
-                    value={editableCourse?.TituloCurso || 'Hubo un error al cargar el curso'}
+                    value={editableCourse?.TituloCurso || ''}
                     onChange={(e) => setEditableCourse({ ...editableCourse, TituloCurso: e.target.value })}
                     // onBlur={handleSaveName}
                     inputRef={(input) => {
@@ -605,6 +613,8 @@ function Courses() {
                           e.preventDefault(); // Evita el comportamiento predeterminado del Enter
                       }
                     }}
+                    fullWidth
+                    placeholder={isMobile ?  "Agrega nombre" : "Agrega el nombre del curso"}
                     InputProps={{
                       readOnly: !isEditing,
                       style: { color: 'white', fontSize: '3rem' }, // Aumentar el tamaño de la fuente
@@ -638,7 +648,7 @@ function Courses() {
                     value={editableCourse?.DescripcionCurso || ''}
                     onChange={(e) => setEditableCourse({ ...editableCourse, DescripcionCurso: e.target.value })}
                     fullWidth
-                    placeholder="Agrega descripción del curso"
+                    placeholder={isMobile ? "Agrega descripción" : "Agrega la descripción del curso"}
                     inputRef={(input) => {
                       if (input) {
                         input.onmouseenter = () => input.focus(); // Hace focus al pasar el cursor

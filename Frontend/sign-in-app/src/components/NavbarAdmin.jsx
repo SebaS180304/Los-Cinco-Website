@@ -34,7 +34,7 @@ const NavbarAdmin = () => {
             <Typography variant="h6" component={Link} to="/dashboard" sx={{ ml: 2, textDecoration: 'none', color: 'black' }}>
               Cursos
             </Typography>
-            <Typography variant="h6" component={Link} to="/dashboard" sx={{ ml: 2, textDecoration: 'none', color: 'black' }}>
+            <Typography variant="h6" component={Link} to="/students" sx={{ ml: 2, textDecoration: 'none', color: 'black' }}>
               Alumnos
             </Typography>
           </Box>
