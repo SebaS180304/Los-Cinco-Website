@@ -7,7 +7,6 @@ import LeagueContent from '../components/LeagueContent';
 import PracticeContent from '../components/PracticeContent';
 import { Box, useMediaQuery, useTheme } from '@mui/material';
 import LearnBottBar from '../components/LearnBottBar';
-import { course_data } from '../components/constants';
 import axios from '../api/axios';
 
 const RECENT_URL = '/CursoEstudiante/Recent';
