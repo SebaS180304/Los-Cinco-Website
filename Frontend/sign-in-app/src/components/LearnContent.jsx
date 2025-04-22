@@ -38,8 +38,8 @@ const LearnContent = ({ course }) => {
     setExpanded(false);
   };
  
-  const inProgressCourses = course.filter(course => course.progress < 100);
-  const completedCourses = course.filter(course => course.progress === 100);
+  const inProgressCourses = course?.filter(item => item?.porcentaje < 100);
+  const completedCourses = course?.filter(item => item?.porcentaje === 100);
 
   return ( 
     <Box sx={{ flexGrow: 1, p: 3 }}>
@@ -63,8 +63,8 @@ const LearnContent = ({ course }) => {
           aria-labelledby="tab-0"
           sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 2 }}
         >
-          {inProgressCourses.map(course => (
-            <LearnCourseCard course={course} key={course.id} />
+          {inProgressCourses.map(item => (
+            <LearnCourseCard course={item} key={item?.idCurso} />
           ))}
         </Box>
       )}
@@ -75,11 +75,11 @@ const LearnContent = ({ course }) => {
           aria-labelledby="tab-1"
           sx={{ mt: 2 }}
         >
-          {completedCourses.map(course => (
+          {completedCourses.map(item => (
             <CourseAccordion 
-              course={course} 
-              panel={`panel-${course.id}`} 
-              key={course.id} 
+              course={item} 
+              panel={`panel-${item?.idCurso}`} 
+              key={item?.idCurso} 
               expanded={expanded} 
               handleChange={handleChange} 
             />

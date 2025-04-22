@@ -2,13 +2,18 @@ import React from 'react';
 import { Box, Divider, List, ListItem, ListItemIcon, Typography } from '@mui/material';
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
+import categoryMapping from './constants/categoryMapping';
 
 const CUSTOM_COLOR = '#FFB300';
 
 const CourseDetails = ({ courseLessons, course }) => {
     const details = [
         { icon: <LibraryBooksOutlinedIcon />, label: 'Lecciones', value: courseLessons.length },
-        { icon: <CategoryOutlinedIcon />, label: 'Categoría', value: course?.category },
+        { 
+            icon: <CategoryOutlinedIcon />, 
+            label: 'Categoría', 
+            value: course ? (categoryMapping[course.categoria] || "Indefinida") : "Indefinida" 
+        },
     ];
 
     return (

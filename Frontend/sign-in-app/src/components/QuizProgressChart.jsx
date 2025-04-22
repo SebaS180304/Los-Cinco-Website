@@ -12,26 +12,26 @@ const SECONDARY_COLOR = '#0c1633';
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Legend);
 
 const QuizProgressChart = ({ course }) => {
-  const filtCourse = course.filter(item => item.try > 0);
+  const filtCourse = course.filter(item => item?.intentos > 0);
 
   if (filtCourse.length === 0) {
     return (
       <Box sx={{ p: 2 }}>
-        <Typography>No hay evaluaciones con intentos.</Typography>
+        <Typography>Regresa aquí cuando hayas completado tu primera evaluación final.</Typography>
       </Box>
     );
   }
 
   const avg =
-    filtCourse.reduce((acc, curr) => acc + curr.grade, 0) /
+    filtCourse.reduce((acc, curr) => acc + curr?.calificacionExamen, 0) /
     filtCourse.length;
 
   const data = {
-    labels: filtCourse.map(item => item.title),
+    labels: filtCourse.map(item => item?.tituloCurso),
     datasets: [
       {
         label: 'Calificación',
-        data: filtCourse.map(item => item.grade),
+        data: filtCourse.map(item => item?.calificacionExamen),
       },
       {
         label: 'Promedio',
