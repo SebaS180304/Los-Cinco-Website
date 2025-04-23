@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import axios from '../api/axios';
-import { Box, Divider, List, ListItem, ListItemIcon, Stack, Typography, Button, useTheme, useMediaQuery, Accordion, AccordionSummary, AccordionDetails, CircularProgress, Dialog, DialogContent, DialogTitle, TextField, Breadcrumbs, IconButton, FormControlLabel, Checkbox, MenuItem } from '@mui/material';
+import { Box, Divider, List, ListItem, ListItemIcon, Stack, Typography, Button, useTheme, useMediaQuery, Accordion, AccordionSummary, AccordionDetails, CircularProgress, Dialog, DialogContent, DialogTitle, TextField, Breadcrumbs, IconButton, FormControlLabel, Checkbox, MenuItem, InputAdornment } from '@mui/material';
 import { Link as LinkComp} from '@mui/material';
 import Navbar from '../components/NavbarAdmin';
+import QuestionsDialog from '../components/QuestionsDialog';
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
@@ -12,23 +13,17 @@ import DownloadIcon from '@mui/icons-material/Download';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
-import ProgressSection from '../components/ProgressSection';
 import CheckMark from '@mui/icons-material/Check';
+import categoryMapping from '../components/constants/categoryMapping';
+import ConfirmationPopup from '../components/ConfirmationPopup';
 
 const CUSTOM_COLOR = '#FFB300';
 
-const categories = [
-  { value: 'seleccionar', label: 'Indefinido' },
-  { value: 'programming', label: 'Programación' },
-  { value: 'design', label: 'Diseño' },
-  { value: 'marketing', label: 'Marketing' },
-  { value: 'add_new', label: 'Agregar nueva categoría' },
-];
-
 // Lista de detalles del curso
-const CourseDetailsList = ({ courseLessons, course, handleSaveChanges, editableCourse, setEditableCourse, isEditing, setIsEditing, originalCourse, setOriginalCourse }) => {
-  const [selectedCategory, setSelectedCategory] = useState(course?.category || 'seleccionar');
-  const [customCategory, setCustomCategory] = useState('');
+const CourseDetailsList = ({ courseLessons, handleSaveChanges, editableCourse, setEditableCourse, isEditing, setIsEditing, originalCourse, setOriginalCourse }) => {
+  const categoryName = categoryMapping[editableCourse?.Categoria] || "Indefinida";
+  const categoryOriginal = categoryMapping[originalCourse?.Categoria] || "Indefinida";
+  const [selectedCategory, setSelectedCategory] = useState(categoryName);
 
   const handleEditOrSave = () => {
     if (isEditing) {
@@ -44,19 +39,16 @@ const CourseDetailsList = ({ courseLessons, course, handleSaveChanges, editableC
 
   const handleCancel = () => {
     setEditableCourse({ ...originalCourse }); // Restaura el curso original
+    setSelectedCategory(categoryOriginal); // Restaura la categoría original
     setIsEditing(false); // Desactiva el modo edición
   };
 
   const handleCategoryChange = (event) => {
-    const value = event.target.value;
-    if (value === 'add_new') {
-      const newCategory = prompt('Ingrese el nombre de la nueva categoría:');
-      if (newCategory) {
-        setCustomCategory(newCategory);
-        setSelectedCategory(newCategory);
-      }
-    } else {
-      setSelectedCategory(value);
+    const selectedValue = event.target.value;
+    const selectedKey = Object.entries(categoryMapping).find(([key, value]) => value === selectedValue)?.[0];
+    if (selectedKey !== undefined) {
+      setSelectedCategory(selectedValue); // Actualizar el valor seleccionado
+      setEditableCourse({ ...editableCourse, Categoria: parseInt(selectedKey, 10) }); // Guardar el key como número en editableCourse.Categoria
     }
   };
 
@@ -83,6 +75,7 @@ const CourseDetailsList = ({ courseLessons, course, handleSaveChanges, editableC
         <Box sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center', gap: 2 }}>
           <Button
             variant="contained"
+            startIcon={<CloseIcon />}
             color="primary"
             onClick={handleCancel}
             sx={{
@@ -100,7 +93,6 @@ const CourseDetailsList = ({ courseLessons, course, handleSaveChanges, editableC
             sx={{
               mb: '1rem',
               transition: 'opacity 0.3s ease, transform 0.3s ease',
-              // '&:hover': { transform: 'scale(1.05)' }, // Efecto de hover
               backgroundColor: CUSTOM_COLOR,
               color: '#ffffff',
               '&:hover': {
@@ -142,28 +134,33 @@ const CourseDetailsList = ({ courseLessons, course, handleSaveChanges, editableC
             </Typography>
             <TextField
               id="category-select"
-              select
+              select={isEditing}
               value={selectedCategory}
               onChange={handleCategoryChange}
               fullWidth
               variant="standard"
+              InputProps={{
+                readOnly: !isEditing, // Deshabilitar edición si no está en modo edición
+                startAdornment: isEditing ? (
+                  <InputAdornment position="start">
+                    <EditIcon sx={{ color: 'white' }} />
+                  </InputAdornment>
+                ) : null, // Mostrar el ícono solo si isEditing es true
+              }}
               sx={{
                 '& .MuiInputBase-root': { color: 'white' },
                 '& .MuiSelect-select': { color: 'white' },
                 '& .MuiInput-underline:before': { borderBottomColor: 'white' },
                 '& .MuiInput-underline:after': { borderBottomColor: 'white' },
                 '& .MuiSelect-icon': { color: 'white' },
-                ml: 0.5,
+                ml: 1,
               }}
             >
-              {categories.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
+              {Object.entries(categoryMapping).map(([key, value]) => (
+                <MenuItem key={key} value={value}>
+                  {value}
                 </MenuItem>
               ))}
-              {customCategory && (
-                <MenuItem value={customCategory}>{customCategory}</MenuItem>
-              )}
             </TextField>
           </ListItem>
           <Divider sx={{ backgroundColor: 'white' }} />
@@ -220,7 +217,7 @@ function LessonAccordion({ lecture, panel, expanded, handleChange, handleOpenEdi
                 <Typography variant="body2" sx={{ ml: 3, fontWeight: 'bold' }}>
                     Lección:
                 </Typography>
-                <Typography variant="body2" sx={{ ml: 3 }}>
+                <Typography variant="body2" sx={{ ml: 2 }}>
                     {lecture.TituloLeccion}
                 </Typography>
               </Box>
@@ -235,7 +232,8 @@ function LessonAccordion({ lecture, panel, expanded, handleChange, handleOpenEdi
                     display: 'flex',
                     flexDirection: 'column',
                     mb: 0,
-                    mx: 3,
+                    mx: 2,
+                    width: '100%',
                     maxHeight: '100px',
                     overflowY: 'auto',
                     padding: '8px',
@@ -256,7 +254,7 @@ function LessonAccordion({ lecture, panel, expanded, handleChange, handleOpenEdi
                 <Typography variant="body2" sx={{ ml: 3, fontWeight: 'bold' }}>
                     Evaluación:
                 </Typography>
-                <Typography variant="body2" sx={{ ml: 3 }}>
+                <Typography variant="body2" sx={{ ml: 2 }}>
                     {lecture.questions?.length || 0} preguntas
                 </Typography>
               </Box>
@@ -268,6 +266,7 @@ function LessonAccordion({ lecture, panel, expanded, handleChange, handleOpenEdi
                     flexDirection: 'column',
                     mb: 0,
                     mx: 3,
+                    width: '100%',
                     maxHeight: '100px',
                     overflowY: 'auto',
                     padding: '8px',
@@ -280,7 +279,7 @@ function LessonAccordion({ lecture, panel, expanded, handleChange, handleOpenEdi
                   {lecture.questions && lecture.questions.length > 0 ? (
                     lecture.questions.map((question, index) => (
                       <Typography key={index} variant="body2" sx={{ mb: 1 }}>
-                        {index + 1}. {question.pregunta}
+                        {index + 1}. {question.texto || 'Pregunta sin nombre'}
                       </Typography>
                     ))
                   ) : (
@@ -316,7 +315,7 @@ function LessonAccordion({ lecture, panel, expanded, handleChange, handleOpenEdi
 
 function Courses() {
     const { courseId } = useParams();
-    const [cursos, setCursos] = useState([]);
+    // const [cursos, setCursos] = useState([]);
     const [course, setCourse] = useState(null);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -336,12 +335,14 @@ function Courses() {
     const [editingContent, setEditingContent] = useState('');
     const [newLesson, setNewLesson] = useState({ TituloLeccion: '', Contenido: '' });
     const [openQuestions, setOpenQuestions] = useState(false);
-    const [currentLecture, setCurrentLecture] = useState(null);
+    const [currentLecture, setCurrentLecture] = useState(null); // Lección actual para editar preguntas
     const [isEditing, setIsEditing] = useState(false); // Nuevo estado para controlar el modo de edición
     const [originalCourse, setOriginalCourse] = useState(null); // Guardar el curso original
 
     const [loading, setLoading] = useState(true); // Estado para manejar la carga
     const [error, setError] = useState(false); // Estado para manejar errores
+
+    const [showPopup, setShowPopup] = useState(false);
 
     // Obtener detalles del curso
     useEffect(() => {
@@ -365,6 +366,7 @@ function Courses() {
             IdLeccion: lesson.idLeccion,
             TituloLeccion: lesson.tituloLeccion,
             Contenido: lesson.contenido,
+            questions: lesson.preguntas || [],
           })));
         } catch (error) {
           console.error('Error al obtener el curso:', error);
@@ -378,26 +380,117 @@ function Courses() {
     }, [courseId]);
 
     const handleOpenQuestions = (lecture) => {
-        setCurrentLecture(lecture);
-        setOpenQuestions(true);
+      if (!lecture.questions || lecture.questions.length === 0) {
+        lecture.questions = [
+          {
+            texto: '',
+            opciones: [
+              { texto: '', correcta: false },
+              { texto: '', correcta: false },
+            ],
+          },
+        ];
+      }
+      setCurrentLecture(lecture); // Establecer la lección actual
+      setOpenQuestions(true); // Abrir el diálogo de preguntas
     };
-
+    
     const handleCloseQuestions = () => {
-        setOpenQuestions(false);
-        setCurrentLecture(null);
+      setOpenQuestions(false); // Cerrar el diálogo de preguntas
+      setCurrentLecture(null); // Limpiar la lección actual
+    };
+    
+    const handleQuestionChange = (questionIndex, field, value) => {
+      const updatedQuestions = [...currentLecture.questions];
+      updatedQuestions[questionIndex][field] = value;
+      setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
+    };
+    
+    const handleOptionChange = (questionIndex, optionIndex, field, value) => {
+      const updatedQuestions = [...currentLecture.questions];
+      updatedQuestions[questionIndex].opciones[optionIndex][field] = value;
+      setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
+    };
+    
+    const handleCorrectOptionChange = (questionIndex, optionIndex) => {
+      const updatedQuestions = [...currentLecture.questions];
+      updatedQuestions[questionIndex].opciones = updatedQuestions[questionIndex].opciones.map((opcion, i) => ({
+        ...opcion,
+        correcta: i === optionIndex,
+      }));
+      setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
+    };
+    
+    const handleAddOption = (questionIndex) => {
+      const updatedQuestions = [...currentLecture.questions];
+      if (updatedQuestions[questionIndex].opciones.length < 4) {
+        updatedQuestions[questionIndex].opciones.push({ texto: '', correcta: false });
+        setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
+      }
+    };
+    
+    const handleRemoveOption = (questionIndex, optionIndex) => {
+      const updatedQuestions = [...currentLecture.questions];
+      updatedQuestions[questionIndex].opciones = updatedQuestions[questionIndex].opciones.filter((_, i) => i !== optionIndex);
+      setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
+    };
+    
+    const handleAddQuestion = () => {
+      const updatedQuestions = [...(currentLecture?.questions || [])];
+      updatedQuestions.push({
+        texto: '',
+        opciones: [
+          { texto: '', correcta: false },
+          { texto: '', correcta: false },
+        ],
+      });
+      setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
+    };
+    
+    const handleSaveQuestions = async () => {
+      try {
+        // Validar que haya preguntas en la lección actual
+        if (!currentLecture || !currentLecture.questions) {
+          console.error('No hay preguntas para guardar.');
+          return;
+        }
+    
+        // Preparar las preguntas en el formato esperado por la API
+        const payload = currentLecture.questions.map((question) => ({
+          texto: question.texto,
+          opciones: question.opciones.map((opcion) => ({
+            texto: opcion.texto,
+            correcta: opcion.correcta,
+          })),
+        }));
+    
+        // Enviar las preguntas a la API
+        await axios.post(
+          `/Quiz/Leccion?id_leccion=${currentLecture.IdLeccion}`,
+          payload,
+          {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          }
+        );
+    
+        // Actualizar las lecciones localmente
+        const updatedLessons = editableLessons.map((lesson) =>
+          lesson.IdLeccion === currentLecture.IdLeccion
+            ? { ...lesson, questions: currentLecture.questions }
+            : lesson
+        );
+        setEditableLessons(updatedLessons);
+    
+        // Cerrar el pop-up
+        handleCloseQuestions();
+        console.log('Preguntas guardadas exitosamente en la API.');
+      } catch (error) {
+        console.error('Error al guardar las preguntas en la API:', error);
+        alert('Hubo un error al guardar las preguntas.');
+      }
     };
 
-    const handleSaveQuestions = (updatedQuestions) => {
-        const updatedCursos = { ...cursos };
-        const lectureIndex = updatedCursos[courseId].lecciones.findIndex(
-            (l) => l.title === currentLecture.title
-        );
-        if (lectureIndex !== -1) {
-            updatedCursos[courseId].lecciones[lectureIndex].questions = updatedQuestions;
-            setCursos(updatedCursos);
-        }
-        handleCloseQuestions();
-    };
+    // ---
 
     const handleLessonChange = (panel) => (event, isExpanded) => {
         setLessonExpanded(isExpanded ? panel : false);
@@ -454,6 +547,9 @@ function Courses() {
     
         // Cerrar el diálogo de agregar lección
         handleCloseAdd();
+
+        // Mostrar el pop-up de confirmación
+        setShowPopup(true);
       } catch (error) {
         console.error('Error al agregar la lección:', error.response?.data || error.message);
         alert('Hubo un error al agregar la lección.');
@@ -474,22 +570,40 @@ function Courses() {
         setEditingContent('');
     };
 
-    const handleSaveEdit = () => {
-        if (editingIndex !== null) {
-            // Crear una copia de las lecciones editables
-            const updatedLessons = [...editableLessons];
-            
-            // Actualizar la lección específica
-            updatedLessons[editingIndex] = {
-                ...updatedLessons[editingIndex],
-                TituloLeccion: editingTitle,
-                Contenido: editingContent,
-            };
-
-            // Actualizar el estado con las lecciones modificadas
-            setEditableLessons(updatedLessons);
+    const handleSaveEdit = async () => {
+      if (editingIndex !== null) {
+        try {
+          // Crear una copia de la lección editada
+          const updatedLesson = {
+            ...editableLessons[editingIndex],
+            TituloLeccion: editingTitle,
+            Contenido: editingContent,
+          };
+    
+          // Enviar la lección editada al backend
+          await axios.patch(
+            '/CursoAdmin/Leccion/Edit',
+            updatedLesson,
+            {
+              headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+            }
+          );
+    
+          // Actualizar el estado local con la lección editada
+          const updatedLessons = [...editableLessons];
+          updatedLessons[editingIndex] = updatedLesson;
+          setEditableLessons(updatedLessons);
+    
+          // Cerrar el diálogo de edición
+          handleCloseEdit();
+    
+          // Mostrar el pop-up de confirmación
+          setShowPopup(true);
+        } catch (error) {
+          console.error('Error al guardar la lección editada:', error);
+          alert('Hubo un error al guardar la lección.');
         }
-        handleCloseEdit();
+      }
     };
     
     const handleSaveChanges = async () => {
@@ -519,24 +633,8 @@ function Courses() {
           );
         }
     
-        // Mostrar un pop-up de confirmación
-        const confirmationPopup = document.createElement('div');
-        confirmationPopup.textContent = 'Los cambios se han guardado correctamente.';
-        confirmationPopup.style.position = 'fixed';
-        confirmationPopup.style.bottom = '20px';
-        confirmationPopup.style.right = '20px';
-        confirmationPopup.style.backgroundColor = '#4caf50';
-        confirmationPopup.style.color = 'white';
-        confirmationPopup.style.padding = '10px 20px';
-        confirmationPopup.style.borderRadius = '5px';
-        confirmationPopup.style.boxShadow = '0px 4px 6px rgba(0, 0, 0, 0.1)';
-        confirmationPopup.style.zIndex = '1000';
-        document.body.appendChild(confirmationPopup);
-
-        setTimeout(() => {
-          document.body.removeChild(confirmationPopup);
-          // window.location.reload(); // Refrescar el sitio
-        }, 3000);
+        // Mostrar el pop-up de confirmación
+        setShowPopup(true);
       } catch (error) {
         console.error('Error al guardar los cambios:', error);
         alert('Hubo un error al guardar los cambios.');
@@ -706,7 +804,7 @@ function Courses() {
                 </Box>
               </Box>
               <Box {...(!isMobile ? { flex: 2 } : {})}>
-                <CourseDetailsList courseLessons={courseLessons} course={course} handleSaveChanges={handleSaveChanges} editableCourse={editableCourse} setEditableCourse={setEditableCourse} isEditing={isEditing} setIsEditing={setIsEditing} originalCourse={originalCourse} setOriginalCourse={setOriginalCourse} />
+                <CourseDetailsList courseLessons={courseLessons} handleSaveChanges={handleSaveChanges} editableCourse={editableCourse} setEditableCourse={setEditableCourse} isEditing={isEditing} setIsEditing={setIsEditing} originalCourse={originalCourse} setOriginalCourse={setOriginalCourse} />
               </Box>
             </Stack>
             {/* <Box sx={{ pt: 3 }}>
@@ -793,11 +891,14 @@ function Courses() {
                 variant="outlined"
                 fullWidth
                 multiline
-                rows={4}
+                rows={7}
                 value={editingContent}
                 onChange={(e) => setEditingContent(e.target.value)}
               />
-              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2, gap: 2 }}>
+                <Button variant="outlined" color="primary" onClick={handleCloseEdit}>
+                  Cancelar
+                </Button>
                 <Button variant="contained" color="primary" onClick={handleSaveEdit}>
                   Guardar
                 </Button>
@@ -806,106 +907,25 @@ function Courses() {
           </Dialog>
 
           {/* Pop-up para agregar/editar preguntas */}
-          <Dialog open={openQuestions} onClose={handleCloseQuestions} maxWidth="md" fullWidth>
-            <DialogTitle>Preguntas de Evaluación</DialogTitle>
-            <DialogContent>
-              {/* Acordeón para mostrar y editar preguntas */}
-              {currentLecture?.questions?.map((question, index) => (
-                <Accordion key={index}>
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <TextField
-                      label="Pregunta"
-                      variant="outlined"
-                      fullWidth
-                      value={question.pregunta}
-                      onChange={(e) => {
-                        const updatedQuestions = [...currentLecture.questions];
-                        updatedQuestions[index].pregunta = e.target.value;
-                        setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
-                      }}
-                    />
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    {question.opciones.map((opcion, i) => (
-                      <Box key={i} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              checked={opcion.correcta}
-                              onChange={() => {
-                                const updatedQuestions = [...currentLecture.questions];
-                                updatedQuestions[index].opciones = updatedQuestions[index].opciones.map((opt, optIndex) => ({
-                                  ...opt,
-                                  correcta: optIndex === i,
-                                }));
-                                setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
-                              }}
-                            />
-                          }
-                          label=""
-                        />
-                        <TextField
-                          label={`Opción ${i + 1}`}
-                          variant="outlined"
-                          fullWidth
-                          value={opcion.texto}
-                          onChange={(e) => {
-                            const updatedQuestions = [...currentLecture.questions];
-                            updatedQuestions[index].opciones[i].texto = e.target.value;
-                            setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
-                          }}
-                          sx={{ mr: 2 }}
-                        />
-                        <IconButton
-                          color="error"
-                          onClick={() => {
-                            const updatedQuestions = [...currentLecture.questions];
-                            updatedQuestions[index].opciones = updatedQuestions[index].opciones.filter((_, optIndex) => optIndex !== i);
-                            setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
-                          }}
-                        >
-                          <CloseIcon />
-                        </IconButton>
-                      </Box>
-                    ))}
-                    {/* Botón para agregar una nueva opción */}
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        onClick={() => {
-                          const updatedQuestions = [...currentLecture.questions];
-                          updatedQuestions[index].opciones.push({ texto: '', correcta: false });
-                          setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
-                        }}
-                      >
-                        Agregar Opción
-                      </Button>
-                    </Box>
-                  </AccordionDetails>
-                </Accordion>
-              ))}
-
-              {/* Botón para guardar todas las preguntas */}
-              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<AddIcon />}
-                    onClick={() => {
-                      const updatedQuestions = currentLecture?.questions || [];
-                      updatedQuestions.push({ pregunta: '', opciones: [{ texto: '', correcta: false }, { texto: '', correcta: false }] });
-                      setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
-                    }}
-                  >
-                    Agregar Pregunta
-                </Button>
-                <Button variant="contained" color="primary" onClick={() => handleSaveQuestions(currentLecture.questions)}>
-                  Guardar
-                </Button>
-              </Box>
-            </DialogContent>
-          </Dialog>
+          <QuestionsDialog
+            open={openQuestions}
+            onClose={handleCloseQuestions}
+            lecture={currentLecture}
+            onQuestionChange={handleQuestionChange}
+            onOptionChange={handleOptionChange}
+            onCorrectOptionChange={handleCorrectOptionChange}
+            onAddOption={handleAddOption}
+            onRemoveOption={handleRemoveOption}
+            onAddQuestion={handleAddQuestion}
+            onSaveQuestions={handleSaveQuestions}
+          />
+          {showPopup && (
+            <ConfirmationPopup
+              message="Los cambios se han guardado correctamente."
+              duration={3000}
+              onClose={() => setShowPopup(false)}
+            />
+          )}
         </Box>
       </Box>
     );
