@@ -17,6 +17,8 @@ public partial class Curso
 
     public int IntentosMax { get; set; }
 
+    public bool Visible { get; set; }
+
     public virtual Usuario IdInstructorNavigation { get; set; } = null!;
 
     public virtual ICollection<InscripcionCurso> InscripcionCursos { get; set; } = new List<InscripcionCurso>();

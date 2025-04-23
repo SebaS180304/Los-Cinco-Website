@@ -148,3 +148,5 @@ BackEnd/MyApiProyect/obj/Debug/net8.0/refint/MyApiProyect.dll
 /BackEnd/MyApiProyect/obj
 /BackEnd/MyApiProyect/bin
 /BackEnd/MyApiProyect/bin
+*.dll
+/BackEnd/MyApiProyect/obj

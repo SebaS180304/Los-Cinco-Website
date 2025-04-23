@@ -39,7 +39,7 @@ namespace MyApiProyect.Services
             return quiz;
         }
 
-        public async Task<List<PreguntaDTO>> GetLeccionPregunta(int id_leccion){
+        public async Task<List<PreguntaDTO>>GetLeccionPreguntas (int id_leccion){
             var preguntas = await context.PreguntaLeccions.
                                 Include(c=>c.OpcionLeccions).
                                 Where(l=>l.IdLeccion == id_leccion).
@@ -62,7 +62,6 @@ namespace MyApiProyect.Services
 
             var elim = await context.PreguntaLeccions.Where(p=> id_leccion ==p.IdLeccion ).ToListAsync();
             context.RemoveRange(elim);
-            Console.WriteLine("elim");
             var preg = questions.Select(p=> new PreguntaLeccion{
                     IdLeccion = id_leccion,
                     TextoPregunta = p.Texto ?? "na",
@@ -73,7 +72,6 @@ namespace MyApiProyect.Services
                     }).ToList() ?? new List<OpcionLeccion>()
             }).ToList();
             context.AddRange(preg);
-            Console.WriteLine("add");
             try{
                 await context.SaveChangesAsync();
                 return true;
@@ -82,6 +80,20 @@ namespace MyApiProyect.Services
                 return false;
             }
                                     
+        }
+
+        public async Task<bool> SubmitionLeccion(int id_leccion, int id_alumno){
+            var leccionA = await context.LeccionCompletada.Where(l=>l.IdLeccion == id_leccion && l.IdUsuario == id_alumno).FirstOrDefaultAsync();
+            if (leccionA is null) return false;
+                leccionA.Valida = true;
+            try{
+                await context.SaveChangesAsync();
+            }catch (Exception e){
+                Console.WriteLine(e);
+                return false;
+            }
+            return true;
+
         }
 
 

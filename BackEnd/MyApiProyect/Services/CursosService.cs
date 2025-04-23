@@ -25,7 +25,9 @@ namespace MyApiProyect.Services
                 IdCurso = c.IdCurso,
                 TituloCurso = c.TituloCurso,
                 DescripcionCurso = c.Descripcion ?? "NA",
-                Categoria = c.Categoria
+                Categoria = c.Categoria,
+                Visible = c.Visible
+                
             }).ToList();
         }
 
@@ -45,6 +47,7 @@ namespace MyApiProyect.Services
                 DescripcionCurso = curso.Descripcion ?? "NA",
                 Categoria = curso.Categoria,
                 IntentosMax = curso.IntentosMax,
+                Visible = curso.Visible,
                 Lecciones = curso.Lecciones.Select(l => new LeccionFullDTO
                 {
                     IdLeccion = l.IdLeccion,
@@ -134,6 +137,7 @@ namespace MyApiProyect.Services
             updateData.Descripcion = curso.DescripcionCurso;
             updateData.TituloCurso = curso.TituloCurso;
             updateData.IntentosMax = curso.IntentosMax;
+            updateData.Visible = curso.Visible;
             try{
                 _context.Update(updateData);
                 await _context.SaveChangesAsync();
