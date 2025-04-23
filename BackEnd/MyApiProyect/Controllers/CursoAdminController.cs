@@ -75,9 +75,12 @@ namespace MyApiProyect.Controllers
             var id = User.FindFirst(ClaimTypes.Name)?.Value;
             if (id is null )
                 return Unauthorized();
+            Console.WriteLine(int.Parse(id));
             var contains = await _cursosService.VerificarCursodeProfesor(id_curso, int.Parse(id));
+            Console.WriteLine(int.Parse(id));
             if(!contains)
                 return StatusCode(409);
+            Console.WriteLine(int.Parse(id));
             bool good = await _cursosService.EliminarCurso(id_curso);
             if(good){
                 return NoContent();

@@ -174,10 +174,10 @@ namespace MyApiProyect.Services
         }
 
         public async Task<bool> EliminarCurso(int id_curso){
-            var curs = new Curso{IdCurso = id_curso};
-            _context.Cursos.Attach(curs);
+            var curs = await _context.Cursos.Where(c=>c.IdCurso == id_curso).FirstOrDefaultAsync();
+            if(curs is null) return false;
             _context.Cursos.Remove(curs);
-                        try{
+            try{
                 await _context.SaveChangesAsync();
             }catch(Exception e){
                 Console.WriteLine(e);
@@ -188,8 +188,8 @@ namespace MyApiProyect.Services
 
 
         public async Task<bool> EliminarLeccion(int id_leccion){
-            var lecc = new Leccione{IdLeccion = id_leccion};
-            _context.Lecciones.Attach(lecc);
+            var lecc = await _context.Lecciones.Where(l=>l.IdLeccion == id_leccion ).FirstOrDefaultAsync();
+            if(lecc is null) return false;
             _context.Lecciones.Remove(lecc);
             try{
                 await _context.SaveChangesAsync();

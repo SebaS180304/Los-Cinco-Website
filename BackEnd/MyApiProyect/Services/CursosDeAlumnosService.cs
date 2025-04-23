@@ -131,5 +131,27 @@ namespace MyApiProyect.Services
                                     
                                 
         }
+
+
+        public async Task<LeccionInscripcionDTO?> GetLeccion(int id_leccion, int id_estudiante){
+            var leccionI = await _context.Lecciones.Where(l=>l.IdLeccion == id_leccion).
+                                        Include(l=>l.LeccionCompletada).
+                                        FirstOrDefaultAsync();
+            if(leccionI is null)
+                return null;
+                                       
+            var LeccionF = new LeccionInscripcionDTO{
+                                            IdLeccion = id_leccion,
+                                            TituloLeccion = leccionI.TituloLeccion,
+                                            Contenido = leccionI.Contenido,
+                                            tipo = leccionI.TipoMedia,
+                                            Url = leccionI.UrlMedia,
+                                            completada = leccionI.LeccionCompletada.Where(r=>r.IdUsuario == id_estudiante).
+                                                                            Select(r=> r.Valida).
+                                                                            FirstOrDefault() ?? false
+                                            
+                                        };
+            return LeccionF;
+        }
     }
 }

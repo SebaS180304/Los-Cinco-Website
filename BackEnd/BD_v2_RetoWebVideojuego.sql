@@ -270,16 +270,16 @@ insert into Usuarios (nombre_completo, rol, contrasena) values
 delimiter //
 delimiter $$ 
 insert into Cursos(titulo_curso, categoria, id_instructor, intentos_max, descripcion) values 
-("Lavadoras 3", 2, 1001, 2, "curso avanzado sobre lavadoras industriales"),
-("Lavadoras 2", 2, 1002, 4, "curso menos avanzado sobre lavadoras industriales"),
-("Lavadoras 1", 2, 1001, 4, "curso para principantes sobre lavadoras industriales");
+("Lavadoras 3", 2, 1002, 2, "Curso avanzado sobre lavadoras industriales"),
+("Lavadoras 2", 2, 1002, 4, "Curso menos avanzado sobre lavadoras industriales"),
+("Lavadoras 1", 2, 1003, 4, "Curso para principiantes sobre lavadoras industriales");
 delimiter $$
 delimiter //
 insert into Lecciones(titulo_leccion, contenido, tipo_media, url_media, id_curso) values
-("Componentes Necesarios", "Informacion relevente, realmente relevantes, muy levenate y confidencial. Whirlpool :)", 
+("Componentes Necesarios", "Información relevante, realmente relevante, muy relevante y confidencial. Whirlpool :)", 
 0, "https://www.lg.com/content/dam/channel/wcms/mx/images/lavadoras-y-secadoras/wm22vv2s6gr_asselat_enms_mx_c/gallery/DZ_01.jpg", 1),
-("Verdades de la mecanica", "La mecanica puede ser muy intimidante aveces, pero recuerda ....", 1, "https://nullc.com", 1),
-("Lavadoras, artefactos o ciencia", "entre las caracteristicas más importantes de las lavadoras es su capacidad de...", 1, "https://nullc.com", 1);
+("Verdades de la mecánica", "La mecánica puede ser muy intimidante a veces, pero recuerda....", 1, "https://nullc.com", 1),
+("Lavadoras, artefactos o ciencia", "Entre las características más importantes de las lavadoras está su capacidad de...", 1, "https://nullc.com", 1);
 delimiter //
 delimiter @@
 insert into InscripcionInstructor ( id_estudiante, id_instructor) values
@@ -288,8 +288,8 @@ insert into InscripcionInstructor ( id_estudiante, id_instructor) values
 delimiter @@
 delimiter $$
 insert into Preguntas (texto_pregunta, id_curso) values 
-("¿Cuales son las mejores opciones para lavadoras?", 1 ),
-("Cuales electrodomesticos son los más peligrosos de instalar erroneamente?", 1);
+("¿Cuáles son las mejores marcas de lavadoras?", 1),
+("¿Cuáles electrodomésticos son los más peligrosos de instalar erróneamente?", 1);
 delimiter $$
 delimiter //
 insert into Opciones(texto_opcion, id_pregunta, correcta) values 
@@ -310,5 +310,6 @@ delimiter @@
 delimiter //
 insert into QuizSubmition(id_inscripcion_curso, calificacion) values(1,60);
 delimiter //
-
+#delete from cursos where id_curso = 3;
+#select * from cursos;
 ##select * from PreguntaLeccion;

@@ -145,3 +145,6 @@ BackEnd/MyApiProyect/obj/Debug/net8.0/MyApiProyect.sourcelink.json
 BackEnd/MyApiProyect/obj/Debug/net8.0/ref/MyApiProyect.dll
 BackEnd/MyApiProyect/obj/Debug/net8.0/refint/MyApiProyect.dll
 /BackEnd/MyApiProyect/bin
+/BackEnd/MyApiProyect/obj
+/BackEnd/MyApiProyect/bin
+/BackEnd/MyApiProyect/bin
