@@ -45,7 +45,7 @@ const CourseCard = ({ course }) => {
                                         Título: {course?.tituloCurso}
                                     </Typography>
                                     <Typography variant="body1" sx={{ mb: 2 }}>
-                                        Lección Actual: {currentLesson ? currentLesson.tituloLeccion : "Lección finalizada"}
+                                        Lección Actual: {currentLesson ? currentLesson?.tituloLeccion : "Curso finalizado"}
                                     </Typography>
                                 </Box>
                                 <Box
@@ -60,7 +60,7 @@ const CourseCard = ({ course }) => {
                     <Box>
                         <Button
                             component={Link}
-                            to="/lesson"
+                            to={`/lesson/${currentLesson?.idLeccion}`}
                             variant="contained"
                             fullWidth
                             endIcon={<ArrowForwardIcon />}

@@ -41,7 +41,45 @@ export const lecture_data = [
                     cumque nihil aliquam in expedita, impedit quas ipsum nesciunt ipsa ullam
                     consequuntur dignissimos numquam at nisi porro a, quaerat rem repellendus.
                     Voluptates perspiciatis, in pariatur impedit, nam facilis libero dolorem
-                    dolores sunt inventore perferendis, aut sapiente modi nesciunt.`
+                    dolores sunt inventore perferendis, aut sapiente modi nesciunt.`,
+        quiz: [
+            {
+                question: '¿Cuál es la función de la computadora?',
+                options: [
+                    { text: 'Almacenar datos', isCorrect: true },
+                    { text: 'Imprimir documentos', isCorrect: false },
+                    { text: 'Reproducir sonido', isCorrect: false },
+                    { text: 'Conectar a internet', isCorrect: false }
+                ]
+            },
+            {
+                question: '¿Qué es un sistema operativo?',
+                options: [
+                    { text: 'Un programa que gestiona el hardware y software', isCorrect: true },
+                    { text: 'Un dispositivo de almacenamiento', isCorrect: false },
+                    { text: 'Una red de computadoras', isCorrect: false },
+                    { text: 'Un tipo de virus informático', isCorrect: false }
+                ]
+            },
+            {
+                question: '¿Qué es un archivo?',
+                options: [
+                    { text: 'Un conjunto de datos almacenados', isCorrect: true },
+                    { text: 'Un programa de software', isCorrect: false },
+                    { text: 'Un dispositivo de entrada', isCorrect: false },
+                    { text: 'Una unidad de medida', isCorrect: false }
+                ]
+            },
+            {
+                question: '¿Qué es un virus informático?',
+                options: [
+                    { text: 'Un programa malicioso que afecta a la computadora', isCorrect: true },
+                    { text: 'Un tipo de hardware', isCorrect: false },
+                    { text: 'Una red de computadoras', isCorrect: false },
+                    { text: 'Un sistema operativo', isCorrect: false }
+                ]
+            }
+        ]
     },
     {
         id: 2,
@@ -82,7 +120,45 @@ export const lecture_data = [
                     cumque nihil aliquam in expedita, impedit quas ipsum nesciunt ipsa ullam
                     consequuntur dignissimos numquam at nisi porro a, quaerat rem repellendus.
                     Voluptates perspiciatis, in pariatur impedit, nam facilis libero dolorem
-                    dolores sunt inventore perferendis, aut sapiente modi nesciunt.`
+                    dolores sunt inventore perferendis, aut sapiente modi nesciunt.`,
+        quiz: [
+            {
+                question: '¿Cuál es la función de la computadora?',
+                options: [
+                    { text: 'Almacenar datos', isCorrect: true },
+                    { text: 'Imprimir documentos', isCorrect: false },
+                    { text: 'Reproducir sonido', isCorrect: false },
+                    { text: 'Conectar a internet', isCorrect: false }
+                ]
+            },
+            {
+                question: '¿Qué es un sistema operativo?',
+                options: [
+                    { text: 'Un programa que gestiona el hardware y software', isCorrect: true },
+                    { text: 'Un dispositivo de almacenamiento', isCorrect: false },
+                    { text: 'Una red de computadoras', isCorrect: false },
+                    { text: 'Un tipo de virus informático', isCorrect: false }
+                ]
+            },
+            {
+                question: '¿Qué es un archivo?',
+                options: [
+                    { text: 'Un conjunto de datos almacenados', isCorrect: true },
+                    { text: 'Un programa de software', isCorrect: false },
+                    { text: 'Un dispositivo de entrada', isCorrect: false },
+                    { text: 'Una unidad de medida', isCorrect: false }
+                ]
+            },
+            {
+                question: '¿Qué es un virus informático?',
+                options: [
+                    { text: 'Un programa malicioso que afecta a la computadora', isCorrect: true },
+                    { text: 'Un tipo de hardware', isCorrect: false },
+                    { text: 'Una red de computadoras', isCorrect: false },
+                    { text: 'Un sistema operativo', isCorrect: false }
+                ]
+            }
+        ]
     },
     {
         id: 3,
@@ -123,7 +199,45 @@ export const lecture_data = [
                     cumque nihil aliquam in expedita, impedit quas ipsum nesciunt ipsa ullam
                     consequuntur dignissimos numquam at nisi porro a, quaerat rem repellendus.
                     Voluptates perspiciatis, in pariatur impedit, nam facilis libero dolorem
-                    dolores sunt inventore perferendis, aut sapiente modi nesciunt.`
+                    dolores sunt inventore perferendis, aut sapiente modi nesciunt.`,
+        quiz: [
+            {
+                question: '¿Cuál es la función de la computadora?',
+                options: [
+                    { text: 'Almacenar datos', isCorrect: true },
+                    { text: 'Imprimir documentos', isCorrect: false },
+                    { text: 'Reproducir sonido', isCorrect: false },
+                    { text: 'Conectar a internet', isCorrect: false }
+                ]
+            },
+            {
+                question: '¿Qué es un sistema operativo?',
+                options: [
+                    { text: 'Un programa que gestiona el hardware y software', isCorrect: true },
+                    { text: 'Un dispositivo de almacenamiento', isCorrect: false },
+                    { text: 'Una red de computadoras', isCorrect: false },
+                    { text: 'Un tipo de virus informático', isCorrect: false }
+                ]
+            },
+            {
+                question: '¿Qué es un archivo?',
+                options: [
+                    { text: 'Un conjunto de datos almacenados', isCorrect: true },
+                    { text: 'Un programa de software', isCorrect: false },
+                    { text: 'Un dispositivo de entrada', isCorrect: false },
+                    { text: 'Una unidad de medida', isCorrect: false }
+                ]
+            },
+            {
+                question: '¿Qué es un virus informático?',
+                options: [
+                    { text: 'Un programa malicioso que afecta a la computadora', isCorrect: true },
+                    { text: 'Un tipo de hardware', isCorrect: false },
+                    { text: 'Una red de computadoras', isCorrect: false },
+                    { text: 'Un sistema operativo', isCorrect: false }
+                ]
+            }
+        ]
     },
     {
         id: 4,
@@ -164,7 +278,45 @@ export const lecture_data = [
                     cumque nihil aliquam in expedita, impedit quas ipsum nesciunt ipsa ullam
                     consequuntur dignissimos numquam at nisi porro a, quaerat rem repellendus.
                     Voluptates perspiciatis, in pariatur impedit, nam facilis libero dolorem
-                    dolores sunt inventore perferendis, aut sapiente modi nesciunt.`
+                    dolores sunt inventore perferendis, aut sapiente modi nesciunt.`,
+        quiz: [
+            {
+                question: '¿Cuál es la función de la computadora?',
+                options: [
+                    { text: 'Almacenar datos', isCorrect: true },
+                    { text: 'Imprimir documentos', isCorrect: false },
+                    { text: 'Reproducir sonido', isCorrect: false },
+                    { text: 'Conectar a internet', isCorrect: false }
+                ]
+            },
+            {
+                question: '¿Qué es un sistema operativo?',
+                options: [
+                    { text: 'Un programa que gestiona el hardware y software', isCorrect: true },
+                    { text: 'Un dispositivo de almacenamiento', isCorrect: false },
+                    { text: 'Una red de computadoras', isCorrect: false },
+                    { text: 'Un tipo de virus informático', isCorrect: false }
+                ]
+            },
+            {
+                question: '¿Qué es un archivo?',
+                options: [
+                    { text: 'Un conjunto de datos almacenados', isCorrect: true },
+                    { text: 'Un programa de software', isCorrect: false },
+                    { text: 'Un dispositivo de entrada', isCorrect: false },
+                    { text: 'Una unidad de medida', isCorrect: false }
+                ]
+            },
+            {
+                question: '¿Qué es un virus informático?',
+                options: [
+                    { text: 'Un programa malicioso que afecta a la computadora', isCorrect: true },
+                    { text: 'Un tipo de hardware', isCorrect: false },
+                    { text: 'Una red de computadoras', isCorrect: false },
+                    { text: 'Un sistema operativo', isCorrect: false }
+                ]
+            }
+        ]
     },
     {
         id: 5,
@@ -205,7 +357,45 @@ export const lecture_data = [
                     cumque nihil aliquam in expedita, impedit quas ipsum nesciunt ipsa ullam
                     consequuntur dignissimos numquam at nisi porro a, quaerat rem repellendus.
                     Voluptates perspiciatis, in pariatur impedit, nam facilis libero dolorem
-                    dolores sunt inventore perferendis, aut sapiente modi nesciunt.`
+                    dolores sunt inventore perferendis, aut sapiente modi nesciunt.`,
+        quiz: [
+            {
+                question: '¿Cuál es la función de la computadora?',
+                options: [
+                    { text: 'Almacenar datos', isCorrect: true },
+                    { text: 'Imprimir documentos', isCorrect: false },
+                    { text: 'Reproducir sonido', isCorrect: false },
+                    { text: 'Conectar a internet', isCorrect: false }
+                ]
+            },
+            {
+                question: '¿Qué es un sistema operativo?',
+                options: [
+                    { text: 'Un programa que gestiona el hardware y software', isCorrect: true },
+                    { text: 'Un dispositivo de almacenamiento', isCorrect: false },
+                    { text: 'Una red de computadoras', isCorrect: false },
+                    { text: 'Un tipo de virus informático', isCorrect: false }
+                ]
+            },
+            {
+                question: '¿Qué es un archivo?',
+                options: [
+                    { text: 'Un conjunto de datos almacenados', isCorrect: true },
+                    { text: 'Un programa de software', isCorrect: false },
+                    { text: 'Un dispositivo de entrada', isCorrect: false },
+                    { text: 'Una unidad de medida', isCorrect: false }
+                ]
+            },
+            {
+                question: '¿Qué es un virus informático?',
+                options: [
+                    { text: 'Un programa malicioso que afecta a la computadora', isCorrect: true },
+                    { text: 'Un tipo de hardware', isCorrect: false },
+                    { text: 'Una red de computadoras', isCorrect: false },
+                    { text: 'Un sistema operativo', isCorrect: false }
+                ]
+            }
+        ]
     }
 ]
 

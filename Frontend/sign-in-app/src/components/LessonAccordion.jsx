@@ -51,7 +51,7 @@ const LessonAccordion = ({ lecture, panel, expanded, handleChange }) => {
                 <Box sx={{ pt: 3, display: 'flex', justifyContent: 'flex-end' }}>
                     <Button 
                         component={Link} 
-                        to="/lesson" 
+                        to={`/lesson/${lecture?.idLeccion}`} 
                         variant="contained"
                         sx={{
                             backgroundColor: buttonColor,
