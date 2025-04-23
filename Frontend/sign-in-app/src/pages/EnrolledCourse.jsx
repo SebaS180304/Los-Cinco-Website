@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, CircularProgress, Dialog, Typography, useMediaQuery, useTheme } from '@mui/material';
 import Navbar from '../components/Navbar';
 import ProgressSection from '../components/ProgressSection';
 import LessonAccordion from '../components/LessonAccordion';
@@ -9,16 +9,24 @@ import axios from '../api/axios';
 
 const COURSE_URL = '/CursoEstudiante/Single?IdCurso=';
 
+const CUSTOM_COLOR = '#FFB300';
+
 const EnrolledCourse = () => {
     const { courseId } = useParams();
+
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
     const [lessonExpanded, setLessonExpanded] = useState(false);
+
     const [course, setCourse] = useState(null);
+
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchCourse = async () => {
             try {
+                setLoading(true);
                 const response = await axios.get(`${COURSE_URL}${courseId}`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
                 });
@@ -26,6 +34,9 @@ const EnrolledCourse = () => {
                 setCourse(response.data);
             } catch (error) {
                 console.error('Error al obtener el curso: ', error.message);
+            } finally {
+                await new Promise(resolve => setTimeout(resolve, 500));
+                setLoading(false);
             }
         };
         fetchCourse();
@@ -38,7 +49,19 @@ const EnrolledCourse = () => {
         setLessonExpanded(isExpanded ? panel : false);
     };
 
-    if (!course) return <div>Cargando...</div>;
+    // Si aún no se cargó la información de los endopoints, mostrar un loader
+    if (loading) {
+        return (
+            <Dialog open={true} PaperProps={{ sx: { textAlign: 'center', padding: 4 } }}>
+                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                <CircularProgress sx={{ color: CUSTOM_COLOR }} />
+                </Box>
+                <Typography variant="h6" sx={{ mt: 2 }}>
+                    Cargando Información...
+                </Typography>
+            </Dialog>
+        );
+    }
 
     return (
         <Box sx={{ display: 'flex', mt: '64px' }}>

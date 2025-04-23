@@ -3,7 +3,7 @@ import { Box, Typography, Grid } from '@mui/material';
 import ProgressCharts from './ProgressCharts';
 import CourseCard from './CourseCard';
 
-const PanelContent = ({ onVerAprender, course, recentCourse }) => {
+const PanelContent = ({ onVerAprender, course, recentCourse, weekProgress }) => {
     return ( 
         <Box sx={{ flexGrow: 1 }}>
             <Box p={3}>
@@ -32,7 +32,7 @@ const PanelContent = ({ onVerAprender, course, recentCourse }) => {
                 </Typography>
                 <Grid container spacing={2}>
                     <Grid item xs={12} md={8.5}>
-                        <ProgressCharts course={course} />
+                        <ProgressCharts course={course} weekProgress={weekProgress} />
                     </Grid>
                     <Grid item xs={12} md={3.5}>
                         <Box sx={{ borderRadius: '16px', border: '1px solid #000', p: 3 }}>
