@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 
 namespace MyApiProyect.DTO
 {
-    public class PreguntaQuiz
+    public class PreguntaDTO
     {
         public int IdPregunta { get; set; }
         public string? Texto { get; set; }
-        public List<OpcionesPregunta>? opciones { get; set; }
+        public List<OpcionDTO> opciones { get; set; } = new List<OpcionDTO>();
     }
-    public class OpcionesPregunta
+    public class OpcionDTO
     {
         public int IdOpcion { get; set; }
         public string? Texto { get; set; }

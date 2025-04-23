@@ -92,6 +92,7 @@ create table OpcionLeccion(
 	id_opcion_leccion int not null auto_increment,
 	id_pregunta_leccion int not null,
 	texto_opcion varchar (100) default "null" not null,
+	correcto bool default false not null,
 	primary key(id_opcion_leccion),
 	foreign key(id_pregunta_leccion) references PreguntaLeccion(id_pregunta_leccion)
 );
@@ -126,6 +127,7 @@ for each row
 	END;
 delimiter //
 #--------------------------------------Insert--------------------------------------#
+####insert Alumno into leccionesCompletadas after inscripcion curso
 delimiter $$
 create Trigger InsertIntoInscripcionLeccion after insert on InscripcionCurso
 for each row 
@@ -134,6 +136,7 @@ for each row
 		select id_leccion,  new.id_estudiante, 0 from Lecciones where (id_curso = new.id_curso) ;
 	end;
 delimiter $$	
+####insert alumno into InscripcionCursos after Inscripcion Instructor
 delimiter $$
 create Trigger InsertIntoInscripcionCurso after insert on InscripcionInstructor
 for each row
@@ -142,7 +145,28 @@ for each row
 		select new.id_estudiante, id_curso from cursos where (id_instructor = new.id_instructor);
 	end;
 delimiter $$
+#### insert inscripionCurso after insert into cursos
+delimiter @@
+create trigger InsertCursosToAlumnos after insert on Cursos
+for each row 
+begin
+	insert into InscripcionCurso (id_estudiante, id_curso)
+	select id_estudiante, new.id_curso from InscripcionInstructor where (id_instructor = new.id_instructor);
+end;
+delimiter @@
+## insert after new leccion into leccion completada
+delimiter $$
+create trigger InsertLeccionToAlumnos after insert on Lecciones
+for each row 
+begin
+	insert into LeccionCompletada (id_leccion, id_usuario)
+	select new.id_leccion, id_estudiante from InscripcionCurso where new.id_curso = id_curso;
+end;
+
+delimiter $$
+
 delimiter //
+#### modify inscripcion curso after quiz submition
 create trigger InsertIntoSubmition after insert on QuizSubmition
 for each row 
 begin	
@@ -159,8 +183,10 @@ begin
 end;
 delimiter //
 #---------------------------------------------delete-------------------------------------#
+
+##delete alumno from instructor
 delimiter $$
-create trigger deleteInscripcion 
+create trigger deleteInscripcionCursosAlumno
 		before delete on InscripcionInstructor
 for each row
 begin 
@@ -169,6 +195,49 @@ begin
 								and old.id_estudiante = id_estudiante);
 end;
 delimiter $$
+
+delimiter @@
+## delete InscripcionCurso in each alumno after delete curso
+create trigger deleteInscripcionCursoAlumnos before delete on Cursos
+for each row 
+begin
+	delete from InscripcionCurso where (id_curso = old.id_curso);
+	delete from Preguntas where (id_curso = old.id_curso);
+	delete from Lecciones where (id_curso = old.id_curso);
+end;
+
+delimiter @@
+delimiter $$
+## delete from Preguntas leccion before delete lecciones
+create trigger deletePreguntasLecciones before delete on Lecciones
+for each row 
+begin
+	delete from PreguntaLeccion where (id_leccion = old.id_leccion);
+end
+delimiter $$
+## delete opciones before preguntas en lecciones
+delimiter @@
+create trigger deleteOpcionesLecciones before delete on PreguntaLeccion
+for each row 
+begin
+	delete from OpcionLeccion where (id_pregunta_leccion = old.id_pregunta_leccion);
+end
+
+delimiter @@
+
+## delite opciones before preguntas en quiz
+delimiter $$
+
+create trigger deleteOpciones before delete on Preguntas
+for each row 
+begin
+	delete from Opciones where (id_pregunta = old.id_pregunta);
+end
+
+
+delimiter $$
+
+## delete leccionCompletadas and QuizSubmitions before delete inscripcion curso
 delimiter //
 create trigger deleteInscripcionSubmitionAndLecciones
 			before delete on InscripcionCurso
@@ -180,14 +249,15 @@ begin
 end;
 delimiter //
 delimiter @@
+## delete registros despues de leccioneCompletada
 create trigger deleteRegistrosLecciones 
 			before delete on LeccionCompletada
 for each row 
 begin
 	delete from RegistroLeccionCompletada where old.id_leccion_completada = id_leccion_completada;
 end
-
 delimiter @@
+
 #----------------------------------------MiniDB-----------------------------------#
 
 delimiter //
@@ -241,5 +311,4 @@ delimiter //
 insert into QuizSubmition(id_inscripcion_curso, calificacion) values(1,60);
 delimiter //
 
-
-
+##select * from PreguntaLeccion;
