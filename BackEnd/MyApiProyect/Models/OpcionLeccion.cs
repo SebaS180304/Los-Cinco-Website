@@ -11,5 +11,7 @@ public partial class OpcionLeccion
 
     public string TextoOpcion { get; set; } = null!;
 
+    public bool Correcto { get; set; }
+
     public virtual PreguntaLeccion IdPreguntaLeccionNavigation { get; set; } = null!;
 }

@@ -9,7 +9,7 @@ const CUSTOM_COLOR = '#FFB300';
 const SECONDARY_COLOR = '#0c1633';
 
 const LessonAccordion = ({ lecture, panel, expanded, handleChange }) => {
-    const isCompleted = Boolean(lecture.isCompleted);
+    const isCompleted = Boolean(lecture?.completada);
     const iconColor = isCompleted ? CUSTOM_COLOR : SECONDARY_COLOR;
     const evaluationText = isCompleted ? 'Completada' : 'Pendiente';
     const buttonText = isCompleted ? 'Repasar' : 'Empezar';
@@ -24,7 +24,7 @@ const LessonAccordion = ({ lecture, panel, expanded, handleChange }) => {
                 sx={{ flexDirection: 'row-reverse' }}
             >
                 <Typography variant="h5" sx={{ fontWeight: 'bold', ml: 3 }}>
-                    {lecture.title}
+                    {lecture?.tituloLeccion}
                 </Typography>
             </AccordionSummary>
             <AccordionDetails>
@@ -35,7 +35,7 @@ const LessonAccordion = ({ lecture, panel, expanded, handleChange }) => {
                             Lección
                         </Typography>
                         <Typography variant="body2" sx={{ ml: 3 }}>
-                            {lecture.title}
+                            {lecture?.tituloLeccion}
                         </Typography>
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', mx: 3 }}>
@@ -51,7 +51,7 @@ const LessonAccordion = ({ lecture, panel, expanded, handleChange }) => {
                 <Box sx={{ pt: 3, display: 'flex', justifyContent: 'flex-end' }}>
                     <Button 
                         component={Link} 
-                        to="/lesson" 
+                        to={`/lesson/${lecture?.idLeccion}`} 
                         variant="contained"
                         sx={{
                             backgroundColor: buttonColor,

@@ -20,6 +20,8 @@ namespace MyApiProyect.Services
        public Task<bool> EditarCurso(CursoFullDTO curso);
        public Task<bool> EditarLeccion(LeccionFullDTO leccion);
        public Task<bool> EditarCursoCompleto(CursoFullDTO curso);
+       public Task<bool> EliminarCurso(int id_curso);
+       public Task<bool> EliminarLeccion(int id_leccion);
        public Task<bool> VerificarLeccionProfesor(int IdLeccion, int IdInstructor );
 
        public Task<bool> VerificarCursodeProfesor(int IdCurso, int IdInstructor);

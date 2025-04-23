@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.Json;
 using MyApiProyect.DTO;
 using MyApiProyect.Models;
 
@@ -30,7 +31,12 @@ namespace MyApiProyect.Services
 
         public async Task<CursoFullDTO> GetCursoFull(int IdCurso)
         {
-            var curso = await _context.Cursos.Include(x => x.Lecciones).FirstOrDefaultAsync(x => x.IdCurso == IdCurso);
+            var curso = await _context.Cursos.Include(x => x.Lecciones).
+                                                ThenInclude(p=> p.PreguntaLeccions).
+                                                ThenInclude(p=> p.OpcionLeccions).
+                                                Include(q=> q.Pregunta).
+                                                ThenInclude(p=>p.Opciones).
+                                                FirstOrDefaultAsync(x => x.IdCurso == IdCurso);
             if (curso == null) return null!;
             return new CursoFullDTO
             {
@@ -45,8 +51,26 @@ namespace MyApiProyect.Services
                     TituloLeccion = l.TituloLeccion,
                     Contenido = l.Contenido,
                     tipo = l.TipoMedia,
-                    Url = l.UrlMedia
-                }).ToList()
+                    Url = l.UrlMedia,
+                    preguntas = l.PreguntaLeccions.Select(p=>new PreguntaDTO{
+                        IdPregunta = p.IdPreguntaLeccion,
+                        Texto = p.TextoPregunta,
+                        opciones = p.OpcionLeccions.Select(o=> new OpcionDTO{
+                            IdOpcion = o.IdOpcionLeccion,
+                            Texto = o.TextoOpcion,
+                            correcta = o.Correcto
+                        }).ToList()
+                    }).ToList()
+                }).ToList(),
+                quiz = curso.Pregunta.Select(p=> new PreguntaDTO{
+                        IdPregunta = p.IdPregunta,
+                        Texto = p.TextoPregunta,
+                        opciones = p.Opciones.Select(o=> new OpcionDTO{
+                            correcta = o.Correcta ?? false,
+                            Texto = o.TextoOpcion,
+                            IdOpcion = o.IdOpcion
+                        }).ToList()
+                    }).ToList()
             };
             
         }
@@ -147,6 +171,33 @@ namespace MyApiProyect.Services
             return true;
 
 
+        }
+
+        public async Task<bool> EliminarCurso(int id_curso){
+            var curs = await _context.Cursos.Where(c=>c.IdCurso == id_curso).FirstOrDefaultAsync();
+            if(curs is null) return false;
+            _context.Cursos.Remove(curs);
+            try{
+                await _context.SaveChangesAsync();
+            }catch(Exception e){
+                Console.WriteLine(e);
+                return false;
+            }
+            return true;
+        }
+
+
+        public async Task<bool> EliminarLeccion(int id_leccion){
+            var lecc = await _context.Lecciones.Where(l=>l.IdLeccion == id_leccion ).FirstOrDefaultAsync();
+            if(lecc is null) return false;
+            _context.Lecciones.Remove(lecc);
+            try{
+                await _context.SaveChangesAsync();
+            }catch(Exception e){
+                Console.WriteLine(e);
+                return false;
+            }
+            return true;
         }
 
         public async Task<bool> VerificarLeccionProfesor(int IdLeccion, int IdInstructor ){

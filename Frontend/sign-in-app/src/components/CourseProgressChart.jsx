@@ -16,21 +16,21 @@ const SECONDARY_COLOR = '#0c1633';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const categoryIconMapping = {
-  'Mecánica': <BuildIcon />,
-  'Seguridad': <SecurityIcon />,
-  'Electrónica': <ElectricBoltIcon />,
-  'Atención al Cliente': <SupportAgentIcon />
+  0 : <BuildIcon />,
+  1 : <SecurityIcon />,
+  2 : <ElectricBoltIcon />,
+  3 : <SupportAgentIcon />
 };
 
 const CourseProgressChart = ({ course }) => {
   const chartHeight = course.length * 50 + 32;
 
   const data = {
-    labels: course.map(course => course.title),
+    labels: course.map(course => course?.tituloCurso),
     datasets: [
       {
         label: 'Progreso',
-        data: course.map(course => course.progress),
+        data: course.map(course => course?.porcentaje),
         backgroundColor: `${CUSTOM_COLOR}70`,
         barThickness: 30,
         borderRadius: 16,
@@ -78,7 +78,7 @@ const CourseProgressChart = ({ course }) => {
           const isEven = index % 2 === 0;
           return (
             <Box
-              key={course.id}
+              key={course?.idCurso}
               sx={{
                 display: 'flex',
                 alignItems: 'center',
@@ -90,8 +90,8 @@ const CourseProgressChart = ({ course }) => {
               }}
             >
               <Box sx={{ mr: 1, display: 'flex', alignItems: 'center' }}>
-                {course.category &&
-                  React.cloneElement(categoryIconMapping[course.category] || <></>, {
+                {course?.categoria &&
+                  React.cloneElement(categoryIconMapping[course?.categoria] || <></>, {
                     sx: { color: isEven ? '#fff' : SECONDARY_COLOR, fontSize: 'inherit' },
                   })}
               </Box>
@@ -105,7 +105,7 @@ const CourseProgressChart = ({ course }) => {
                   textOverflow: 'ellipsis',
                 }}
               >
-                {course.title}
+                {course.tituloCurso}
               </Typography>
             </Box>
           );

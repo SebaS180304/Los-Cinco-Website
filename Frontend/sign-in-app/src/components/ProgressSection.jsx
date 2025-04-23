@@ -9,7 +9,7 @@ const ProgressSection = ({ course, courseLessons, isMobile }) => {
 
     const toggleExpansion = () => setExpanded(prev => !prev);
     const totalLessons = courseLessons.length;
-    const completedLessons = courseLessons.filter(lecture => lecture.isCompleted === 1).length;
+    const completedLessons = courseLessons.filter(lecture => lecture.completada === true).length;
 
     return (
         <Accordion expanded={expanded} onChange={toggleExpansion} sx={{ bgcolor: '#373e52', borderRadius: '20px' }}>
@@ -34,12 +34,12 @@ const ProgressSection = ({ course, courseLessons, isMobile }) => {
                         }}
                     >
                         <Typography variant="body1" sx={{ fontWeight: 'bold', color: 'white' }}>
-                            {course.progress}%
+                            {course?.porcentaje || 0}%
                         </Typography>
                         <Box sx={{ flexGrow: 1 }}>
                             <LinearProgress
                                 variant="determinate"
-                                value={course.progress}
+                                value={course?.porcentaje || 0}
                                 sx={{
                                     height: '20px',
                                     borderRadius: '10px',
@@ -65,7 +65,12 @@ const ProgressSection = ({ course, courseLessons, isMobile }) => {
                 </Box>
             </AccordionSummary>
             <AccordionDetails sx={{ p: 2 }}>
-                <ProgressTables course={course} totalLessons={totalLessons} completedLessons={completedLessons} isMobile={isMobile} />
+                <ProgressTables 
+                    course={course} 
+                    totalLessons={totalLessons} 
+                    completedLessons={completedLessons} 
+                    isMobile={isMobile} 
+                />
             </AccordionDetails>
         </Accordion>
     );

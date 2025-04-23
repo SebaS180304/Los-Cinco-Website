@@ -3,16 +3,14 @@ import { Box, Typography, Card, CardContent, CardActionArea, LinearProgress, But
 import { Link, useNavigate } from 'react-router-dom';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
-
-{ /* Se necesita informacion del curso mas reciente para mostrar su nombre, categoria, progreso y descripcion. Para esto es necesario conseguir la 
-    informacion de cual fue la ultima leccion realizada por el usuario de la tabla lecciones_completadas y verificar de que curso pertenece esa 
-    leccion y mandar los datos de dicho curso. Tambien se necesita la informacion de la leccion actual, es decir, es necesario saber el id de la 
-    leccion mas reciente para poder mandar al usuario a donde lo dejo por ultima vez. */ }
+import categoryMapping from './constants/categoryMapping';
 
 const CUSTOM_COLOR = '#FFB300';
 
 const CourseCard = ({ course }) => {
     const navigate = useNavigate();
+    const currentLesson = course?.lecciones?.find(leccion => !leccion.completada);
+    const categoryName = categoryMapping[course?.categoria] || "Indefinida";
 
     return (
         <Card sx={{ maxWidth: '100%', borderRadius: '16px', border: '1px solid #000' }}>
@@ -20,11 +18,11 @@ const CourseCard = ({ course }) => {
                 <Stack spacing={2} divider={<Divider flexItem sx={{ border: '1px solid #000' }} />}>
                     <Box>
                         <Typography variant="body2" color="text.secondary" gutterBottom>
-                            Progreso: <strong>{course.progress}%</strong>
+                            Progreso: <strong>{course?.porcentaje || 0}%</strong>
                         </Typography>
                         <LinearProgress
                             variant="determinate"
-                            value={course.progress}
+                            value={course?.porcentaje || 0}
                             sx={{
                                 height: '20px',
                                 borderRadius: '10px',
@@ -36,18 +34,18 @@ const CourseCard = ({ course }) => {
                             }}
                         />
                     </Box>
-                    <CardActionArea onClick={() => navigate(`/enrolled/${course.id}`)}>
+                    <CardActionArea onClick={() => navigate(`/enrolled/${course?.idCurso}`)}>
                         <Box p={2}>
                             <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={3}>
                                 <Box flex={2}>
                                     <Typography color="text.secondary">
-                                        Categoría: {course.category}
+                                        Categoría: {categoryName}
                                     </Typography>
                                     <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
-                                        Título: {course.title}
+                                        Título: {course?.tituloCurso}
                                     </Typography>
                                     <Typography variant="body1" sx={{ mb: 2 }}>
-                                        Descripción: {course.description}
+                                        Lección Actual: {currentLesson ? currentLesson?.tituloLeccion : "Curso finalizado"}
                                     </Typography>
                                 </Box>
                                 <Box
@@ -62,7 +60,7 @@ const CourseCard = ({ course }) => {
                     <Box>
                         <Button
                             component={Link}
-                            to="/lesson"
+                            to={`/lesson/${currentLesson?.idLeccion}`}
                             variant="contained"
                             fullWidth
                             endIcon={<ArrowForwardIcon />}

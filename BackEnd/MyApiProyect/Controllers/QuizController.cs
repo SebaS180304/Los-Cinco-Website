@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using MyApiProyect.Services;
 using MyApiProyect.DTO;
+using System.Security.Claims;
 
 namespace MyApiProyect.Controllers
 {
@@ -12,16 +13,29 @@ namespace MyApiProyect.Controllers
     [Route("[controller]")]
     public class QuizController : ControllerBase
     {
-        private IQuizService quizService;
-        public QuizController(IQuizService _quizService) => quizService = _quizService;
+        private IQuestionService quizService;
+        public QuizController(IQuestionService _quizService) => quizService = _quizService;
 
         [HttpGet]
-        public async Task<ActionResult<List<PreguntaQuiz>>> GetQuizzes(int id_curso, int id_alumno)
+        public async Task<ActionResult<List<PreguntaDTO>>> GetQuizzes(int id_curso, int id_alumno)
         {
-            Console.WriteLine($"id_curso: {id_curso} id_alumno: {id_alumno}");
-            var quizzes = await quizService.GetQuizPreguntas(id_curso, id_alumno);
+            var quizzes = await quizService.GetQuizPreguntas(id_curso);
             if (quizzes is null) return NotFound();
             return Ok(quizzes);
+        }
+
+        [HttpPost]
+        [Route("Leccion")]
+        public async Task<IActionResult> ModificarPreguntasLeccion([FromBody] List<PreguntaDTO> preguntas, int id_leccion){
+            var id = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (id is null)
+                return Unauthorized();
+            var response = await quizService.ModificarLeccionQuiz(preguntas, id_leccion);
+            if(response){
+                return NoContent();
+            }else{
+                return StatusCode(500);
+            }
         }
 
     }

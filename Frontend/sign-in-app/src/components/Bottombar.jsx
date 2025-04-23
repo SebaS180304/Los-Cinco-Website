@@ -1,17 +1,38 @@
-import { AppBar, Box, Toolbar, Typography, Button, Container } from '@mui/material';
+import { AppBar, Box, Toolbar, Typography, Button } from '@mui/material';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { lecture_data } from './constants';
 
-function Bottombar({ currentLecture, setCurrentLecture }) {
+function Bottombar({ mode, currentLectureIndex, setCurrentLectureIndex, quizCompleted }) {
+    const navigate = useNavigate();
+
     const handleNext = () => {
-        if (currentLecture < lecture_data.length - 1) {
-            setCurrentLecture(currentLecture + 1);
+        if (mode === 'quiz') {
+            // En quiz: habilitado solo cuando el quiz esté completado.
+            if (quizCompleted && currentLectureIndex < lecture_data.length - 1) {
+                const nextId = lecture_data[currentLectureIndex + 1].id;
+                setCurrentLectureIndex(currentLectureIndex + 1);
+                navigate(`/lesson/${nextId}`);
+            }
+        } else if (mode === 'lesson') {
+            // En lesson: redirige al quiz de la lección actual.
+            const currentId = lecture_data[currentLectureIndex].id;
+            navigate(`/quiz/${currentId}`);
         }
     };
 
     const handleBack = () => {
-        if (currentLecture > 0) {
-            setCurrentLecture(currentLecture - 1);
+        if (mode === 'quiz') {
+            // En quiz: regresar a la vista lesson de la lección actual.
+            const currentId = lecture_data[currentLectureIndex].id;
+            navigate(`/lesson/${currentId}`);
+        } else if (mode === 'lesson') {
+            // En lesson: si existe, redirige al quiz de la lección anterior.
+            if (currentLectureIndex > 0) {
+                const prevId = lecture_data[currentLectureIndex - 1].id;
+                setCurrentLectureIndex(currentLectureIndex - 1);
+                navigate(`/quiz/${prevId}`);
+            }
         }
     };
 
@@ -20,14 +41,14 @@ function Bottombar({ currentLecture, setCurrentLecture }) {
             <Toolbar>
                 <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: "center" }}>
-                        {currentLecture + 1}/{lecture_data.length} lecciones
+                        {currentLectureIndex + 1}/{lecture_data.length} lecciones
                     </Typography>
                     <Box sx={{ display: 'flex', gap: 2}}>
                         <Button 
                             sx={{ color: '#FFB300', border: '2px solid #FFB300' }}
                             variant="outlined" 
                             onClick={handleBack}
-                            disabled={currentLecture === 0}
+                            disabled={mode === 'lesson' && currentLectureIndex === 0}
                         >
                             Atrás
                         </Button>
@@ -35,7 +56,7 @@ function Bottombar({ currentLecture, setCurrentLecture }) {
                             sx={{ backgroundColor: '#FFB300'}} 
                             variant="contained"
                             onClick={handleNext}
-                            disabled={currentLecture === lecture_data.length - 1}
+                            disabled={mode === 'quiz' && (!quizCompleted || currentLectureIndex === lecture_data.length - 1)}
                         >
                             Siguiente
                         </Button>

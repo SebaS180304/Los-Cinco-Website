@@ -6,7 +6,7 @@ import QuizProgressChart from './QuizProgressChart';
 
 const CUSTOM_COLOR = '#FFB300';
 
-const ProgressCharts = ({ course }) => {
+const ProgressCharts = ({ course, weekProgress }) => {
   const [select, setSelect] = useState('semanal');
 
   const handleChange = (event) => {
@@ -19,7 +19,7 @@ const ProgressCharts = ({ course }) => {
   } else if (select === 'evaluaciones') {
     chartComponent = <QuizProgressChart course={course} />;
   } else {
-    chartComponent = <WeekProgressChart />;
+    chartComponent = <WeekProgressChart weekProgress={weekProgress} />;
   }
 
   return (

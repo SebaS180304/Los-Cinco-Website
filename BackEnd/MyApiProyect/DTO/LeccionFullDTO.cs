@@ -12,6 +12,7 @@ namespace MyApiProyect.DTO
         public string Contenido { get; set; } = null!;
         public int tipo { get; set; } = 0;
         public string? Url { get; set; } = null!;
+        public List<PreguntaDTO> preguntas {get;set;}= new List<PreguntaDTO>();
         
     }
     

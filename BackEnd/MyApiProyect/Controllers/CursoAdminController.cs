@@ -69,6 +69,43 @@ namespace MyApiProyect.Controllers
             return Ok(new { IdLeccion });
         }
 
+        [HttpDelete]
+        [Route("Eliminar")]
+        public async Task<ActionResult> EliminarCurso(int id_curso){
+            var id = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (id is null )
+                return Unauthorized();
+            Console.WriteLine(int.Parse(id));
+            var contains = await _cursosService.VerificarCursodeProfesor(id_curso, int.Parse(id));
+            Console.WriteLine(int.Parse(id));
+            if(!contains)
+                return StatusCode(409);
+            Console.WriteLine(int.Parse(id));
+            bool good = await _cursosService.EliminarCurso(id_curso);
+            if(good){
+                return NoContent();
+            }else {
+                return StatusCode(500);
+            }
+        }
+
+        [HttpDelete]
+        [Route("Lecciones/Eliminar")]
+        public async Task<ActionResult> EliminarLeccion(int id_leccion){
+            var id = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (id is null )
+                return Unauthorized();
+            var contains = await _cursosService.VerificarLeccionProfesor(id_leccion, int.Parse(id));
+            if(!contains)
+                return StatusCode(409);
+            bool good = await _cursosService.EliminarLeccion(id_leccion);
+            if(good){
+                return NoContent();
+            }else {
+                return StatusCode(500);
+            }
+        }
+
         [HttpPatch]
         [Route("Edit")]
         public async Task<ActionResult> EditarCurso ([FromBody] CursoFullDTO curso){
@@ -117,7 +154,6 @@ namespace MyApiProyect.Controllers
             }
             return Ok(new {result});
         }
-
 
     }
 }

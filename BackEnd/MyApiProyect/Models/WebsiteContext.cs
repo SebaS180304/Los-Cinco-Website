@@ -40,7 +40,6 @@ public partial class WebsiteContext : DbContext
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -190,6 +189,7 @@ public partial class WebsiteContext : DbContext
             entity.HasIndex(e => e.IdPreguntaLeccion, "id_pregunta_leccion");
 
             entity.Property(e => e.IdOpcionLeccion).HasColumnName("id_opcion_leccion");
+            entity.Property(e => e.Correcto).HasColumnName("correcto");
             entity.Property(e => e.IdPreguntaLeccion).HasColumnName("id_pregunta_leccion");
             entity.Property(e => e.TextoOpcion)
                 .HasMaxLength(100)

@@ -21,13 +21,13 @@ const ProgressTables = ({ course, totalLessons, completedLessons, isMobile }) =>
                     <TableRow>
                         <TableCell sx={{ color: 'white' }}>Examen Final</TableCell>
                         <TableCell sx={{ color: 'white', textAlign: 'right' }}>
-                            Intentos: {course.try}/{course.quizTries}
+                            Intentos: {course?.intentos || 0}/{course?.intentosMax || 0}
                         </TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell sx={{ color: 'white' }}>Calificación Examen</TableCell>
                         <TableCell sx={{ color: 'white', textAlign: 'right' }}>
-                            {course.grade}%
+                            {course?.calificacionExamen || 0}%
                         </TableCell>
                     </TableRow>
                 </TableBody>
@@ -50,10 +50,10 @@ const ProgressTables = ({ course, totalLessons, completedLessons, isMobile }) =>
                         {completedLessons}/{totalLessons}
                     </TableCell>
                     <TableCell sx={{ color: 'white' }}>
-                        Intentos: {course.try}/{course.quizTries}
+                        Intentos: {course.intentos}/{course.intentosMax}
                     </TableCell>
                     <TableCell sx={{ color: 'white' }}>
-                        {course.grade}%
+                        {course.calificacionExamen}%
                     </TableCell>
                 </TableRow>
             </TableBody>

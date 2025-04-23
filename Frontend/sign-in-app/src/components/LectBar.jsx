@@ -9,7 +9,7 @@ import Drawcontent from './DrawContent';
 
 const settings = ['Cerrar Sesión'];
 
-function Lectbar({ selectedView, setSelectedView, disableMedia }) {
+function Lectbar({ selectedView, setSelectedView, disableMedia, mode = 'lesson' }) {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const navigate = useNavigate();
@@ -44,31 +44,34 @@ function Lectbar({ selectedView, setSelectedView, disableMedia }) {
                             <img src={logoA} alt='Whirlpool logo' style={{ height: '40px' }} />
                         </Link>
                     </Box>
-                    <ButtonGroup>
-                        <Button 
-                            onClick={() => setSelectedView('model')}
-                            variant={selectedView === 'model' ? 'contained' : 'outlined'}
-                            disabled={disableMedia}
-                            sx={{
-                                color: selectedView === 'model' ? 'black' : '#FFB300',
-                                backgroundColor: selectedView === 'model' ? '#FFB300' : 'transparent',
-                                border: '2px solid #FFB300'
-                            }}
-                        >
-                            Media
-                        </Button>
-                        <Button 
-                            onClick={() => setSelectedView('content')}
-                            variant={selectedView === 'content' ? 'contained' : 'outlined'}
-                            sx={{
-                                color: selectedView === 'content' ? 'black' : '#FFB300',
-                                backgroundColor: selectedView === 'content' ? '#FFB300' : 'transparent',
-                                border: '2px solid #FFB300'
-                            }}
-                        >
-                            Contenido
-                        </Button>
-                    </ButtonGroup>
+                    {/* Si es modo lesson se renderiza el ButtonGroup; en modo quiz se omite en móviles */}
+                    {mode === 'lesson' && (
+                        <ButtonGroup>
+                            <Button 
+                                onClick={() => setSelectedView('model')}
+                                variant={selectedView === 'model' ? 'contained' : 'outlined'}
+                                disabled={disableMedia}
+                                sx={{
+                                    color: selectedView === 'model' ? 'black' : '#FFB300',
+                                    backgroundColor: selectedView === 'model' ? '#FFB300' : 'transparent',
+                                    border: '2px solid #FFB300'
+                                }}
+                            >
+                                Media
+                            </Button>
+                            <Button 
+                                onClick={() => setSelectedView('content')}
+                                variant={selectedView === 'content' ? 'contained' : 'outlined'}
+                                sx={{
+                                    color: selectedView === 'content' ? 'black' : '#FFB300',
+                                    backgroundColor: selectedView === 'content' ? '#FFB300' : 'transparent',
+                                    border: '2px solid #FFB300'
+                                }}
+                            >
+                                Contenido
+                            </Button>
+                        </ButtonGroup>
+                    )}
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <IconButton onClick={toggleDrawer(true)}>
                             <LibraryBooksIcon sx={{ color: '#FFB300', fontSize: 40 }} />
@@ -95,6 +98,7 @@ function Lectbar({ selectedView, setSelectedView, disableMedia }) {
                     </Box>
                 </Toolbar>
             ) : (
+                // Versión escritorio permanece sin cambios
                 <Toolbar>
                     <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
                         <Link to='/learn'>
@@ -130,9 +134,9 @@ function Lectbar({ selectedView, setSelectedView, disableMedia }) {
                     </Box>
                 </Toolbar>
             )}
-            <Menu sx={{mt: '45px'}} id="user-menu" anchorEl={anchorElUser}
-                anchorOrigin={{vertical: 'top', horizontal: 'right'}} keepMounted
-                transformOrigin={{vertical: 'top', horizontal: 'right'}}
+            <Menu sx={{ mt: '45px' }} id="user-menu" anchorEl={anchorElUser}
+                anchorOrigin={{ vertical: 'top', horizontal: 'right' }} keepMounted
+                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                 open={Boolean(anchorElUser)} onClose={handleCloseUserMenu}>
                 {settings.map((setting) => (
                     <MenuItem key={setting} onClick={handleLogout}>

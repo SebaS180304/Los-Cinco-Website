@@ -52,6 +52,7 @@ namespace MyApiProyect.Services
             }).ToList();
             foreach(var curs in result){
                 curs.Porcentaje = (int)((float)curs.lecciones.Where(l=>l.completada).Count() /curs.lecciones.Count() * 80);
+                curs.Porcentaje = curs.lecciones.Count() > 0 ? curs.Porcentaje : 0;
                 curs.Porcentaje += curs.CalificacionExamen > 80 ? 20: 0;
             }
             return result;
@@ -81,6 +82,7 @@ namespace MyApiProyect.Services
                 }).ToList()
             };
             cursoDTO.Porcentaje = (int)((float)cursoDTO.lecciones.Where(l=>l.completada).Count() /cursoDTO.lecciones.Count() * 80);
+            cursoDTO.Porcentaje = cursoDTO.lecciones.Count() > 0 ? cursoDTO.Porcentaje : 0;
             cursoDTO.Porcentaje += cursoDTO.CalificacionExamen > 80 ? 20: 0;
             return cursoDTO;
         }
@@ -128,6 +130,28 @@ namespace MyApiProyect.Services
             return new EstadisticasSemana {estadisticas = Estadisticas};
                                     
                                 
+        }
+
+
+        public async Task<LeccionInscripcionDTO?> GetLeccion(int id_leccion, int id_estudiante){
+            var leccionI = await _context.Lecciones.Where(l=>l.IdLeccion == id_leccion).
+                                        Include(l=>l.LeccionCompletada).
+                                        FirstOrDefaultAsync();
+            if(leccionI is null)
+                return null;
+                                       
+            var LeccionF = new LeccionInscripcionDTO{
+                                            IdLeccion = id_leccion,
+                                            TituloLeccion = leccionI.TituloLeccion,
+                                            Contenido = leccionI.Contenido,
+                                            tipo = leccionI.TipoMedia,
+                                            Url = leccionI.UrlMedia,
+                                            completada = leccionI.LeccionCompletada.Where(r=>r.IdUsuario == id_estudiante).
+                                                                            Select(r=> r.Valida).
+                                                                            FirstOrDefault() ?? false
+                                            
+                                        };
+            return LeccionF;
         }
     }
 }

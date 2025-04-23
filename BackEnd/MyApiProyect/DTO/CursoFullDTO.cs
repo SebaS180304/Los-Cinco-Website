@@ -12,6 +12,7 @@ namespace MyApiProyect.DTO
         public string DescripcionCurso { get; set; } = null!;
         public int? Categoria { get; set; } = 0;
         public int IntentosMax {get; set;}= 0;
+        public List<PreguntaDTO> quiz {get; set;} =  new List<PreguntaDTO>();
         public List<LeccionFullDTO> Lecciones { get; set; } = new List<LeccionFullDTO>();
    
     }
