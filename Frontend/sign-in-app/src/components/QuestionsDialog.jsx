@@ -1,22 +1,9 @@
 import React from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  TextField,
-  Box,
-  Button,
-  FormControlLabel,
-  Checkbox,
-  IconButton,
-  Typography,
-} from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, Accordion, AccordionSummary, AccordionDetails, TextField, Box, Button, FormControlLabel, Checkbox, IconButton, Typography, Tooltip, } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
+import CheckMark from '@mui/icons-material/Check';
 
 const QuestionsDialog = ({
   open,
@@ -32,22 +19,56 @@ const QuestionsDialog = ({
 }) => {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <DialogTitle>Preguntas de Evaluación</DialogTitle>
-      <DialogContent>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mr: 3, pb: 0 }}>
+        <DialogTitle>Preguntas de Lección</DialogTitle>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={onAddQuestion}
+            startIcon={<AddIcon />}
+            disabled={lecture?.questions?.length >= 10} // Limitar a 10 preguntas
+          >
+            Agregar Pregunta
+          </Button>
+        </Box>
+      <DialogContent
+        sx={{
+          minHeight: '400px', // Altura mínima
+          maxHeight: '500px', // Altura máxima
+          overflowY: 'auto',  // Habilitar scroll si el contenido excede el tamaño máximo
+        }}
+      >
         {lecture?.questions?.map((question, index) => (
-          <Accordion key={index}>
+          <Accordion key={index}  defaultExpanded={index === 0}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="h6">{question.texto || "Nueva Pregunta"}</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
               <TextField
                 label="Pregunta"
                 variant="outlined"
                 fullWidth
-                value={question.pregunta}
-                onChange={(e) => onQuestionChange(index, 'pregunta', e.target.value)}
+                value={question.texto}
+                onChange={(e) => onQuestionChange(index, 'texto', e.target.value)}
+                sx={{ mb: 2 }}
               />
-            </AccordionSummary>
-            <AccordionDetails>
               {question.opciones.map((opcion, i) => (
                 <Box key={i} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <FormControlLabel
+                    control={
+                      <Tooltip title="Opción Correcta">
+                        <Checkbox
+                          checked={opcion.correcta}
+                          onChange={() => onCorrectOptionChange(index, i)}
+                          sx={{
+                            '&.Mui-checked': {
+                              color: '#FFB300',
+                            },
+                          }}
+                        />
+                      </Tooltip>
+                    }
+                  />
                   <TextField
                     label={`Opción ${i + 1}`}
                     variant="outlined"
@@ -55,15 +76,6 @@ const QuestionsDialog = ({
                     value={opcion.texto}
                     onChange={(e) => onOptionChange(index, i, 'texto', e.target.value)}
                     sx={{ mr: 2 }}
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={opcion.correcta}
-                        onChange={() => onCorrectOptionChange(index, i)}
-                      />
-                    }
-                    label="Correcta"
                   />
                   <IconButton
                     color="error"
@@ -78,6 +90,8 @@ const QuestionsDialog = ({
                   variant="outlined"
                   color="primary"
                   onClick={() => onAddOption(index)}
+                  disabled={question.opciones.length >= 4} // Limitar a 4 opciones
+                  startIcon={<AddIcon />}
                 >
                   Agregar Opción
                 </Button>
@@ -85,24 +99,28 @@ const QuestionsDialog = ({
             </AccordionDetails>
           </Accordion>
         ))}
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2, gap: 2 }}>
+      </DialogContent>
+        <Box sx={{ display: 'flex', alignItems: 'end', justifyContent: 'end', mb: 2, gap: 2, mr: 2 }}>
           <Button
             variant="contained"
             color="primary"
-            onClick={onAddQuestion}
-            startIcon={<AddIcon />}
+            onClick={onClose}
+            startIcon={<CloseIcon />}
           >
-            Agregar Pregunta
+            Cancelar
           </Button>
           <Button
             variant="contained"
-            color="primary"
             onClick={onSaveQuestions}
+            startIcon={<CheckMark />}
+            sx={{
+              backgroundColor: '#FFB300',
+              color: '#ffffff',
+            }}
           >
             Guardar
           </Button>
         </Box>
-      </DialogContent>
     </Dialog>
   );
 };

@@ -8,6 +8,7 @@ import mechanical from '../assets/images/mechanical-course.jpg';
 import electronics from '../assets/images/electrical-course.jpg';
 import security from '../assets/images/security-course.jpg';
 import courseBg from '../assets/images/courseBg.png';
+import categoryMapping from './constants/categoryMapping';
 
 const CUSTOM_COLOR = '#FFB300';
 
@@ -21,16 +22,17 @@ const courseBackground = [
 const AdminCourseCard = ({ course, isAddCard, onAddCurso }) => {
     const navigate = useNavigate();
     const [newCurso, setNewCurso] = useState('');
+    const categoryName = categoryMapping[course?.category] || "Indefinida";
 
     const handleAddCurso = async () => {
         try {
             const response = await axios.post(
                 '/CursoAdmin/Nuevo',
-                { TituloCurso: newCurso, DescripcionCurso: '', Categoria: 1 },
+                { TituloCurso: newCurso, DescripcionCurso: '', Categoria: 4 },
                 { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
             );
             const newCursoId = response.data.idCurso;
-            onAddCurso({ idCurso: newCursoId, tituloCurso: newCurso, progress: 0, categoria: 1 });
+            onAddCurso({ idCurso: newCursoId, tituloCurso: newCurso, progress: 0, categoria: 4 });
             setNewCurso('');
             navigate(`/courses/${newCursoId}`);
         } catch (error) {
@@ -69,7 +71,7 @@ const AdminCourseCard = ({ course, isAddCard, onAddCurso }) => {
         );
     }
 
-    const bgImage = courseBackground.find(item => item.text === course.category)?.src || courseBg;
+    const bgImage = courseBackground.find(item => item.text === categoryName)?.src || courseBg;
 
     return (
         <Card
@@ -103,7 +105,7 @@ const AdminCourseCard = ({ course, isAddCard, onAddCurso }) => {
             <CardContent sx={{ p: 1.5 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <Typography variant="body2" color="text.secondary" sx={{ mr: 0 }}>
-                        Categoría: <strong>{course.category}</strong>
+                        Categoría: <strong>{categoryName}</strong>
                     </Typography>
                 </Box>
             </CardContent>
