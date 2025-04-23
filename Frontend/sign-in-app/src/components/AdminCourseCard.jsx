@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Card, Grid, CardActionArea, CardContent, CardMedia, Divider, LinearProgress, Typography, Button, TextField } from '@mui/material';
+import { Box, Card, CardActionArea, CardContent, CardMedia, Divider, Typography, } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from '../api/axios';
 import AddIcon from '@mui/icons-material/Add';
@@ -93,8 +93,8 @@ const AdminCourseCard = ({ course, isAddCard, onAddCurso }) => {
                         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
                             {course.title || 'Curso Indefinido'}
                         </Typography>
-                        <Typography color="text.secondary">
-                            {course.category || 'Indefinido'}
+                        <Typography color="text.secondary" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {course.description || 'Sin descripción'}
                         </Typography>
                     </Box>
                 </CardContent>
@@ -102,23 +102,9 @@ const AdminCourseCard = ({ course, isAddCard, onAddCurso }) => {
             <Divider sx={{ backgroundColor: 'black' }} />
             <CardContent sx={{ p: 1.5 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Typography variant="body2" color="text.secondary" sx={{ mr: 2 }}>
-                        Progreso: <strong>{course.progress}%</strong>
+                    <Typography variant="body2" color="text.secondary" sx={{ mr: 0 }}>
+                        Categoría: <strong>{course.category}</strong>
                     </Typography>
-                    <LinearProgress 
-                        variant="determinate" 
-                        value={course.progress} 
-                        sx={{
-                            width: '50%',
-                            height: '10px',
-                            borderRadius: '10px',
-                            backgroundColor: `${CUSTOM_COLOR}40`,
-                            '& .MuiLinearProgress-bar': {
-                                borderRadius: '10px',
-                                backgroundColor: CUSTOM_COLOR
-                            }
-                        }} 
-                    />
                 </Box>
             </CardContent>
         </Card>

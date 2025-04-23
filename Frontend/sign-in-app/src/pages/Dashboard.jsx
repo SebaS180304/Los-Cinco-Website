@@ -38,7 +38,7 @@ const Dashboard = () => {
           </Link>
         </Breadcrumbs>
         <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', mb: 3 }}>
-          Vista de Administrador
+          Panel de Cursos
         </Typography>
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
           {Array.isArray(cursos) &&
@@ -47,7 +47,7 @@ const Dashboard = () => {
               course={{
                   id: curso.idCurso,
                   title: curso.tituloCurso,
-                  progress: curso.progress || 0,
+                  description: curso.descripcionCurso || 0,
                   category: curso.categoria || 'Indefinido',
                 }}
                 key={curso.idCurso}

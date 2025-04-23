@@ -4,6 +4,7 @@ import axios from '../api/axios';
 import { Box, Divider, List, ListItem, ListItemIcon, Stack, Typography, Button, useTheme, useMediaQuery, Accordion, AccordionSummary, AccordionDetails, CircularProgress, Dialog, DialogContent, DialogTitle, TextField, Breadcrumbs, IconButton, FormControlLabel, Checkbox, MenuItem } from '@mui/material';
 import { Link as LinkComp} from '@mui/material';
 import Navbar from '../components/NavbarAdmin';
+import QuestionsDialog from '../components/QuestionsDialog';
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
@@ -12,7 +13,6 @@ import DownloadIcon from '@mui/icons-material/Download';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
-import ProgressSection from '../components/ProgressSection';
 import CheckMark from '@mui/icons-material/Check';
 
 const CUSTOM_COLOR = '#FFB300';
@@ -83,6 +83,7 @@ const CourseDetailsList = ({ courseLessons, course, handleSaveChanges, editableC
         <Box sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center', gap: 2 }}>
           <Button
             variant="contained"
+            startIcon={<CloseIcon />}
             color="primary"
             onClick={handleCancel}
             sx={{
@@ -100,7 +101,6 @@ const CourseDetailsList = ({ courseLessons, course, handleSaveChanges, editableC
             sx={{
               mb: '1rem',
               transition: 'opacity 0.3s ease, transform 0.3s ease',
-              // '&:hover': { transform: 'scale(1.05)' }, // Efecto de hover
               backgroundColor: CUSTOM_COLOR,
               color: '#ffffff',
               '&:hover': {
@@ -316,7 +316,7 @@ function LessonAccordion({ lecture, panel, expanded, handleChange, handleOpenEdi
 
 function Courses() {
     const { courseId } = useParams();
-    const [cursos, setCursos] = useState([]);
+    // const [cursos, setCursos] = useState([]);
     const [course, setCourse] = useState(null);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -387,17 +387,66 @@ function Courses() {
         setCurrentLecture(null);
     };
 
-    const handleSaveQuestions = (updatedQuestions) => {
-        const updatedCursos = { ...cursos };
-        const lectureIndex = updatedCursos[courseId].lecciones.findIndex(
-            (l) => l.title === currentLecture.title
-        );
-        if (lectureIndex !== -1) {
-            updatedCursos[courseId].lecciones[lectureIndex].questions = updatedQuestions;
-            setCursos(updatedCursos);
-        }
-        handleCloseQuestions();
+    // Nuevas funciones de preguntas
+
+    const handleQuestionChange = (questionIndex, field, value) => {
+      const updatedQuestions = [...currentLecture.questions];
+      updatedQuestions[questionIndex][field] = value;
+      setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
     };
+    
+    const handleOptionChange = (questionIndex, optionIndex, field, value) => {
+      const updatedQuestions = [...currentLecture.questions];
+      updatedQuestions[questionIndex].opciones[optionIndex][field] = value;
+      setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
+    };
+    
+    const handleCorrectOptionChange = (questionIndex, optionIndex) => {
+      const updatedQuestions = [...currentLecture.questions];
+      updatedQuestions[questionIndex].opciones = updatedQuestions[questionIndex].opciones.map((opcion, i) => ({
+        ...opcion,
+        correcta: i === optionIndex,
+      }));
+      setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
+    };
+    
+    const handleAddOption = (questionIndex) => {
+      const updatedQuestions = [...currentLecture.questions];
+      if (updatedQuestions[questionIndex].opciones.length < 4) {
+        updatedQuestions[questionIndex].opciones.push({ texto: '', correcta: false });
+        setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
+      }
+    };
+    
+    const handleRemoveOption = (questionIndex, optionIndex) => {
+      const updatedQuestions = [...currentLecture.questions];
+      updatedQuestions[questionIndex].opciones = updatedQuestions[questionIndex].opciones.filter((_, i) => i !== optionIndex);
+      setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
+    };
+    
+    const handleAddQuestion = () => {
+      const updatedQuestions = [...(currentLecture?.questions || [])];
+      updatedQuestions.push({
+        pregunta: '',
+        opciones: [
+          { texto: '', correcta: false },
+          { texto: '', correcta: false },
+        ],
+      });
+      setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
+    };
+    
+    const handleSaveQuestions = () => {
+      const updatedLessons = editableLessons.map((lesson) =>
+        lesson.IdLeccion === currentLecture.IdLeccion
+          ? { ...lesson, questions: currentLecture.questions }
+          : lesson
+      );
+      setEditableLessons(updatedLessons);
+      handleCloseQuestions();
+    };
+
+    // ---
 
     const handleLessonChange = (panel) => (event, isExpanded) => {
         setLessonExpanded(isExpanded ? panel : false);
@@ -793,11 +842,14 @@ function Courses() {
                 variant="outlined"
                 fullWidth
                 multiline
-                rows={4}
+                rows={7}
                 value={editingContent}
                 onChange={(e) => setEditingContent(e.target.value)}
               />
-              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2, gap: 2 }}>
+                <Button variant="outlined" color="primary" onClick={handleCloseEdit}>
+                  Cancelar
+                </Button>
                 <Button variant="contained" color="primary" onClick={handleSaveEdit}>
                   Guardar
                 </Button>
@@ -806,106 +858,18 @@ function Courses() {
           </Dialog>
 
           {/* Pop-up para agregar/editar preguntas */}
-          <Dialog open={openQuestions} onClose={handleCloseQuestions} maxWidth="md" fullWidth>
-            <DialogTitle>Preguntas de Evaluación</DialogTitle>
-            <DialogContent>
-              {/* Acordeón para mostrar y editar preguntas */}
-              {currentLecture?.questions?.map((question, index) => (
-                <Accordion key={index}>
-                  <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <TextField
-                      label="Pregunta"
-                      variant="outlined"
-                      fullWidth
-                      value={question.pregunta}
-                      onChange={(e) => {
-                        const updatedQuestions = [...currentLecture.questions];
-                        updatedQuestions[index].pregunta = e.target.value;
-                        setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
-                      }}
-                    />
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    {question.opciones.map((opcion, i) => (
-                      <Box key={i} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                        <FormControlLabel
-                          control={
-                            <Checkbox
-                              checked={opcion.correcta}
-                              onChange={() => {
-                                const updatedQuestions = [...currentLecture.questions];
-                                updatedQuestions[index].opciones = updatedQuestions[index].opciones.map((opt, optIndex) => ({
-                                  ...opt,
-                                  correcta: optIndex === i,
-                                }));
-                                setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
-                              }}
-                            />
-                          }
-                          label=""
-                        />
-                        <TextField
-                          label={`Opción ${i + 1}`}
-                          variant="outlined"
-                          fullWidth
-                          value={opcion.texto}
-                          onChange={(e) => {
-                            const updatedQuestions = [...currentLecture.questions];
-                            updatedQuestions[index].opciones[i].texto = e.target.value;
-                            setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
-                          }}
-                          sx={{ mr: 2 }}
-                        />
-                        <IconButton
-                          color="error"
-                          onClick={() => {
-                            const updatedQuestions = [...currentLecture.questions];
-                            updatedQuestions[index].opciones = updatedQuestions[index].opciones.filter((_, optIndex) => optIndex !== i);
-                            setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
-                          }}
-                        >
-                          <CloseIcon />
-                        </IconButton>
-                      </Box>
-                    ))}
-                    {/* Botón para agregar una nueva opción */}
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        onClick={() => {
-                          const updatedQuestions = [...currentLecture.questions];
-                          updatedQuestions[index].opciones.push({ texto: '', correcta: false });
-                          setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
-                        }}
-                      >
-                        Agregar Opción
-                      </Button>
-                    </Box>
-                  </AccordionDetails>
-                </Accordion>
-              ))}
-
-              {/* Botón para guardar todas las preguntas */}
-              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<AddIcon />}
-                    onClick={() => {
-                      const updatedQuestions = currentLecture?.questions || [];
-                      updatedQuestions.push({ pregunta: '', opciones: [{ texto: '', correcta: false }, { texto: '', correcta: false }] });
-                      setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
-                    }}
-                  >
-                    Agregar Pregunta
-                </Button>
-                <Button variant="contained" color="primary" onClick={() => handleSaveQuestions(currentLecture.questions)}>
-                  Guardar
-                </Button>
-              </Box>
-            </DialogContent>
-          </Dialog>
+          <QuestionsDialog
+            open={openQuestions}
+            onClose={handleCloseQuestions}
+            lecture={currentLecture}
+            onQuestionChange={handleQuestionChange}
+            onOptionChange={handleOptionChange}
+            onCorrectOptionChange={handleCorrectOptionChange}
+            onAddOption={handleAddOption}
+            onRemoveOption={handleRemoveOption}
+            onAddQuestion={handleAddQuestion}
+            onSaveQuestions={handleSaveQuestions}
+          />
         </Box>
       </Box>
     );

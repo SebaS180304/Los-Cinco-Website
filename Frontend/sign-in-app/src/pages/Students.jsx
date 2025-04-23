@@ -129,7 +129,7 @@ const Students = () => {
         </Box>
         <Box sx={{ width: '100%', border: '2px solid black', borderRadius: 2, mt: 2, p: 0 }}>
           <Typography variant="h6" sx={{ p: 2 }}>
-            Lista de Alumnos
+            Alumnos Inscritos
           </Typography>
           <Divider sx={{ mx: 2 }} />
           <Box sx={{ height: 350, overflow: 'auto', px: 2, pt: 0, pb: 4 }}>
