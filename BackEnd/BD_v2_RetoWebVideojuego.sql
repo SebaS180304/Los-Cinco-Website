@@ -17,6 +17,7 @@ create table Cursos (
     descripcion varchar(600) default "null",
     id_instructor int not null,
     intentos_max int not null,
+    visible bool default false not null,
     primary key(id_curso),
     foreign key(id_instructor) references Usuarios(id_usuario)
 );
@@ -116,6 +117,7 @@ create table Opciones (
     foreign key(id_pregunta) references Preguntas(id_pregunta)
 );
 #----------------------------------------------Update-----------------------------#
+##cuando se registra una completada
 delimiter //
 create Trigger UpdateLeccionCompletada before update on LeccionCompletada
 for each row 

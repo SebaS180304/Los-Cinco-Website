@@ -38,5 +38,16 @@ namespace MyApiProyect.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("Leccion")]
+        public async Task<ActionResult<List<PreguntaDTO>>> getPreguntasLeccion(int id_leccion){
+             var id = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (id is null)
+                return Unauthorized();
+            var response = await quizService.GetLeccionPreguntas( id_leccion);
+            return response;
+
+        }
+
     }
 }
