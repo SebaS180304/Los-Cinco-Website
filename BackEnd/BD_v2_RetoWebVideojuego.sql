@@ -212,6 +212,7 @@ delimiter $$
 create trigger deletePreguntasLecciones before delete on Lecciones
 for each row 
 begin
+	delete from LeccionCompletada where (id_leccion = old.id_leccion);
 	delete from PreguntaLeccion where (id_leccion = old.id_leccion);
 end
 delimiter $$
