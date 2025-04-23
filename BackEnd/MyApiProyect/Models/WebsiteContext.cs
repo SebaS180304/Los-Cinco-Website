@@ -65,6 +65,7 @@ public partial class WebsiteContext : DbContext
             entity.Property(e => e.TituloCurso)
                 .HasMaxLength(100)
                 .HasColumnName("titulo_curso");
+            entity.Property(e => e.Visible).HasColumnName("visible");
 
             entity.HasOne(d => d.IdInstructorNavigation).WithMany(p => p.Cursos)
                 .HasForeignKey(d => d.IdInstructor)

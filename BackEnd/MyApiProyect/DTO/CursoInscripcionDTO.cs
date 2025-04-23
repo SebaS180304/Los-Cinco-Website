@@ -16,6 +16,7 @@ namespace MyApiProyect.DTO
         public int Intentos {get; set;} = 0;
         public int CalificacionExamen {get; set;} = 0;
         public int Porcentaje {get; set;} = 0;
+        public bool Visible {get; set;} = false;
         public List<LeccionInscripcionDTO> lecciones {get; set;} = new List<LeccionInscripcionDTO>();
 
 

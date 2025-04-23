@@ -38,6 +38,7 @@ namespace MyApiProyect.Services
                 DescripcionCurso = c.Descripcion ?? "NA",
                 Categoria = c.Categoria,
                 IntentosMax = c.IntentosMax,
+                
                 Intentos = c.InscripcionCursos.Where(i=>i.IdEstudiante == id_estudiante ).
                                                 Select(i=>i.Intento).FirstOrDefault(),
                 CalificacionExamen = c.InscripcionCursos.Where(i=>i.IdEstudiante == id_estudiante ).
@@ -53,7 +54,7 @@ namespace MyApiProyect.Services
             foreach(var curs in result){
                 curs.Porcentaje = (int)((float)curs.lecciones.Where(l=>l.completada).Count() /curs.lecciones.Count() * 80);
                 curs.Porcentaje = curs.lecciones.Count() > 0 ? curs.Porcentaje : 0;
-                curs.Porcentaje += curs.CalificacionExamen > 80 ? 20: 0;
+                curs.Porcentaje += curs.CalificacionExamen > 80 ? 100 : curs.CalificacionExamen ;
             }
             return result;
         }
@@ -83,7 +84,7 @@ namespace MyApiProyect.Services
             };
             cursoDTO.Porcentaje = (int)((float)cursoDTO.lecciones.Where(l=>l.completada).Count() /cursoDTO.lecciones.Count() * 80);
             cursoDTO.Porcentaje = cursoDTO.lecciones.Count() > 0 ? cursoDTO.Porcentaje : 0;
-            cursoDTO.Porcentaje += cursoDTO.CalificacionExamen > 80 ? 20: 0;
+            cursoDTO.Porcentaje = cursoDTO.CalificacionExamen > 80 ? 100: cursoDTO.CalificacionExamen ;
             return cursoDTO;
         }
 
