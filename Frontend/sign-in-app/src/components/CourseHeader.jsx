@@ -2,12 +2,14 @@ import React from 'react';
 import { Box, Stack, Typography, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import DownloadIcon from '@mui/icons-material/Download';
 import CourseDetails from './CourseDetails';
+import DownloadCoursePDF from './DownloadCoursePDF';
 
 const CUSTOM_COLOR = '#FFB300';
 
 const CourseHeader = ({ course, courseLessons, isMobile }) => {
+    const currentLesson = course?.lecciones?.find(leccion => !leccion.completada);
+
     const buttonStyles = {
         fontWeight: 'bold',
         color: 'black',
@@ -38,7 +40,7 @@ const CourseHeader = ({ course, courseLessons, isMobile }) => {
                 >
                     <Button
                         component={Link}
-                        to="/lesson"
+                        to={`/lesson/${currentLesson?.idLeccion}`}
                         variant="contained"
                         startIcon={<ArrowForwardIcon />}
                         sx={{
@@ -49,19 +51,7 @@ const CourseHeader = ({ course, courseLessons, isMobile }) => {
                     >
                         Continuar
                     </Button>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        startIcon={<DownloadIcon />}
-                        href="/manual.pdf"
-                        download="manual.pdf"
-                        sx={{
-                            ...buttonStyles,
-                            '&:hover': { backgroundColor: `CC` },
-                        }}
-                    >
-                        Descargar
-                    </Button>
+                    <DownloadCoursePDF />
                 </Box>
             </Box>
             <Box {...(!isMobile ? { flex: 2 } : {})}>

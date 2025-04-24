@@ -3,6 +3,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { lecture_data } from './constants';
 
+const CUSTOM_COLOR = '#FFB300';
+
 function Bottombar({ mode, currentLectureIndex, setCurrentLectureIndex, quizCompleted }) {
     const navigate = useNavigate();
 
@@ -45,7 +47,7 @@ function Bottombar({ mode, currentLectureIndex, setCurrentLectureIndex, quizComp
                     </Typography>
                     <Box sx={{ display: 'flex', gap: 2}}>
                         <Button 
-                            sx={{ color: '#FFB300', border: '2px solid #FFB300' }}
+                            sx={{ color: CUSTOM_COLOR, border: `2px solid ${CUSTOM_COLOR}`, '&:hover': { opacity: 0.8 } }}
                             variant="outlined" 
                             onClick={handleBack}
                             disabled={mode === 'lesson' && currentLectureIndex === 0}
@@ -53,7 +55,7 @@ function Bottombar({ mode, currentLectureIndex, setCurrentLectureIndex, quizComp
                             Atrás
                         </Button>
                         <Button 
-                            sx={{ backgroundColor: '#FFB300'}} 
+                            sx={{ backgroundColor: CUSTOM_COLOR, '&:hover': { backgroundColor: `${CUSTOM_COLOR}CC`, color: 'black' } }} 
                             variant="contained"
                             onClick={handleNext}
                             disabled={mode === 'quiz' && (!quizCompleted || currentLectureIndex === lecture_data.length - 1)}
