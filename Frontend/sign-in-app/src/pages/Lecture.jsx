@@ -36,17 +36,18 @@ function Lecture() {
                 selectedView={selectedView} 
                 setSelectedView={setSelectedView} 
                 disableMedia={disableMedia}
-                mode='lesson' 
+                mode='lesson'
+                isMobile={isMobile} 
             />
             <Box component="main" sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
                 {isMobile ? (
                     selectedView === 'content' ? 
-                        <Content currentLecture={currentLectureIndex} /> :
-                        <Media mediaType={lecture.mediaType} src={lecture.src} />
+                        <Content currentLecture={currentLectureIndex} isMobile={isMobile} /> :
+                        <Media mediaType={lecture.mediaType} src={lecture.src} isMobile={isMobile} />
                 ) : (
                     <Stack direction="row" justifyContent={'space-between'}>
-                        <Content currentLecture={currentLectureIndex} />
-                        <Media mediaType={lecture.mediaType} src={lecture.src} />
+                        <Content currentLecture={currentLectureIndex} isMobile={isMobile} />
+                        <Media mediaType={lecture.mediaType} src={lecture.src} isMobile={isMobile} />
                     </Stack>
                 )}
             </Box>

@@ -1,12 +1,10 @@
-import { Box, AppBar, Toolbar, Typography, useTheme, useMediaQuery } from '@mui/material';
+import { Box, AppBar, Toolbar, Typography } from '@mui/material';
 import React from 'react';
 import LocalLibraryOutlinedIcon from '@mui/icons-material/LocalLibraryOutlined';
 import { lecture_data } from './constants';
 
-function Content({ currentLecture }) {
+function Content({ currentLecture, isMobile }) {
     const lecture = lecture_data[currentLecture];
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     return ( 
         <Box bgcolor="#101626" {...(!isMobile ? { flex: 1 } : {})} sx={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 128px)'}}>

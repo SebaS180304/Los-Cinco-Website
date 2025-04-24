@@ -6,6 +6,7 @@ export const lecture_data = [
         id: 1,
         title: 'Lección 1',
         course: 'Curso 1',
+        courseId: 1,
         mediaType: 'model3d',
         isCompleted: 1,
         src: '/computer/computer.gltf',

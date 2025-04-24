@@ -1,65 +1,66 @@
-import { Accordion, AccordionSummary, AccordionDetails, Box, IconButton, Typography, List, ListItem, Divider } from '@mui/material';
+import { Box, Card, CardContent, IconButton, Stack, Typography, Button } from '@mui/material';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { lecture_data } from './constants';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+
+const CUSTOM_COLOR = '#FFB300';
+const SECONDARY_COLOR = '#0c1633';
+const BG_COLOR = '#101626';
 
 function Drawcontent({ onClose }) {
-    const groupedLectures = lecture_data.reduce((acc, lecture) => {
-        if (!acc[lecture.course]) {
-            acc[lecture.course] = [];
-        }
-        acc[lecture.course].push(lecture);
-        return acc;
-    }, {});
-
+    const navigate = useNavigate();
+    
     return ( 
-        <Box bgcolor="#101626" p={2} sx={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                <Typography variant="h6" color="white" sx={{ p: 2, textTransform: 'uppercase', fontWeight: 'bold' }}>
-                    Nombre del Curso
-                </Typography>
-                <IconButton onClick={onClose}>
-                    <CloseIcon style={{ color: 'white', fontSize: 40}} />
-                </IconButton>
+        <Box sx={{ display: 'flex', mb: '64px', backgroundColor: BG_COLOR }}>
+            <Box component="main" sx={{ display: 'flex', flexDirection: 'column', width: '100%', height: 'calc(100vh - 80px)', overflowY: 'auto' }}>
+                <Box sx={{ p: 3, display: 'flex', justifyContent: 'space-between' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                        <Typography variant="h6" color="white" sx={{ textTransform: 'uppercase', fontWeight: 'bold' }}>
+                            {lecture_data[0].course}
+                        </Typography>
+                    </Box>
+                    <IconButton onClick={onClose}>
+                        <CloseIcon style={{ color: 'white', fontSize: 40 }} />
+                    </IconButton>
+                </Box>
+                <Box sx={{ p: 2 }}>
+                    <Stack spacing={2} mt={1} alignItems="center">
+                        {lecture_data.map((l, idx) => {
+                            const isCompleted = Boolean(l.isCompleted);
+                            return (
+                                <Card key={idx} sx={{ backgroundColor: '#1E2A45', borderRadius: 2, width: '100%' }}>
+                                    <CardContent>
+                                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                            {isCompleted ? (
+                                                <CheckCircleIcon sx={{ color: CUSTOM_COLOR, mr: 1 }} />
+                                            ) : (
+                                                <CheckCircleOutlineIcon sx={{ color: SECONDARY_COLOR, mr: 1 }} />
+                                            )}
+                                            <Typography variant="body1" sx={{ color: 'white' }}>
+                                                {l.title}
+                                            </Typography>
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+                            );
+                        })}
+                    </Stack>
+                </Box>
             </Box>
-            
-            {Object.entries(groupedLectures).map(([course, lectures]) => (
-                <Accordion 
-                    key={course}
-                    sx={{
-                        backgroundColor: '#1e2738',
-                        color: 'white',
-                        '& .MuiAccordionSummary-expandIconWrapper': {
-                            color: 'white'
-                        }
-                    }}
+            <Box sx={{ position: 'absolute', bottom: 0, backgroundColor: BG_COLOR, height: '80px', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Button
+                    onClick={() => navigate(`/enrolled/${lecture_data[0].courseId}`)}
+                    sx={{ color: CUSTOM_COLOR , border: `2px solid ${CUSTOM_COLOR}`, '&:hover': { opacity: 0.8 }  }}
+                    variant="outlined" 
                 >
-                    <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls={`panel-${course}-content`}
-                        id={`panel-${course}-header`}
-                    >
-                        <Typography>{course}</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <List sx={{ width: '100%' }}>
-                            {lectures.map((lecture, index) => (
-                                <React.Fragment key={lecture.id}>
-                                    <ListItem>
-                                        <Typography color="white">{lecture.title}</Typography>
-                                    </ListItem>
-                                    {index < lectures.length - 1 && (
-                                        <Divider sx={{ backgroundColor: 'rgba(255, 255, 255, 0.12)' }} />
-                                    )}
-                                </React.Fragment>
-                            ))}
-                        </List>
-                    </AccordionDetails>
-                </Accordion>
-            ))}
+                    Ver página del curso
+                </Button>
+            </Box>
         </Box>
-     );
+    );
 }
 
 export default Drawcontent;

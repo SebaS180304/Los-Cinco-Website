@@ -1,19 +1,19 @@
 import React, { useState, useCallback } from 'react';
-import { Box, AppBar, Container, Toolbar, Typography, Button, Alert, CircularProgress, useTheme, useMediaQuery } from '@mui/material';
+import { Box, AppBar, Toolbar, Typography, Button, Alert, CircularProgress } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import ViewInArOutlinedIcon from '@mui/icons-material/ViewInArOutlined';
 import VideoCameraBackOutlinedIcon from '@mui/icons-material/VideoCameraBackOutlined';
 import ComputerCanvas from './canvas/Computer';
 
-function Media({ mediaType, src }) {
-        if (mediaType === 'none') return <></>;
+const CUSTOM_COLOR = '#FFB300';
+
+function Media({ mediaType, src, isMobile }) {
+    if (mediaType === 'none') return <></>;
 
     const [reloadKey, setReloadKey] = useState(0);
     const [loadError, setLoadError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const handleReload = useCallback(() => {
         setIsLoading(true);
@@ -118,7 +118,7 @@ function Media({ mediaType, src }) {
                         alignItems: 'center',
                         gap: 2
                     }}>
-                        <CircularProgress color="warning" size={60} />
+                        <CircularProgress sx={{ color: CUSTOM_COLOR }} size={60} />
                         <Typography color="white">
                             Cargando contenido multimedia...
                         </Typography>
@@ -139,12 +139,15 @@ function Media({ mediaType, src }) {
                         disabled={isLoading}
                         sx={{ 
                             bgcolor: '#212633', 
-                            border: '2px solid #FFB300', 
+                            border: `2px solid ${CUSTOM_COLOR}`, 
                             color: 'white',
                             '&:disabled': {
                                 bgcolor: '#1a1f2a',
                                 border: '2px solid #666',
                                 color: '#666'
+                            },
+                            '&:hover': {
+                                opacity: 0.8
                             }
                         }}
                     >

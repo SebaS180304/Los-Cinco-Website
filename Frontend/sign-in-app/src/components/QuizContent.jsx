@@ -107,7 +107,7 @@ const QuizContent = ({
                 backgroundColor: CUSTOM_COLOR,
                 color: 'white',
                 '&:hover': {
-                  backgroundColor: '#e6a800'
+                  backgroundColor: `${CUSTOM_COLOR}CC`, color: 'black'
                 }
               }}
             >
