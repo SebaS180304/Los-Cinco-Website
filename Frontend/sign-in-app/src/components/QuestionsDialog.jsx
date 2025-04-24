@@ -80,22 +80,25 @@ const QuestionsDialog = ({
                   <IconButton
                     color="error"
                     onClick={() => onRemoveOption(index, i)}
+                    disabled={question.opciones.length <= 2} // Deshabilitar si hay menos de 2 opciones
                   >
                     <CloseIcon />
                   </IconButton>
                 </Box>
               ))}
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  onClick={() => onAddOption(index)}
-                  disabled={question.opciones.length >= 4} // Limitar a 4 opciones
-                  startIcon={<AddIcon />}
-                >
-                  Agregar Opción
-                </Button>
-              </Box>
+              {question.opciones.length < 4 && ( // Mostrar el botón solo si hay menos de 4 opciones}
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => onAddOption(index)}
+                    disabled={question.opciones.length >= 4} // Limitar a 4 opciones
+                    startIcon={<AddIcon />}
+                  >
+                    Agregar Opción
+                  </Button>
+                </Box>
+              )}
             </AccordionDetails>
           </Accordion>
         ))}

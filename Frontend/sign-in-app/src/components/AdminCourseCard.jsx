@@ -28,11 +28,11 @@ const AdminCourseCard = ({ course, isAddCard, onAddCurso }) => {
         try {
             const response = await axios.post(
                 '/CursoAdmin/Nuevo',
-                { TituloCurso: newCurso, DescripcionCurso: '', Categoria: 4 },
+                { TituloCurso: newCurso, DescripcionCurso: '', Categoria: 4, Visible: false },
                 { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
             );
             const newCursoId = response.data.idCurso;
-            onAddCurso({ idCurso: newCursoId, tituloCurso: newCurso, progress: 0, categoria: 4 });
+            onAddCurso({ idCurso: newCursoId, tituloCurso: newCurso, progress: 0, categoria: 4, visible: false });
             setNewCurso('');
             navigate(`/courses/${newCursoId}`);
         } catch (error) {
@@ -103,9 +103,12 @@ const AdminCourseCard = ({ course, isAddCard, onAddCurso }) => {
             </CardActionArea>
             <Divider sx={{ backgroundColor: 'black' }} />
             <CardContent sx={{ p: 1.5 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Typography variant="body2" color="text.secondary" sx={{ mr: 0 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Typography variant="body2" color="text.secondary">
                         Categoría: <strong>{categoryName}</strong>
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>
+                        Visibilidad: <strong>{course.visible ? 'Publicado' : 'Sin publicar'}</strong>
                     </Typography>
                 </Box>
             </CardContent>

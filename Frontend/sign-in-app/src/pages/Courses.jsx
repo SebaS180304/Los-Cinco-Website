@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import axios from '../api/axios';
-import { Box, Divider, List, ListItem, ListItemIcon, Stack, Typography, Button, useTheme, useMediaQuery, Accordion, AccordionSummary, AccordionDetails, CircularProgress, Dialog, DialogContent, DialogTitle, TextField, Breadcrumbs, IconButton, FormControlLabel, Checkbox, MenuItem, InputAdornment } from '@mui/material';
+import { Box, Divider, List, ListItem, ListItemIcon, Stack, Typography, Button, useTheme, useMediaQuery, Accordion, AccordionSummary, AccordionDetails, CircularProgress, Dialog, DialogContent, DialogTitle, TextField, Breadcrumbs, MenuItem, InputAdornment, Switch, FormControlLabel } from '@mui/material';
 import { Link as LinkComp} from '@mui/material';
+import { styled } from '@mui/material/styles';
 import Navbar from '../components/NavbarAdmin';
 import QuestionsDialog from '../components/QuestionsDialog';
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
@@ -358,6 +359,7 @@ function Courses() {
             TituloCurso: response.data.tituloCurso,
             DescripcionCurso: response.data.descripcionCurso,
             Categoria: response.data.categoria,
+            Visible: response.data.visible,
           });
           if (response.data.tituloCurso === '') {
             setIsEditing(true); // Activar el modo de edición si no hay título
@@ -380,24 +382,17 @@ function Courses() {
     }, [courseId]);
 
     const handleOpenQuestions = (lecture) => {
-      if (!lecture.questions || lecture.questions.length === 0) {
-        lecture.questions = [
-          {
-            texto: '',
-            opciones: [
-              { texto: '', correcta: false },
-              { texto: '', correcta: false },
-            ],
-          },
-        ];
-      }
       setCurrentLecture(lecture); // Establecer la lección actual
       setOpenQuestions(true); // Abrir el diálogo de preguntas
+      if (!lecture.questions || lecture.questions.length === 0) {
+        handleAddQuestion(); // Agregar una pregunta vacía si no hay preguntas
+      }
     };
     
     const handleCloseQuestions = () => {
-      setOpenQuestions(false); // Cerrar el diálogo de preguntas
+      // currentLecture.questions = currentLecture.questions.filter((question) => question.texto.trim() !== ''); // Filtrar preguntas vacías
       setCurrentLecture(null); // Limpiar la lección actual
+      setOpenQuestions(false); // Cerrar el diálogo de preguntas
     };
     
     const handleQuestionChange = (questionIndex, field, value) => {
@@ -622,17 +617,6 @@ function Courses() {
           }
         );
     
-        // Actualizar las lecciones
-        for (const lesson of editableLessons) {
-          await axios.patch(
-            '/CursoAdmin/Leccion/Edit',
-            lesson,
-            {
-              headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-            }
-          );
-        }
-    
         // Mostrar el pop-up de confirmación
         setShowPopup(true);
       } catch (error) {
@@ -640,6 +624,90 @@ function Courses() {
         alert('Hubo un error al guardar los cambios.');
       }
     };
+
+    const handleVisibilityChange = async (event) => {
+      const isChecked = event.target.checked;
+      setEditableCourse({ ...editableCourse, Visible: isChecked });
+      try {
+        await axios.patch(
+          '/CursoAdmin/Edit',
+          {
+            IdCurso: courseId,
+            TituloCurso: editableCourse.TituloCurso,
+            DescripcionCurso: editableCourse.DescripcionCurso,
+            Categoria: editableCourse.Categoria,
+            Visible: isChecked,
+          },
+          {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+          }
+        );
+        console.log('Visibilidad actualizada:', isChecked);
+      } catch (error) {
+        console.error('Error al actualizar la visibilidad:', error);
+        alert('Hubo un error al actualizar la visibilidad.');
+      }
+    };
+
+    const IOSSwitch = styled((props) => (
+      <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
+    ))(({ theme }) => ({
+      width: 42,
+      height: 26,
+      padding: 0,
+      '& .MuiSwitch-switchBase': {
+        padding: 0,
+        margin: 2,
+        transitionDuration: '300ms',
+        '&.Mui-checked': {
+          transform: 'translateX(16px)',
+          color: '#fff',
+          '& + .MuiSwitch-track': {
+            backgroundColor: '#65C466',
+            opacity: 1,
+            border: 0,
+            ...theme.applyStyles('dark', {
+              backgroundColor: '#2ECA45',
+            }),
+          },
+          '&.Mui-disabled + .MuiSwitch-track': {
+            opacity: 0.5,
+          },
+        },
+        '&.Mui-focusVisible .MuiSwitch-thumb': {
+          color: '#33cf4d',
+          border: '6px solid #fff',
+        },
+        '&.Mui-disabled .MuiSwitch-thumb': {
+          color: theme.palette.grey[100],
+          ...theme.applyStyles('dark', {
+            color: theme.palette.grey[600],
+          }),
+        },
+        '&.Mui-disabled + .MuiSwitch-track': {
+          opacity: 0.7,
+          ...theme.applyStyles('dark', {
+            opacity: 0.3,
+          }),
+        },
+      },
+      '& .MuiSwitch-thumb': {
+        boxSizing: 'border-box',
+        width: 22,
+        height: 22,
+      },
+      '& .MuiSwitch-track': {
+        borderRadius: 26 / 2,
+        backgroundColor: '#E9E9EA',
+        opacity: 1,
+        transition: theme.transitions.create(['background-color'], {
+          duration: 500,
+        }),
+        ...theme.applyStyles('dark', {
+          backgroundColor: '#39393D',
+        }),
+      },
+    }));
 
     if (loading) {
       return (
@@ -679,6 +747,16 @@ function Courses() {
               </LinkComp>
               <Typography color="text.primary">{course?.tituloCurso || 'Nuevo Curso'}</Typography>
             </Breadcrumbs>
+            <FormControlLabel
+              control={
+                <IOSSwitch 
+                  sx={{ m: 1 }}
+                  onChange={handleVisibilityChange}
+                  checked={editableCourse?.Visible || false}
+                />
+              }
+              label="Visible"
+            />
           </Box>
           <Box sx={{ backgroundColor: '#0c1633', borderRadius: '20px' }}>
             <Stack
@@ -816,14 +894,23 @@ function Courses() {
               <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
                 Contenido del Curso
               </Typography>
-              <Button
-                variant="contained"
-                color="primary"
-                startIcon={<AddIcon />}
-                onClick={handleOpenAdd}
-              >
-                Agregar Lección
-              </Button>
+              <Box sx={{ display: 'flex', gap: 2 }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  startIcon={<AddIcon />}
+                  onClick={handleOpenAdd}
+                >
+                  Agregar Lección
+                </Button>
+                <Button
+                  variant='outlined'
+                  color="secondary"
+                  startIcon={<AssignmentOutlinedIcon />}
+                >
+                  Ver Quiz
+                </Button>
+              </Box>
             </Box>
             {editableLessons.length === 0 ? (
               <Box sx={{ textAlign: 'center', mt: 3 }}>
