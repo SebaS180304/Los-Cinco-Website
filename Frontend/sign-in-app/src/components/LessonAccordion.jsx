@@ -8,12 +8,21 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 const CUSTOM_COLOR = '#FFB300';
 const SECONDARY_COLOR = '#0c1633';
 
-const LessonAccordion = ({ lecture, panel, expanded, handleChange }) => {
+const LessonAccordion = ({ lecture, lessons, panel, expanded, handleChange }) => {
     const isCompleted = Boolean(lecture?.completada);
     const iconColor = isCompleted ? CUSTOM_COLOR : SECONDARY_COLOR;
     const evaluationText = isCompleted ? 'Completada' : 'Pendiente';
     const buttonText = isCompleted ? 'Repasar' : 'Empezar';
     const buttonColor = isCompleted ? SECONDARY_COLOR : CUSTOM_COLOR;
+
+    // Determinar si la lección anterior está completada
+    const previousCompleted = (() => {
+        if (!Array.isArray(lessons)) return true;
+        const idx = lessons.findIndex(l => l.idLeccion === lecture?.idLeccion);
+        // Si es la primera lección, asumimos que se puede empezar
+        if (idx <= 0) return true;
+        return Boolean(lessons[idx - 1].completada);
+    })();
 
     return (
         <Accordion expanded={expanded === panel} onChange={handleChange(panel)} sx={{ mb: 2 }}>
@@ -53,6 +62,7 @@ const LessonAccordion = ({ lecture, panel, expanded, handleChange }) => {
                         component={Link} 
                         to={`/lesson/${lecture?.idLeccion}`} 
                         variant="contained"
+                        disabled={!lecture?.completada && !previousCompleted}
                         sx={{
                             backgroundColor: buttonColor,
                             '&:hover': { backgroundColor: `${buttonColor}CC` },

@@ -1,20 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import logoA from '../assets/logo-c.png';
 import logo from '../assets/logo.png';
-import { AppBar, Toolbar, Box, ButtonGroup, Button, Tooltip, Menu, Typography, MenuItem, IconButton, Drawer, useMediaQuery, useTheme } from '@mui/material';
+import { AppBar, Toolbar, Box, ButtonGroup, Button, Tooltip, Menu, Typography, MenuItem, IconButton, Drawer } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
-import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
 import Drawcontent from './DrawContent';
 
 const settings = ['Cerrar Sesión'];
 
-function Lectbar({ selectedView, setSelectedView, disableMedia, mode = 'lesson' }) {
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+const CUSTOM_COLOR = '#FFB300';
+
+function Lectbar({ selectedView, setSelectedView, disableMedia, mode = 'lesson', isMobile }) {
     const navigate = useNavigate();
-    const [anchorElUser, setAnchorElUser] = React.useState(null);
-    const [open, setOpen] = React.useState(false);
+
+    const [anchorElUser, setAnchorElUser] = useState(null);
+    const [open, setOpen] = useState(false);
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -27,7 +28,7 @@ function Lectbar({ selectedView, setSelectedView, disableMedia, mode = 'lesson' 
     const handleLogout = () => {
         handleCloseUserMenu();
         localStorage.removeItem('token');
-        localStorage.removeItem('userId');
+        localStorage.removeItem('rol');
         navigate('/');
     };
 
@@ -44,7 +45,6 @@ function Lectbar({ selectedView, setSelectedView, disableMedia, mode = 'lesson' 
                             <img src={logoA} alt='Whirlpool logo' style={{ height: '40px' }} />
                         </Link>
                     </Box>
-                    {/* Si es modo lesson se renderiza el ButtonGroup; en modo quiz se omite en móviles */}
                     {mode === 'lesson' && (
                         <ButtonGroup>
                             <Button 
@@ -52,9 +52,10 @@ function Lectbar({ selectedView, setSelectedView, disableMedia, mode = 'lesson' 
                                 variant={selectedView === 'model' ? 'contained' : 'outlined'}
                                 disabled={disableMedia}
                                 sx={{
-                                    color: selectedView === 'model' ? 'black' : '#FFB300',
-                                    backgroundColor: selectedView === 'model' ? '#FFB300' : 'transparent',
-                                    border: '2px solid #FFB300'
+                                    color: selectedView === 'model' ? 'white' : CUSTOM_COLOR,
+                                    backgroundColor: selectedView === 'model' ? CUSTOM_COLOR : 'transparent',
+                                    border: `2px solid ${CUSTOM_COLOR}`,
+                                    '&:hover': selectedView === 'model' ? { backgroundColor: `${CUSTOM_COLOR}CC`, color: 'black' } : { opacity: 0.8 }
                                 }}
                             >
                                 Media
@@ -63,9 +64,10 @@ function Lectbar({ selectedView, setSelectedView, disableMedia, mode = 'lesson' 
                                 onClick={() => setSelectedView('content')}
                                 variant={selectedView === 'content' ? 'contained' : 'outlined'}
                                 sx={{
-                                    color: selectedView === 'content' ? 'black' : '#FFB300',
-                                    backgroundColor: selectedView === 'content' ? '#FFB300' : 'transparent',
-                                    border: '2px solid #FFB300'
+                                    color: selectedView === 'content' ? 'white' : CUSTOM_COLOR,
+                                    backgroundColor: selectedView === 'content' ? CUSTOM_COLOR : 'transparent',
+                                    border: `2px solid ${CUSTOM_COLOR}`,
+                                    '&:hover': selectedView === 'content' ? { backgroundColor: `${CUSTOM_COLOR}CC`, color: 'black' } : { opacity: 0.8 }
                                 }}
                             >
                                 Contenido
@@ -74,7 +76,7 @@ function Lectbar({ selectedView, setSelectedView, disableMedia, mode = 'lesson' 
                     )}
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <IconButton onClick={toggleDrawer(true)}>
-                            <LibraryBooksIcon sx={{ color: '#FFB300', fontSize: 40 }} />
+                            <LibraryBooksOutlinedIcon sx={{ color: CUSTOM_COLOR, fontSize: 40, '&:hover': { opacity: 0.8 } }} />
                         </IconButton>
                         <Drawer 
                             open={open} 
@@ -92,22 +94,21 @@ function Lectbar({ selectedView, setSelectedView, disableMedia, mode = 'lesson' 
                         </Drawer>
                         <Tooltip title="Abrir Configuración" arrow>
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, ml: 1 }}>
-                                <AccountCircleOutlinedIcon sx={{ color: '#FFB300', fontSize: 40 }}/>
+                                <AccountCircleOutlinedIcon sx={{ color: CUSTOM_COLOR, fontSize: 40, '&:hover': { opacity: 0.8 } }}/>
                             </IconButton>
                         </Tooltip>
                     </Box>
                 </Toolbar>
             ) : (
-                // Versión escritorio permanece sin cambios
                 <Toolbar>
                     <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
                         <Link to='/learn'>
                             <img src={logo} alt='Whirlpool logo' style={{ height: '40px' }} />
                         </Link>
-                        <Typography variant='h6' component={Link} to='/learn' sx={{ ml: 2, textDecoration: 'none', color: 'white' }}>
+                        <Typography variant='h6' component={Link} to='/learn' sx={{ ml: 2, textDecoration: 'none', color: 'white', '&:hover': { color: CUSTOM_COLOR, opacity: 0.8 } }}>
                             Inicio
                         </Typography>
-                        <Typography component={Link} onClick={toggleDrawer(true)} sx={{ ml: 2, textDecoration: 'none', color: 'white', fontSize: '20px' }}>
+                        <Typography component={Link} onClick={toggleDrawer(true)} sx={{ ml: 2, textDecoration: 'none', color: 'white', fontSize: '20px', '&:hover': { color: CUSTOM_COLOR, opacity: 0.8 } }}>
                             Contenidos
                         </Typography>
                         <Drawer 
@@ -127,8 +128,8 @@ function Lectbar({ selectedView, setSelectedView, disableMedia, mode = 'lesson' 
                     </Box>
                     <Box>
                         <Tooltip title="Abrir Configuración" arrow>
-                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <AccountCircleOutlinedIcon sx={{ color: '#FFB300', fontSize: 40 }} />
+                            <IconButton onClick={handleOpenUserMenu}>
+                                <AccountCircleOutlinedIcon sx={{ color: CUSTOM_COLOR, fontSize: 40, '&:hover': { opacity: 0.8 } }} />
                             </IconButton>
                         </Tooltip>
                     </Box>

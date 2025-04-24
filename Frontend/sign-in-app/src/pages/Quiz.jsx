@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box } from '@mui/material';
+import { Box, useTheme, useMediaQuery } from '@mui/material';
 import Lectbar from '../components/LectBar';
 import Bottombar from '../components/Bottombar';
 import QuizContainer from '../components/QuizContainer';
@@ -15,6 +15,9 @@ const Quiz = () => {
   );
   const lesson = lecture_data[currentLectureIndex];
   const questions = lesson.quiz || [];
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   // Estado que indica que el quiz se ha completado.
   const [quizCompleted, setQuizCompleted] = useState(false);
@@ -38,6 +41,7 @@ const Quiz = () => {
         setSelectedView={() => {}}
         disableMedia={true}
         mode="quiz"
+        isMobile={isMobile}
       />
       <Box component="main" sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
         <QuizContainer
