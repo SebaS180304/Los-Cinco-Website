@@ -89,6 +89,7 @@ const EnrolledCourse = () => {
                         <LessonAccordion 
                             key={lecture.idLeccion}
                             lecture={lecture}
+                            lessons={courseLessons}
                             panel={`panel-${lecture.idLeccion}`}
                             expanded={lessonExpanded}
                             handleChange={handleLessonChange}

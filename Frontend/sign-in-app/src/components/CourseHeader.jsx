@@ -8,6 +8,8 @@ import DownloadCoursePDF from './DownloadCoursePDF';
 const CUSTOM_COLOR = '#FFB300';
 
 const CourseHeader = ({ course, courseLessons, isMobile }) => {
+    const currentLesson = course?.lecciones?.find(leccion => !leccion.completada);
+
     const buttonStyles = {
         fontWeight: 'bold',
         color: 'black',
@@ -38,7 +40,7 @@ const CourseHeader = ({ course, courseLessons, isMobile }) => {
                 >
                     <Button
                         component={Link}
-                        to="/lesson"
+                        to={`/lesson/${currentLesson?.idLeccion}`}
                         variant="contained"
                         startIcon={<ArrowForwardIcon />}
                         sx={{
