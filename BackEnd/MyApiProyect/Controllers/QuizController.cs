@@ -49,5 +49,18 @@ namespace MyApiProyect.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<IActionResult> ModificarQuizPreguntas([FromBody] List<PreguntaDTO> preguntas, int id_curso){
+            var id = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (id is null)
+                return Unauthorized();
+            var response = await quizService.ModificarQuizFinal(preguntas, id_curso);
+            if(response){
+                return NoContent();
+            }else{
+                return StatusCode(500);
+            }
+        }
+
     }
 }

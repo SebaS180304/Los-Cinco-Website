@@ -30,7 +30,7 @@ namespace MyApiProyect.Services
                             Include(c=> c.InscripcionCursos).
                             Include(l=>l.Lecciones).
                             ThenInclude(l=> l.LeccionCompletada).
-                            Where(c=> SelectedCursos.Contains(c.IdCurso)).
+                            Where(c=> SelectedCursos.Contains(c.IdCurso) && c.Visible).
                             ToListAsync();
             var result = cursosCom.Select(c=> new CursoInscripcionDTO{
                 IdCurso = c.IdCurso,
@@ -54,14 +54,14 @@ namespace MyApiProyect.Services
             foreach(var curs in result){
                 curs.Porcentaje = (int)((float)curs.lecciones.Where(l=>l.completada).Count() /curs.lecciones.Count() * 80);
                 curs.Porcentaje = curs.lecciones.Count() > 0 ? curs.Porcentaje : 0;
-                curs.Porcentaje += curs.CalificacionExamen > 80 ? 100 : curs.CalificacionExamen ;
+                curs.Porcentaje = curs.CalificacionExamen > 80 ? 100 : curs.Porcentaje ;
             }
             return result;
         }
 
         public async Task<CursoInscripcionDTO?> GetCurso(int id_estudiante, int id_curso){
             var curso = await _context.Cursos.
-                                Where(c=> c.IdCurso == id_curso).
+                                Where(c=> c.IdCurso == id_curso && c.Visible).
                                 Include(c=> c.Lecciones).
                                 ThenInclude(c=> c.LeccionCompletada).
                                 FirstOrDefaultAsync();
@@ -84,13 +84,15 @@ namespace MyApiProyect.Services
             };
             cursoDTO.Porcentaje = (int)((float)cursoDTO.lecciones.Where(l=>l.completada).Count() /cursoDTO.lecciones.Count() * 80);
             cursoDTO.Porcentaje = cursoDTO.lecciones.Count() > 0 ? cursoDTO.Porcentaje : 0;
-            cursoDTO.Porcentaje = cursoDTO.CalificacionExamen > 80 ? 100: cursoDTO.CalificacionExamen ;
+            cursoDTO.Porcentaje = cursoDTO.CalificacionExamen > 80 ? 100: cursoDTO.Porcentaje ;
             return cursoDTO;
         }
 
         public async Task<CursoInscripcionDTO?> GetCursoReciente(int id_estudiante){
+            var LecVal = await GetCursos(id_estudiante);
             var leccionesCompletadas = await _context.LeccionCompletada.
-                                                Where(c=>c.IdUsuario == id_estudiante).
+                                                Where(c=>c.IdUsuario == id_estudiante && LecVal.Any(lp=>lp.lecciones.
+                                                                                        Select(lp=>lp.IdLeccion).Contains(c.IdLeccion))).
                                                 ToListAsync();
             var IDLeccionesC = leccionesCompletadas.Select(l=> l.IdLeccionCompletada).ToList();
             var fecha = await _context.RegistroLeccionCompletada.
@@ -109,8 +111,10 @@ namespace MyApiProyect.Services
         }
 
         public async Task<EstadisticasSemana> GetEstadisticas(int id_estudiante){
+            var LecVal = await GetCursos(id_estudiante);
             var lecciones = await _context.LeccionCompletada.
-                                    Where(l=>l.IdUsuario== id_estudiante).
+                                    Where(l=>l.IdUsuario == id_estudiante && LecVal.Any(lp=>lp.lecciones.
+                                                                                        Select(lp=>lp.IdLeccion).Contains(l.IdLeccion))).
                                     Select(l=>l.IdLeccionCompletada).
                                     ToListAsync();
             var TodoRegistro = await _context.RegistroLeccionCompletada.
@@ -140,6 +144,10 @@ namespace MyApiProyect.Services
                                         FirstOrDefaultAsync();
             if(leccionI is null)
                 return null;
+            var lec = await _context.Lecciones.Where(c=> c.IdCurso == leccionI.IdCurso).
+                                        ToListAsync();
+            var cant = lec.Count();
+
                                        
             var LeccionF = new LeccionInscripcionDTO{
                                             IdLeccion = id_leccion,
@@ -147,6 +155,7 @@ namespace MyApiProyect.Services
                                             Contenido = leccionI.Contenido,
                                             tipo = leccionI.TipoMedia,
                                             Url = leccionI.UrlMedia,
+                                            cantidad = cant,
                                             completada = leccionI.LeccionCompletada.Where(r=>r.IdUsuario == id_estudiante).
                                                                             Select(r=> r.Valida).
                                                                             FirstOrDefault() ?? false
@@ -154,5 +163,43 @@ namespace MyApiProyect.Services
                                         };
             return LeccionF;
         }
+
+        public async Task<QuizLeccionDTO> PreguntasDeLeccion(int id_leccion, int id_alumno){
+            var sin = await _context.Lecciones.Where(l=> l.IdLeccion == id_leccion).FirstAsync();
+            var lecciones = await _context.Lecciones.Where(l=> l.IdCurso == sin.IdCurso).
+                                    Select(l=>l.IdLeccion).ToListAsync();
+            
+            var preguntas = await _context.PreguntaLeccions.
+                                        Include(p=>p.OpcionLeccions).
+                                        Where(p=>p.IdLeccion == id_leccion).
+                                        ToListAsync();
+            var ended = await _context.LeccionCompletada.
+                                    Where(l=>l.IdLeccion == id_leccion && l.IdUsuario == id_alumno).
+                                    Select(l=>l.Valida).
+                                    FirstOrDefaultAsync() ?? false;
+            int nextL = 0;
+            while(nextL < lecciones.Count() && lecciones[nextL] != id_leccion){
+                nextL++;
+            }
+            nextL = lecciones.Count() >= nextL ? -1 : lecciones[nextL];
+            var fin = new QuizLeccionDTO{
+                id_leccion = id_leccion,
+                completado = ended,
+                cantiad = lecciones.Count(),
+                id_leccion_siguiente = nextL,
+                preguntas = preguntas.Select(p=> new PreguntaDTO{
+                    IdPregunta = p.IdPreguntaLeccion,
+                    Texto = p.TextoPregunta,
+                    opciones = p.OpcionLeccions.Select(o=> new OpcionDTO{
+                        IdOpcion = o.IdOpcionLeccion,
+                        Texto = o.TextoOpcion,
+                        correcta = o.Correcto
+                    }).ToList()
+                }).ToList()
+            };
+            return fin;                      
+        }
+
+
     }
 }

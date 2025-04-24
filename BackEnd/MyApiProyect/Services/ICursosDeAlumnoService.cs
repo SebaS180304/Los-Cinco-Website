@@ -15,6 +15,7 @@ namespace MyApiProyect.Services
 
         public Task<EstadisticasSemana> GetEstadisticas(int id_estudiante);
         public Task<LeccionInscripcionDTO?> GetLeccion(int id_leccion, int id_estudiante);
+        public Task<QuizLeccionDTO> PreguntasDeLeccion(int id_leccion, int id_alumno);
 
     }
 }
