@@ -663,7 +663,7 @@ function Courses() {
           transform: 'translateX(16px)',
           color: '#fff',
           '& + .MuiSwitch-track': {
-            backgroundColor: '#65C466',
+            backgroundColor: CUSTOM_COLOR,
             opacity: 1,
             border: 0,
             ...theme.applyStyles('dark', {
@@ -789,6 +789,7 @@ function Courses() {
                           e.preventDefault(); // Evita el comportamiento predeterminado del Enter
                       }
                     }}
+                    multiline
                     fullWidth
                     placeholder={isMobile ?  "Agrega nombre" : "Agrega el nombre del curso"}
                     InputProps={{
@@ -824,6 +825,7 @@ function Courses() {
                     value={editableCourse?.DescripcionCurso || ''}
                     onChange={(e) => setEditableCourse({ ...editableCourse, DescripcionCurso: e.target.value })}
                     fullWidth
+                    multiline
                     placeholder={isMobile ? "Agrega descripción" : "Agrega la descripción del curso"}
                     inputRef={(input) => {
                       if (input) {
@@ -907,8 +909,12 @@ function Courses() {
                   variant='outlined'
                   color="secondary"
                   startIcon={<AssignmentOutlinedIcon />}
+                  onClick={() => {
+                    // Aquí puedes agregar la lógica para ver el examen
+                    console.log('Ver examen');
+                  }}
                 >
-                  Ver Quiz
+                  Ver Examen
                 </Button>
               </Box>
             </Box>

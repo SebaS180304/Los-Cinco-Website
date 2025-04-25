@@ -20,7 +20,7 @@ const QuestionsDialog = ({
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mr: 3, pb: 0 }}>
-        <DialogTitle>Preguntas de Lección</DialogTitle>
+        <DialogTitle>Preguntas de Evaluación</DialogTitle>
           <Button
             variant="outlined"
             color="primary"
