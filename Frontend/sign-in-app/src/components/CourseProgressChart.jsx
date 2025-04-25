@@ -23,6 +23,14 @@ const categoryIconMapping = {
 };
 
 const CourseProgressChart = ({ course }) => {
+  if (course.length === 0) {
+      return (
+        <Box sx={{ p: 2 }}>
+          <Typography>Regresa aquí cuando tengas algún curso disponible para visualizar tu progreso en los cursos en los que estás inscrito.</Typography>
+        </Box>
+      );
+    }
+
   const chartHeight = course.length * 50 + 32;
 
   const data = {

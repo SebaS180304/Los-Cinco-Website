@@ -319,7 +319,3 @@ delimiter $$
 delimiter $$
 insert into OpcionLeccion(id_pregunta_leccion, texto_opcion, correcto) values (1, "No lavar", false);
 delimiter $$
-##update Cursos set visible = false where id_curso = 1;
-#delete from cursos where id_curso = 3;
-select * from cursos;
-##select * from PreguntaLeccion;

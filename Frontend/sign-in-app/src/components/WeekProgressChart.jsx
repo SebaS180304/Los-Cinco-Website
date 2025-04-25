@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement } from 'chart.js';
 
@@ -19,6 +19,16 @@ const dayMapping = {
 };
 
 const WeekProgressChart = ({ weekProgress }) => {
+    if (weekProgress.every(item => !(item?.cantidad > 0))) {
+        return (
+            <Box sx={{ p: 2 }}>
+                <Typography>
+                    Regresa aquí cuando tengas alguna lección completada para visualizar tu progreso semanal.
+                </Typography>
+            </Box>
+        );
+    }
+
     const data = {
         labels: weekProgress.slice(0).reverse().map(item => dayMapping[item?.dia] || item?.dia),
         datasets: [

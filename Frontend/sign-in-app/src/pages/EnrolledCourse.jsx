@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Box, CircularProgress, Dialog, Typography, useMediaQuery, useTheme } from '@mui/material';
 import Navbar from '../components/Navbar';
 import ProgressSection from '../components/ProgressSection';
@@ -13,15 +13,14 @@ const CUSTOM_COLOR = '#FFB300';
 
 const EnrolledCourse = () => {
     const { courseId } = useParams();
-
+    const navigate = useNavigate();
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
     const [lessonExpanded, setLessonExpanded] = useState(false);
-
     const [course, setCourse] = useState(null);
-
     const [loading, setLoading] = useState(true);
+    const [errorMsg, setErrorMsg] = useState(null);
 
     useEffect(() => {
         const fetchCourse = async () => {
@@ -30,31 +29,32 @@ const EnrolledCourse = () => {
                 const response = await axios.get(`${COURSE_URL}${courseId}`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
                 });
-                // Guarda la data tal cual viene de la API sin transformación
                 setCourse(response.data);
             } catch (error) {
-                console.error('Error al obtener el curso: ', error.message);
+                if (error.response && error.response.status === 404) {
+                    setErrorMsg("El curso no se encuentra disponible por el momento.");
+                    setTimeout(() => {
+                        navigate(-1);
+                    }, 3000);
+                } else {
+                    console.error('Error al obtener el curso: ', error.message);
+                }
             } finally {
                 await new Promise(resolve => setTimeout(resolve, 500));
                 setLoading(false);
             }
         };
         fetchCourse();
-    }, [courseId]);
+    }, [courseId, navigate]);
 
-    // Derivar las lecciones desde el objeto course
-    const courseLessons = course?.lecciones || [];
 
-    const handleLessonChange = (panel) => (event, isExpanded) => {
-        setLessonExpanded(isExpanded ? panel : false);
-    };
 
     // Si aún no se cargó la información de los endopoints, mostrar un loader
     if (loading) {
         return (
             <Dialog open={true} PaperProps={{ sx: { textAlign: 'center', padding: 4 } }}>
                 <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <CircularProgress sx={{ color: CUSTOM_COLOR }} />
+                    <CircularProgress sx={{ color: CUSTOM_COLOR }} />
                 </Box>
                 <Typography variant="h6" sx={{ mt: 2 }}>
                     Cargando Información...
@@ -62,6 +62,30 @@ const EnrolledCourse = () => {
             </Dialog>
         );
     }
+
+    // Mostrar el mensaje de error en un Dialog similar al loader
+    if (errorMsg) {
+        return (
+            <Dialog open={true} PaperProps={{ sx: { textAlign: 'center', padding: 4 } }}>
+                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <CircularProgress sx={{ color: CUSTOM_COLOR }} />
+                </Box>
+                <Typography variant="h6" sx={{ mt: 2 }}>
+                    {errorMsg}
+                </Typography>
+                <Typography variant="body1" sx={{ mt: 1 }}>
+                    Serás redirigido a la página anterior.
+                </Typography>
+            </Dialog>
+        );
+    }
+
+    // Derivar las lecciones desde el objeto course
+    const courseLessons = course?.lecciones || [];
+
+    const handleLessonChange = (panel) => (event, isExpanded) => {
+        setLessonExpanded(isExpanded ? panel : false);
+    };
 
     return (
         <Box sx={{ display: 'flex', mt: '64px' }}>

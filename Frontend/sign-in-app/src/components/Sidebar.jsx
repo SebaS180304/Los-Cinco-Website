@@ -65,25 +65,29 @@ function Sidebar({ selectedTab, onChange, course }) {
                     ))}
                 </List>
                 <Divider />
-                <Box p={2}>
-                    <LinearProgress 
-                        variant="determinate" 
-                        value={course?.porcentaje || 0} 
-                        sx={{ 
-                            height: '20px',
-                            borderRadius: '10px',
-                            backgroundColor: `${CUSTOM_COLOR}40`,
-                            '& .MuiLinearProgress-bar': {
-                                borderRadius: '10px',
-                                backgroundColor: CUSTOM_COLOR
-                            }
-                        }} 
-                    />
-                    <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                        Progreso del curso más reciente: <strong>{course?.porcentaje || 0}%</strong>   
-                    </Typography>
-                </Box>
-                <Divider />
+                {course && (
+                    <>
+                        <Box p={2}>
+                            <LinearProgress 
+                                variant="determinate" 
+                                value={course?.porcentaje || 0} 
+                                sx={{ 
+                                    height: '20px',
+                                    borderRadius: '10px',
+                                    backgroundColor: `${CUSTOM_COLOR}40`,
+                                    '& .MuiLinearProgress-bar': {
+                                        borderRadius: '10px',
+                                        backgroundColor: CUSTOM_COLOR
+                                    }
+                                }} 
+                            />
+                            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                                Progreso del curso más reciente: <strong>{course?.porcentaje || 0}%</strong>   
+                            </Typography>
+                        </Box>
+                        <Divider />
+                    </>
+                )}
             </Drawer>
         </Box>
     );
