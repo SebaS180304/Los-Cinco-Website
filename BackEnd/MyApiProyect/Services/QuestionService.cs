@@ -39,6 +39,28 @@ namespace MyApiProyect.Services
             return quiz;
         }
 
+        public async Task<bool> ModificarQuizFinal (List<PreguntaDTO> questions, int id_curso){
+            var elim = await context.Preguntas.Where(p=> id_curso ==p.IdCurso ).ToListAsync();
+            context.RemoveRange(elim);
+            var preg = questions.Select(p=> new Pregunta{
+                    IdCurso = id_curso,
+                    TextoPregunta = p.Texto ?? "na",
+                    Opciones = p.opciones.Select(o=> new Opcione{
+                        IdOpcion = o.IdOpcion,
+                        TextoOpcion = o.Texto ?? "na",
+                        Correcta = o.correcta
+                    }).ToList() ?? new List<Opcione>()
+            }).ToList();
+            context.AddRange(preg);
+            try{
+                await context.SaveChangesAsync();
+                return true;
+            }catch(Exception e){
+                Console.WriteLine(e);
+                return false;
+            }
+        }
+
         public async Task<List<PreguntaDTO>>GetLeccionPreguntas (int id_leccion){
             var preguntas = await context.PreguntaLeccions.
                                 Include(c=>c.OpcionLeccions).

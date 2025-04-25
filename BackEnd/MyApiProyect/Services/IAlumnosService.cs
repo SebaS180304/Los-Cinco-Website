@@ -8,7 +8,7 @@ namespace MyApiProyect.Services
 {
     public interface IAlumnosService
     {
-        public Task<List<DetallesBaseAlumno>> GetAlumnos();
+        public Task<List<DetallesBaseAlumno>> GetALL();
 
         public Task<List<DetallesBaseAlumno>> GetOwnAlumnos(int id_profesor);
         public Task<List<DetallesBaseAlumno>> GetNotOwnAlumnos(int id_profesor);
