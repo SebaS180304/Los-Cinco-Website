@@ -115,13 +115,6 @@ const DownloadCoursePDF = () => {
     doc.save(`${curso.title}.pdf`);
   };
 
-  // Estilos del botón
-  const buttonStyles = {
-    fontWeight: 'bold',
-    color: 'black',
-    width: { xs: '100%', sm: '50%' }
-  };
-
   return (
     <Button
       variant="contained"
@@ -129,7 +122,8 @@ const DownloadCoursePDF = () => {
       startIcon={<DownloadIcon />}
       onClick={createPDF}
       sx={{
-        ...buttonStyles,
+        color: 'white',
+        width: '100%',
         '&:hover': { backgroundColor: 'CC' }
       }}
     >

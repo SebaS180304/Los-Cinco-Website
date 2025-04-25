@@ -1,24 +1,23 @@
 import { AppBar, Box, Toolbar, Typography, Button } from '@mui/material';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { lecture_data } from './constants';
 
 const CUSTOM_COLOR = '#FFB300';
 
-function Bottombar({ mode, currentLectureIndex, setCurrentLectureIndex, quizCompleted }) {
+function Bottombar({ mode, currentLectureIndex, setCurrentLectureIndex, quizCompleted, lessons }) {
     const navigate = useNavigate();
 
     const handleNext = () => {
         if (mode === 'quiz') {
             // En quiz: habilitado solo cuando el quiz esté completado.
-            if (quizCompleted && currentLectureIndex < lecture_data.length - 1) {
-                const nextId = lecture_data[currentLectureIndex + 1].id;
+            if (quizCompleted && currentLectureIndex < lessons.length - 1) {
+                const nextId = lessons[currentLectureIndex + 1].idLeccion;
                 setCurrentLectureIndex(currentLectureIndex + 1);
                 navigate(`/lesson/${nextId}`);
             }
         } else if (mode === 'lesson') {
             // En lesson: redirige al quiz de la lección actual.
-            const currentId = lecture_data[currentLectureIndex].id;
+            const currentId = lessons[currentLectureIndex].idLeccion;
             navigate(`/quiz/${currentId}`);
         }
     };
@@ -26,12 +25,12 @@ function Bottombar({ mode, currentLectureIndex, setCurrentLectureIndex, quizComp
     const handleBack = () => {
         if (mode === 'quiz') {
             // En quiz: regresar a la vista lesson de la lección actual.
-            const currentId = lecture_data[currentLectureIndex].id;
+            const currentId = lessons[currentLectureIndex].idLeccion;
             navigate(`/lesson/${currentId}`);
         } else if (mode === 'lesson') {
             // En lesson: si existe, redirige al quiz de la lección anterior.
             if (currentLectureIndex > 0) {
-                const prevId = lecture_data[currentLectureIndex - 1].id;
+                const prevId = lessons[currentLectureIndex - 1].idLeccion;
                 setCurrentLectureIndex(currentLectureIndex - 1);
                 navigate(`/quiz/${prevId}`);
             }
@@ -43,7 +42,7 @@ function Bottombar({ mode, currentLectureIndex, setCurrentLectureIndex, quizComp
             <Toolbar>
                 <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: "center" }}>
-                        {currentLectureIndex + 1}/{lecture_data.length} lecciones
+                        {currentLectureIndex + 1}/{lessons.length} lecciones
                     </Typography>
                     <Box sx={{ display: 'flex', gap: 2}}>
                         <Button 
@@ -58,7 +57,7 @@ function Bottombar({ mode, currentLectureIndex, setCurrentLectureIndex, quizComp
                             sx={{ backgroundColor: CUSTOM_COLOR, '&:hover': { backgroundColor: `${CUSTOM_COLOR}CC`, color: 'black' } }} 
                             variant="contained"
                             onClick={handleNext}
-                            disabled={mode === 'quiz' && (!quizCompleted || currentLectureIndex === lecture_data.length - 1)}
+                            disabled={mode === 'quiz' && (!quizCompleted || currentLectureIndex === lessons.length - 1)}
                         >
                             Siguiente
                         </Button>

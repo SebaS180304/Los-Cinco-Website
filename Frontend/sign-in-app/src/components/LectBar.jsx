@@ -11,7 +11,7 @@ const settings = ['Cerrar Sesión'];
 
 const CUSTOM_COLOR = '#FFB300';
 
-function Lectbar({ selectedView, setSelectedView, disableMedia, mode = 'lesson', isMobile }) {
+function Lectbar({ selectedView, setSelectedView, disableMedia, mode = 'lesson', isMobile, lessons }) {
     const navigate = useNavigate();
 
     const [anchorElUser, setAnchorElUser] = useState(null);
@@ -90,7 +90,7 @@ function Lectbar({ selectedView, setSelectedView, disableMedia, mode = 'lesson',
                                 },
                             }}
                         >
-                            <Drawcontent onClose={toggleDrawer(false)} />
+                            <Drawcontent onClose={toggleDrawer(false)} lessons={lessons} />
                         </Drawer>
                         <Tooltip title="Abrir Configuración" arrow>
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, ml: 1 }}>
@@ -123,7 +123,7 @@ function Lectbar({ selectedView, setSelectedView, disableMedia, mode = 'lesson',
                                 },
                             }}
                         >
-                            <Drawcontent onClose={toggleDrawer(false)} />
+                            <Drawcontent onClose={toggleDrawer(false)} lessons={lessons} />
                         </Drawer>
                     </Box>
                     <Box>

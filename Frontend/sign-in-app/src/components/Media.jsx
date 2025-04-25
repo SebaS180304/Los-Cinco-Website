@@ -9,7 +9,7 @@ import ComputerCanvas from './canvas/Computer';
 const CUSTOM_COLOR = '#FFB300';
 
 function Media({ mediaType, src, isMobile }) {
-    if (mediaType === 'none') return <></>;
+    if (mediaType === 0) return <></>;
 
     const [reloadKey, setReloadKey] = useState(0);
     const [loadError, setLoadError] = useState(false);
@@ -35,7 +35,7 @@ function Media({ mediaType, src, isMobile }) {
     let mediaContent;
     let mediaIcon;
     let mediaText;
-    if (mediaType === 'model3d') {
+    if (mediaType === 3) {
         mediaContent = (
             <ComputerCanvas 
                 src={src}
@@ -46,7 +46,7 @@ function Media({ mediaType, src, isMobile }) {
         );
         mediaIcon = <ViewInArOutlinedIcon sx={{ color: 'white', fontSize: 40 }} />;
         mediaText = 'Modelo 3D';
-    } else if (mediaType === 'video') {
+    } else if (mediaType === 2) {
         mediaContent = (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                 <video 
@@ -63,7 +63,7 @@ function Media({ mediaType, src, isMobile }) {
         );
         mediaIcon = <VideoCameraBackOutlinedIcon sx={{ color: 'white', fontSize: 40 }} />;
         mediaText = 'Video';
-    } else if (mediaType === 'image') {
+    } else if (mediaType === 1) {
         mediaContent = (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                 <img 

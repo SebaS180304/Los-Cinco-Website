@@ -6,18 +6,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 const CUSTOM_COLOR = '#FFB300';
 
-const QuizContent = ({
-  question,
-  current,
-  total,
-  selected,
-  submitted,
-  isCorrect,
-  onSelect,
-  onSubmit,
-  onNext,
-  onTryAgain
-}) => {
+const QuizContent = ({ question, current, total, selected, submitted, isCorrect, onSelect, onSubmit, onNext, onTryAgain }) => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', height: 'calc(100vh - 128px)' }}>
       <AppBar position="static" sx={{ backgroundColor: '#273661', boxShadow: 'none' }}>
@@ -30,9 +19,9 @@ const QuizContent = ({
       </AppBar>
       <Box component="main" sx={{ p: 3, overflow: 'auto' }}>
         <Typography variant="h4" fontWeight="bold" gutterBottom sx={{ color: 'white', textAlign: 'center' }}>
-          {question.question}
+          {question.texto}
         </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
           <Typography variant="body1" sx={{ color: 'white', mr: 2 }}>
             {current + 1} / {total}
           </Typography>
@@ -54,22 +43,22 @@ const QuizContent = ({
           </Box>
         </Box>
         <Stack spacing={3} mt={3} alignItems="center">
-          {question.options.map((opt, i) => {
+          {question.opciones.map((opt, i) => {
             const defaultBg = '#1E2A45';
             let borderStyle = '1px solid transparent';
             if (submitted) {
               if (i === selected) {
-                borderStyle = opt.isCorrect
-                  ? '4px solid #4CAF50'  // borde grueso verde en respuesta correcta
-                  : '4px solid #F44336'; // borde grueso rojo en respuesta incorrecta
+                borderStyle = opt.correcta
+                  ? '4px solid #4CAF50'
+                  : '4px solid #F44336';
               }
             } else if (i === selected) {
-              borderStyle = '2px solid ' + CUSTOM_COLOR;  // borde resaltado al seleccionar
+              borderStyle = '2px solid ' + CUSTOM_COLOR;
             }
   
             return (
               <Button
-                key={i}
+                key={opt.idOpcion}
                 variant="contained"
                 onClick={() => !submitted && onSelect(i)}
                 sx={{
@@ -91,7 +80,7 @@ const QuizContent = ({
                 }}
               >
                 <Typography variant="body1" sx={{ textTransform: 'none' }}>
-                  {opt.text}
+                  {opt.texto}
                 </Typography>
               </Button>
             );

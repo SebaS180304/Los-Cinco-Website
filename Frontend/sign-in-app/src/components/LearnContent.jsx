@@ -63,9 +63,15 @@ const LearnContent = ({ course }) => {
           aria-labelledby="tab-0"
           sx={{ mt: 2, display: 'flex', flexWrap: 'wrap', gap: 2 }}
         >
-          {inProgressCourses.map(item => (
-            <LearnCourseCard course={item} key={item?.idCurso} />
-          ))}
+          {inProgressCourses.length === 0 ? (
+            <Typography>
+              No hay cursos en progreso disponibles.
+            </Typography>
+          ) : (
+            inProgressCourses.map(item => (
+              <LearnCourseCard course={item} key={item?.idCurso} />
+            ))
+          )}
         </Box>
       )}
       {value === 1 && (
@@ -75,15 +81,21 @@ const LearnContent = ({ course }) => {
           aria-labelledby="tab-1"
           sx={{ mt: 2 }}
         >
-          {completedCourses.map(item => (
-            <CourseAccordion 
-              course={item} 
-              panel={`panel-${item?.idCurso}`} 
-              key={item?.idCurso} 
-              expanded={expanded} 
-              handleChange={handleChange} 
-            />
-          ))}
+          {completedCourses.length === 0 ? (
+            <Typography>
+              No hay cursos completados disponibles.
+            </Typography>
+          ) : (
+            completedCourses.map(item => (
+              <CourseAccordion 
+                course={item} 
+                panel={`panel-${item?.idCurso}`} 
+                key={item?.idCurso} 
+                expanded={expanded} 
+                handleChange={handleChange} 
+              />
+            ))
+          )}
         </Box>
       )}
     </Box>

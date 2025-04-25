@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Box, Typography, Button, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { Box, Typography, Button, Accordion, AccordionSummary, AccordionDetails, Chip } from '@mui/material';
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -11,7 +11,7 @@ const SECONDARY_COLOR = '#0c1633';
 const LessonAccordion = ({ lecture, lessons, panel, expanded, handleChange }) => {
     const isCompleted = Boolean(lecture?.completada);
     const iconColor = isCompleted ? CUSTOM_COLOR : SECONDARY_COLOR;
-    const evaluationText = isCompleted ? 'Completada' : 'Pendiente';
+    const evaluationText = isCompleted ? 'Completada' : 'En Progreso';
     const buttonText = isCompleted ? 'Repasar' : 'Empezar';
     const buttonColor = isCompleted ? SECONDARY_COLOR : CUSTOM_COLOR;
 
@@ -27,14 +27,34 @@ const LessonAccordion = ({ lecture, lessons, panel, expanded, handleChange }) =>
     return (
         <Accordion expanded={expanded === panel} onChange={handleChange(panel)} sx={{ mb: 2 }}>
             <AccordionSummary
-                expandIcon={<ExpandMoreIcon sx={{ color: iconColor }} />}
+                expandIcon={<ExpandMoreIcon />}
                 aria-controls={`${panel}-content`}
                 id={`${panel}-header`}
-                sx={{ flexDirection: 'row-reverse' }}
+                sx={{ 
+                    flexDirection: 'row-reverse',
+                    '& .MuiAccordionSummary-content': {
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        width: '100%'
+                    }
+                }}
             >
                 <Typography variant="h5" sx={{ fontWeight: 'bold', ml: 3 }}>
                     {lecture?.tituloLeccion}
                 </Typography>
+                <Chip
+                    label={evaluationText}
+                    variant="outlined"
+                    sx={{
+                        mr: 3,
+                        color: iconColor,
+                        borderColor: iconColor,
+                        '& .MuiChip-label': {
+                            fontWeight: 'medium'
+                        }
+                    }}
+                />
             </AccordionSummary>
             <AccordionDetails>
                 <Box sx={{ borderRadius: '10px', border: '1px solid #000', p: 2 }}>
