@@ -14,7 +14,7 @@ create table Cursos (
 	id_curso int not null auto_increment,
     titulo_curso varchar(100) not null,
     categoria int default 0,
-    descripcion text default "null",
+    descripcion text default null,
     id_instructor int not null,
     intentos_max int not null,
     visible bool default false not null,
@@ -313,6 +313,13 @@ delimiter @@
 delimiter //
 insert into QuizSubmition(id_inscripcion_curso, calificacion) values(1,60);
 delimiter //
+delimiter $$
+insert into PreguntaLeccion(id_leccion, texto_pregunta) values (1, "¿Mejores formas de lavar?");
+delimiter $$
+delimiter $$
+insert into OpcionLeccion(id_pregunta_leccion, texto_opcion, correcto) values (1, "No lavar", false);
+delimiter $$
+##update Cursos set visible = false where id_curso = 1;
 #delete from cursos where id_curso = 3;
-#select * from cursos;
+select * from cursos;
 ##select * from PreguntaLeccion;

@@ -90,53 +90,114 @@ namespace MyApiProyect.Services
         }
 
         public async Task<CursoInscripcionDTO?> GetCursoReciente(int id_estudiante){
-            var LecVal = await GetCursos(id_estudiante);
-            var leccionesCompletadas = await _context.LeccionCompletada.
-                                                Where(c=>c.IdUsuario == id_estudiante && LecVal.Any(lp=>lp.lecciones.
-                                                                                        Select(lp=>lp.IdLeccion).Contains(c.IdLeccion))).
-                                                ToListAsync();
-            var IDLeccionesC = leccionesCompletadas.Select(l=> l.IdLeccionCompletada).ToList();
-            var fecha = await _context.RegistroLeccionCompletada.
-                                Where(l=> IDLeccionesC.Contains(l.IdLeccionCompletada)).
-                                OrderBy(l=>l.FechaAcabada).
-                                Select(l=>l.IdLeccionCompletada).
-                                FirstOrDefaultAsync();
-            var IDLeccion = leccionesCompletadas.
-                            Where(l=>l.IdLeccionCompletada == fecha).
-                            Select(l=>l.IdLeccion).FirstOrDefault();
-            var IDCurso = await _context.Lecciones.
-                                    Where(l=>l.IdLeccion == IDLeccion).
-                                    Select(l=>l.IdCurso).
-                                    FirstOrDefaultAsync();
-            return await GetCurso(id_estudiante, IDCurso);
+                var leccionIds = await _context.InscripcionCursos
+        .Where(ic => ic.IdEstudiante == id_estudiante)
+        .Join(
+            _context.Lecciones,
+            ic => ic.IdCurso,
+            l => l.IdCurso,
+            (ic, l) => l.IdLeccion
+        )
+        .ToListAsync();
+
+    if (!leccionIds.Any())
+    {
+        return null;
+    }
+
+    // Get completed lessons for these lesson IDs
+    var completedLesson = await _context.LeccionCompletada
+        .Where(lc => lc.IdUsuario == id_estudiante && leccionIds.Contains(lc.IdLeccion))
+        .Join(
+            _context.RegistroLeccionCompletada,
+            lc => lc.IdLeccionCompletada,
+            rlc => rlc.IdLeccionCompletada,
+            (lc, rlc) => new { lc.IdLeccion, rlc.FechaAcabada }
+        )
+        .OrderByDescending(x => x.FechaAcabada)
+        .FirstOrDefaultAsync();
+
+    if (completedLesson == null)
+    {
+        return null;
+    }
+
+    // Get course ID for the most recent completed lesson
+    var cursoId = await _context.Lecciones
+        .Where(l => l.IdLeccion == completedLesson.IdLeccion)
+        .Select(l => l.IdCurso)
+        .FirstOrDefaultAsync();
+
+    return await GetCurso(id_estudiante, cursoId);
         }
 
-        public async Task<EstadisticasSemana> GetEstadisticas(int id_estudiante){
-            var LecVal = await GetCursos(id_estudiante);
-            var lecciones = await _context.LeccionCompletada.
-                                    Where(l=>l.IdUsuario == id_estudiante && LecVal.Any(lp=>lp.lecciones.
-                                                                                        Select(lp=>lp.IdLeccion).Contains(l.IdLeccion))).
-                                    Select(l=>l.IdLeccionCompletada).
-                                    ToListAsync();
-            var TodoRegistro = await _context.RegistroLeccionCompletada.
-                                    Where(r=> lecciones.Contains(r.IdLeccionCompletada) && r.FechaAcabada > DateTime.Today.AddDays(-7)).
-                                    ToListAsync();
-            var registros = TodoRegistro.GroupBy(r=>r.FechaAcabada.DayOfWeek).ToDictionary(
-                                                    group => group.Key, // Key: Day of the week
-                                                    group => group.Select(g=>g.FechaAcabada).Count() // Value: Count of distinct elements
-                                                );
-            List<Estadistica> Estadisticas = new List<Estadistica>();
-            for(int i = 0; i < 7; i++){
-                var day =  DateTime.Today.AddDays(-i).DayOfWeek;
-                Estadisticas.Add( new Estadistica{
-                    dia = day.ToString(),
-                    cantidad = registros.ContainsKey(day) ? registros[day] : 0
-                });
-            }
-            return new EstadisticasSemana {estadisticas = Estadisticas};
-                                    
-                                
+        public async Task<EstadisticasSemana> GetEstadisticas(int id_estudiante)
+{
+    // Get all lesson IDs from student's enrolled courses first
+    var leccionIds = await _context.InscripcionCursos
+        .Where(ic => ic.IdEstudiante == id_estudiante)
+        .Join(
+            _context.Cursos.Where(c => c.Visible), // Only join with visible courses
+            ic => ic.IdCurso,
+            c => c.IdCurso,
+            (ic, c) => c.IdCurso
+        )
+        .Join(
+            _context.Lecciones,
+            cid => cid,
+            l => l.IdCurso,
+            (cid, l) => l.IdLeccion
+        )
+        .ToListAsync();
+
+    if (!leccionIds.Any())
+    {   var Estadistic = new List<Estadistica>();
+        for (int i = 0; i < 7; i++)
+        {
+            var day = DateTime.Today.AddDays(-i).DayOfWeek;
+            Estadistic.Add(new Estadistica
+            {
+                dia = day.ToString(),
+                cantidad =  0
+            });
         }
+        return new EstadisticasSemana() {estadisticas = Estadistic};
+    }
+
+    // Get completed lessons for these lesson IDs
+    var completedLessons = await _context.LeccionCompletada
+        .Where(l => l.IdUsuario == id_estudiante && leccionIds.Contains(l.IdLeccion))
+        .Select(l => l.IdLeccionCompletada)
+        .ToListAsync();
+
+    // Get records from the last 7 days
+    var TodoRegistro = await _context.RegistroLeccionCompletada
+        .Where(r => completedLessons.Contains(r.IdLeccionCompletada) && 
+                    r.FechaAcabada > DateTime.Today.AddDays(-7))
+        .ToListAsync();
+
+    // Group by day and count distinct completion records
+    var registros = TodoRegistro
+        .GroupBy(r => r.FechaAcabada.DayOfWeek)
+        .ToDictionary(
+            group => group.Key,
+            group => group.Select(g => g.IdLeccionCompletada).Distinct().Count()
+        );
+
+    // Create statistics for the last 7 days
+    var Estadisticas = new List<Estadistica>();
+    for (int i = 0; i < 7; i++)
+    {
+        var day = DateTime.Today.AddDays(-i).DayOfWeek;
+        Estadisticas.Add(new Estadistica
+        {
+            dia = day.ToString(),
+            cantidad = registros.ContainsKey(day) ? registros[day] : 0
+        });
+    }
+
+    return new EstadisticasSemana { estadisticas = Estadisticas };
+}
 
         public async Task<List<LeccionInscripcionSimpleDTO>> GetLeccionesSimple(int id_leccion, int id_alumno){
             var cur = await _context.Lecciones.Where(l=> l.IdLeccion == id_leccion).Select(l=> l.IdCurso).FirstOrDefaultAsync();
