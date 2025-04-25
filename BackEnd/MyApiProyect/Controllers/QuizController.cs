@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using MyApiProyect.Services;
 using MyApiProyect.DTO;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MyApiProyect.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class QuizController : ControllerBase
     {
         private IQuestionService quizService;

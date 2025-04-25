@@ -71,5 +71,16 @@ namespace MyApiProyect.Controllers
             return re;
         }
 
+        [HttpGet]
+        [Route("Lecciones")]
+        public async Task<ActionResult<List<LeccionInscripcionSimpleDTO>>> getLecciones(int id_leccion){
+            var I =  User.FindFirstValue(ClaimTypes.Name);
+            if(I is null) return BadRequest();
+            int id = int.Parse(I);
+            var re = await cursosDeAlumnoService.GetLeccionesSimple(id_leccion, id); 
+            if (re is null) return StatusCode(500);
+            return re;
+        }
+
     }
 }

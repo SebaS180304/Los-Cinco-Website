@@ -14,7 +14,7 @@ create table Cursos (
 	id_curso int not null auto_increment,
     titulo_curso varchar(100) not null,
     categoria int default 0,
-    descripcion varchar(600) default "null",
+    descripcion text default "null",
     id_instructor int not null,
     intentos_max int not null,
     visible bool default false not null,

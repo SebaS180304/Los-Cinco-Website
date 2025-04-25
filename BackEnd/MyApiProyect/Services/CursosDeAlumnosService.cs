@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -137,6 +138,15 @@ namespace MyApiProyect.Services
                                 
         }
 
+        public async Task<List<LeccionInscripcionSimpleDTO>> GetLeccionesSimple(int id_leccion, int id_alumno){
+            var cur = await _context.Lecciones.Where(l=> l.IdLeccion == id_leccion).Select(l=> l.IdCurso).FirstOrDefaultAsync();
+            var lecciones = await _context.Cursos.Where(l=> l.IdCurso == cur ).Include(c=> c.Lecciones).ThenInclude(l=> l.LeccionCompletada).FirstOrDefaultAsync();
+            return lecciones.Lecciones.Select(l=> new LeccionInscripcionSimpleDTO{
+                IdLeccion = l.IdLeccion,
+                TituloLeccion = l.TituloLeccion,
+                completada = l.LeccionCompletada.Where(l=> l.IdUsuario == id_alumno).Select(c=>c.Valida).FirstOrDefault() ?? false
+            }).ToList();
+        } 
 
         public async Task<LeccionInscripcionDTO?> GetLeccion(int id_leccion, int id_estudiante){
             var leccionI = await _context.Lecciones.Where(l=>l.IdLeccion == id_leccion).
@@ -144,10 +154,6 @@ namespace MyApiProyect.Services
                                         FirstOrDefaultAsync();
             if(leccionI is null)
                 return null;
-            var lec = await _context.Lecciones.Where(c=> c.IdCurso == leccionI.IdCurso).
-                                        ToListAsync();
-            var cant = lec.Count();
-
                                        
             var LeccionF = new LeccionInscripcionDTO{
                                             IdLeccion = id_leccion,
@@ -155,7 +161,6 @@ namespace MyApiProyect.Services
                                             Contenido = leccionI.Contenido,
                                             tipo = leccionI.TipoMedia,
                                             Url = leccionI.UrlMedia,
-                                            cantidad = cant,
                                             completada = leccionI.LeccionCompletada.Where(r=>r.IdUsuario == id_estudiante).
                                                                             Select(r=> r.Valida).
                                                                             FirstOrDefault() ?? false
@@ -165,10 +170,6 @@ namespace MyApiProyect.Services
         }
 
         public async Task<QuizLeccionDTO> PreguntasDeLeccion(int id_leccion, int id_alumno){
-            var sin = await _context.Lecciones.Where(l=> l.IdLeccion == id_leccion).FirstAsync();
-            var lecciones = await _context.Lecciones.Where(l=> l.IdCurso == sin.IdCurso).
-                                    Select(l=>l.IdLeccion).ToListAsync();
-            
             var preguntas = await _context.PreguntaLeccions.
                                         Include(p=>p.OpcionLeccions).
                                         Where(p=>p.IdLeccion == id_leccion).
@@ -177,16 +178,9 @@ namespace MyApiProyect.Services
                                     Where(l=>l.IdLeccion == id_leccion && l.IdUsuario == id_alumno).
                                     Select(l=>l.Valida).
                                     FirstOrDefaultAsync() ?? false;
-            int nextL = 0;
-            while(nextL < lecciones.Count() && lecciones[nextL] != id_leccion){
-                nextL++;
-            }
-            nextL = lecciones.Count() >= nextL ? -1 : lecciones[nextL];
             var fin = new QuizLeccionDTO{
                 id_leccion = id_leccion,
                 completado = ended,
-                cantiad = lecciones.Count(),
-                id_leccion_siguiente = nextL,
                 preguntas = preguntas.Select(p=> new PreguntaDTO{
                     IdPregunta = p.IdPreguntaLeccion,
                     Texto = p.TextoPregunta,
