@@ -49,6 +49,7 @@ const Dashboard = () => {
                   title: curso.tituloCurso,
                   description: curso.descripcionCurso || 0,
                   category: curso.categoria || 'Indefinido',
+                  visible: curso.visible || false,
                 }}
                 key={curso.idCurso}
                 />
