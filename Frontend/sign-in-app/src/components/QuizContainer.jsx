@@ -12,12 +12,12 @@ const QuizContainer = ({ questions, onQuizComplete, isLectureComplete }) => {
   const question = questions[current];
 
   const handleSubmit = () => {
-    const wasCorrect = question.options[selected].isCorrect;
+    const wasCorrect = question?.opciones[selected]?.correcta;
     setIsCorrect(wasCorrect);
     setSubmitted(true);
-      };
+  };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (current + 1 < questions.length) {
       setCurrent(current + 1);
       setSelected(null);
@@ -25,6 +25,10 @@ const QuizContainer = ({ questions, onQuizComplete, isLectureComplete }) => {
       setIsCorrect(false);
     } else {
       setFinished(true);
+      // Llamar a onQuizComplete solo cuando se completa todo el quiz
+      if (onQuizComplete) {
+        await onQuizComplete();
+      }
     }
   };
 
@@ -39,12 +43,6 @@ const QuizContainer = ({ questions, onQuizComplete, isLectureComplete }) => {
       setFinished(true);
     }
   }, [isLectureComplete]);
-
-  useEffect(() => {
-    if (finished && onQuizComplete) {
-      onQuizComplete();
-    }
-  }, [finished, onQuizComplete]);
 
   return finished ? (
     <QuizSummary questions={questions}/>

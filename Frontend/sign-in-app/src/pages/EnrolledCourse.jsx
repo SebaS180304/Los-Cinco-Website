@@ -15,7 +15,7 @@ const EnrolledCourse = () => {
     const { courseId } = useParams();
     const navigate = useNavigate();
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const [lessonExpanded, setLessonExpanded] = useState(false);
     const [course, setCourse] = useState(null);

@@ -22,18 +22,18 @@ const QuizSummary = ({ questions }) => {
         </Typography>
         <Stack spacing={2} mt={3} alignItems="center">
           {questions.map((q, idx) => {
-            const correctOptions = q.options.filter(opt => opt.isCorrect);
+            const correctOptions = q.opciones.filter(opt => opt.correcta);
             return (
-              <Card key={idx} sx={{ backgroundColor: '#1E2A45', borderRadius: 2, width: '80%', p: 2 }}>
+              <Card key={q.idPregunta} sx={{ backgroundColor: '#1E2A45', borderRadius: 2, width: '80%', p: 2 }}>
                 <CardContent>
                   <Typography variant="h6" sx={{ color: 'white', fontWeight: 'bold' }}>
-                    {idx + 1}. {q.question}
+                    {idx + 1}. {q.texto}
                   </Typography>
-                  {correctOptions.map((opt, i) => (
-                    <Box key={i} sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                  {correctOptions.map((opt) => (
+                    <Box key={opt.idOpcion} sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
                       <CheckCircleIcon sx={{ color: CUSTOM_COLOR, mr: 1 }} />
                       <Typography variant="body1" sx={{ color: 'white' }}>
-                        {opt.text}
+                        {opt.texto}
                       </Typography>
                     </Box>
                   ))}

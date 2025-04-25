@@ -2,7 +2,6 @@ import { Box, Card, CardContent, IconButton, Stack, Typography, Button } from '@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import CloseIcon from '@mui/icons-material/Close';
-import { lecture_data } from './constants';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
@@ -10,7 +9,7 @@ const CUSTOM_COLOR = '#FFB300';
 const SECONDARY_COLOR = '#0c1633';
 const BG_COLOR = '#101626';
 
-function Drawcontent({ onClose }) {
+function Drawcontent({ onClose, lessons }) {
     const navigate = useNavigate();
     
     return ( 
@@ -19,7 +18,7 @@ function Drawcontent({ onClose }) {
                 <Box sx={{ p: 3, display: 'flex', justifyContent: 'space-between' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
                         <Typography variant="h6" color="white" sx={{ textTransform: 'uppercase', fontWeight: 'bold' }}>
-                            {lecture_data[0].course}
+                            Nombre del curso
                         </Typography>
                     </Box>
                     <IconButton onClick={onClose}>
@@ -28,8 +27,8 @@ function Drawcontent({ onClose }) {
                 </Box>
                 <Box sx={{ p: 2 }}>
                     <Stack spacing={2} mt={1} alignItems="center">
-                        {lecture_data.map((l, idx) => {
-                            const isCompleted = Boolean(l.isCompleted);
+                        {lessons.map((l, idx) => {
+                            const isCompleted = Boolean(l.completada);
                             return (
                                 <Card key={idx} sx={{ backgroundColor: '#1E2A45', borderRadius: 2, width: '100%' }}>
                                     <CardContent>
@@ -40,7 +39,7 @@ function Drawcontent({ onClose }) {
                                                 <CheckCircleOutlineIcon sx={{ color: SECONDARY_COLOR, mr: 1 }} />
                                             )}
                                             <Typography variant="body1" sx={{ color: 'white' }}>
-                                                {l.title}
+                                                {l.tituloLeccion}
                                             </Typography>
                                         </Box>
                                     </CardContent>
@@ -52,7 +51,7 @@ function Drawcontent({ onClose }) {
             </Box>
             <Box sx={{ position: 'absolute', bottom: 0, backgroundColor: BG_COLOR, height: '80px', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <Button
-                    onClick={() => navigate(`/enrolled/${lecture_data[0].courseId}`)}
+                    onClick={() => navigate(`/enrolled/1`)}
                     sx={{ color: CUSTOM_COLOR , border: `2px solid ${CUSTOM_COLOR}`, '&:hover': { opacity: 0.8 }  }}
                     variant="outlined" 
                 >
