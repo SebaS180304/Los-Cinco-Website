@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using MyApiProyect.DTO;
 using MyApiProyect.Models;
@@ -90,51 +92,51 @@ namespace MyApiProyect.Services
         }
 
         public async Task<CursoInscripcionDTO?> GetCursoReciente(int id_estudiante){
-                var leccionIds = await _context.InscripcionCursos
-        .Where(ic => ic.IdEstudiante == id_estudiante)
-        .Join(
-            _context.Lecciones,
-            ic => ic.IdCurso,
-            l => l.IdCurso,
-            (ic, l) => l.IdLeccion
-        )
-        .ToListAsync();
+            var leccionIds = await _context.InscripcionCursos
+            .Where(ic => ic.IdEstudiante == id_estudiante)
+            .Join(
+                _context.Lecciones,
+                ic => ic.IdCurso,
+                l => l.IdCurso,
+                (ic, l) => l.IdLeccion
+            )
+            .ToListAsync();
 
-    if (!leccionIds.Any())
-    {
-        return null;
-    }
+            if (!leccionIds.Any())
+            {
+                return null;
+            }
 
-    // Get completed lessons for these lesson IDs
-    var completedLesson = await _context.LeccionCompletada
-        .Where(lc => lc.IdUsuario == id_estudiante && leccionIds.Contains(lc.IdLeccion))
-        .Join(
-            _context.RegistroLeccionCompletada,
-            lc => lc.IdLeccionCompletada,
-            rlc => rlc.IdLeccionCompletada,
-            (lc, rlc) => new { lc.IdLeccion, rlc.FechaAcabada }
-        )
-        .OrderByDescending(x => x.FechaAcabada)
-        .FirstOrDefaultAsync();
+            // Get completed lessons for these lesson IDs
+            var completedLesson = await _context.LeccionCompletada
+                .Where(lc => lc.IdUsuario == id_estudiante && leccionIds.Contains(lc.IdLeccion))
+                .Join(
+                    _context.RegistroLeccionCompletada,
+                    lc => lc.IdLeccionCompletada,
+                    rlc => rlc.IdLeccionCompletada,
+                    (lc, rlc) => new { lc.IdLeccion, rlc.FechaAcabada }
+                )
+                .OrderByDescending(x => x.FechaAcabada)
+                .FirstOrDefaultAsync();
 
-    if (completedLesson == null)
-    {
-        return null;
-    }
+            if (completedLesson == null)
+            {
+                return null;
+            }
 
-    // Get course ID for the most recent completed lesson
-    var cursoId = await _context.Lecciones
-        .Where(l => l.IdLeccion == completedLesson.IdLeccion)
-        .Select(l => l.IdCurso)
-        .FirstOrDefaultAsync();
+            // Get course ID for the most recent completed lesson
+            var cursoId = await _context.Lecciones
+                .Where(l => l.IdLeccion == completedLesson.IdLeccion)
+                .Select(l => l.IdCurso)
+                .FirstOrDefaultAsync();
 
-    return await GetCurso(id_estudiante, cursoId);
+            return await GetCurso(id_estudiante, cursoId);
         }
 
         public async Task<EstadisticasSemana> GetEstadisticas(int id_estudiante)
-{
+        {
     // Get all lesson IDs from student's enrolled courses first
-    var leccionIds = await _context.InscripcionCursos
+        var leccionIds = await _context.InscripcionCursos
         .Where(ic => ic.IdEstudiante == id_estudiante)
         .Join(
             _context.Cursos.Where(c => c.Visible), // Only join with visible courses
@@ -150,63 +152,68 @@ namespace MyApiProyect.Services
         )
         .ToListAsync();
 
-    if (!leccionIds.Any())
-    {   var Estadistic = new List<Estadistica>();
-        for (int i = 0; i < 7; i++)
-        {
-            var day = DateTime.Today.AddDays(-i).DayOfWeek;
-            Estadistic.Add(new Estadistica
+        if (!leccionIds.Any())
+        {   var Estadistic = new List<Estadistica>();
+            for (int i = 0; i < 7; i++)
             {
-                dia = day.ToString(),
-                cantidad =  0
-            });
-        }
+                var day = DateTime.Today.AddDays(-i).DayOfWeek;
+                Estadistic.Add(new Estadistica
+                {
+                    dia = day.ToString(),
+                    cantidad =  0
+                });
+            }
         return new EstadisticasSemana() {estadisticas = Estadistic};
-    }
+        }
 
     // Get completed lessons for these lesson IDs
-    var completedLessons = await _context.LeccionCompletada
-        .Where(l => l.IdUsuario == id_estudiante && leccionIds.Contains(l.IdLeccion))
-        .Select(l => l.IdLeccionCompletada)
-        .ToListAsync();
+            var completedLessons = await _context.LeccionCompletada
+                .Where(l => l.IdUsuario == id_estudiante && leccionIds.Contains(l.IdLeccion))
+                .Select(l => l.IdLeccionCompletada)
+                .ToListAsync();
 
-    // Get records from the last 7 days
-    var TodoRegistro = await _context.RegistroLeccionCompletada
-        .Where(r => completedLessons.Contains(r.IdLeccionCompletada) && 
-                    r.FechaAcabada > DateTime.Today.AddDays(-7))
-        .ToListAsync();
+            // Get records from the last 7 days
+            var TodoRegistro = await _context.RegistroLeccionCompletada
+                .Where(r => completedLessons.Contains(r.IdLeccionCompletada) && 
+                            r.FechaAcabada > DateTime.Today.AddDays(-7))
+                .ToListAsync();
 
-    // Group by day and count distinct completion records
-    var registros = TodoRegistro
-        .GroupBy(r => r.FechaAcabada.DayOfWeek)
-        .ToDictionary(
-            group => group.Key,
-            group => group.Select(g => g.IdLeccionCompletada).Distinct().Count()
-        );
+            // Group by day and count distinct completion records
+            var registros = TodoRegistro
+                .GroupBy(r => r.FechaAcabada.DayOfWeek)
+                .ToDictionary(
+                    group => group.Key,
+                    group => group.Select(g => g.IdLeccionCompletada).Distinct().Count()
+                );
 
-    // Create statistics for the last 7 days
-    var Estadisticas = new List<Estadistica>();
-    for (int i = 0; i < 7; i++)
-    {
-        var day = DateTime.Today.AddDays(-i).DayOfWeek;
-        Estadisticas.Add(new Estadistica
-        {
-            dia = day.ToString(),
-            cantidad = registros.ContainsKey(day) ? registros[day] : 0
-        });
-    }
+        // Create statistics for the last 7 days
+            var Estadisticas = new List<Estadistica>();
+            for (int i = 0; i < 7; i++)
+            {
+                var day = DateTime.Today.AddDays(-i).DayOfWeek;
+                Estadisticas.Add(new Estadistica
+                {
+                    dia = day.ToString(),
+                    cantidad = registros.ContainsKey(day) ? registros[day] : 0
+                });
+            }
 
-    return new EstadisticasSemana { estadisticas = Estadisticas };
-}
-
-        public async Task<List<LeccionInscripcionSimpleDTO>> GetLeccionesSimple(int id_leccion, int id_alumno){
+            return new EstadisticasSemana { estadisticas = Estadisticas };
+        }
+        public async Task<CursoSimpleDTO?> GetCursoSimple(int id_leccion, int id_alumno){
             var cur = await _context.Lecciones.Where(l=> l.IdLeccion == id_leccion).Select(l=> l.IdCurso).FirstOrDefaultAsync();
-            var lecciones = await _context.Cursos.Where(l=> l.IdCurso == cur ).Include(c=> c.Lecciones).ThenInclude(l=> l.LeccionCompletada).FirstOrDefaultAsync();
-            return lecciones.Lecciones.Select(l=> new LeccionInscripcionSimpleDTO{
-                IdLeccion = l.IdLeccion,
-                TituloLeccion = l.TituloLeccion,
-                completada = l.LeccionCompletada.Where(l=> l.IdUsuario == id_alumno).Select(c=>c.Valida).FirstOrDefault() ?? false
-            }).ToList();
+            var curs = await _context.Cursos.Where(l=> l.IdCurso == cur ).Include(c=> c.Lecciones).ThenInclude(l=> l.LeccionCompletada).FirstOrDefaultAsync();
+            if (curs is null) return null;
+            var a =  new CursoSimpleDTO{
+                IdCurso = curs.IdCurso,
+                TituloCurso = curs.TituloCurso,
+                lecciones = curs.Lecciones.Select(l=> new LeccionInscripcionSimpleDTO{
+                    IdLeccion = l.IdLeccion,
+                    TituloLeccion = l.TituloLeccion,
+                    completada = l.LeccionCompletada.Where(p=>p.IdUsuario == id_alumno).Select(lc=>lc.Valida).FirstOrDefault() ?? false
+                }).ToList()
+            };
+            return a;
         } 
 
         public async Task<LeccionInscripcionDTO?> GetLeccion(int id_leccion, int id_estudiante){
@@ -253,6 +260,31 @@ namespace MyApiProyect.Services
                 }).ToList()
             };
             return fin;                      
+        }
+
+
+        public async Task<CursoPDF_DTO?> GetPDFInfo( int id_curso, int id_alumno){
+            var sample = await _context.Cursos.Where(c=> c.IdCurso == id_curso && c.Visible).
+                                    Include(c=> c.Lecciones).FirstOrDefaultAsync();
+            if(sample is null ) return null;
+            var t =  new CursoPDF_DTO{
+                IdCurso = sample.IdCurso,
+                TituloCurso = sample.TituloCurso,
+                DescripcionCurso = sample.Descripcion ??  "NA",
+                Categoria = sample.Categoria,
+                lecciones = sample.Lecciones.Select(l=> new LeccionPDF_DTO{
+                    IdLeccion = l.IdLeccion,
+                    TituloLeccion = l.TituloLeccion,
+                    Contenido = l.Contenido,
+                }).ToList()
+            };
+            return t;
+
+        }
+
+        public async Task<bool> PerteneceCurso(int id_curso, int id_alumno){
+            var curso = await _context.InscripcionCursos.Where(i=> i.IdCurso == id_curso && i.IdEstudiante == id_alumno).FirstOrDefaultAsync();
+            return !(curso is null);
         }
 
 
