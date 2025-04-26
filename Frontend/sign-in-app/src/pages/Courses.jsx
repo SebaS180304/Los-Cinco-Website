@@ -17,6 +17,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckMark from '@mui/icons-material/Check';
 import categoryMapping from '../components/constants/categoryMapping';
 import ConfirmationPopup from '../components/ConfirmationPopup';
+import ExamQuestions from '../components/ExamQuestions';
 
 const CUSTOM_COLOR = '#FFB300';
 
@@ -344,6 +345,7 @@ function Courses() {
     const [error, setError] = useState(false); // Estado para manejar errores
 
     const [showPopup, setShowPopup] = useState(false);
+    const [viewingExam, setViewingExam] = useState(false);
 
     // Obtener detalles del curso
     useEffect(() => {
@@ -906,37 +908,38 @@ function Courses() {
                   Agregar Lección
                 </Button>
                 <Button
-                  variant='outlined'
+                  variant="outlined"
                   color="secondary"
                   startIcon={<AssignmentOutlinedIcon />}
-                  onClick={() => {
-                    // Aquí puedes agregar la lógica para ver el examen
-                    console.log('Ver examen');
-                  }}
+                  onClick={() => setViewingExam(!viewingExam)}
                 >
-                  Ver Examen
+                  {viewingExam ? 'Ver Lecciones' : 'Ver Examen'}
                 </Button>
               </Box>
             </Box>
-            {editableLessons.length === 0 ? (
-              <Box sx={{ textAlign: 'center', mt: 3 }}>
-                <Typography variant="body1" sx={{ mb: 2 }}>
-                  No hay lecciones disponibles.
-                </Typography>
-              </Box>
+            {viewingExam ? (
+              <ExamQuestions courseId={courseId} />
             ) : (
-              editableLessons.map((lesson, index) => (
-                <LessonAccordion
-                  key={index}
-                  lecture={lesson}
-                  panel={`panel-${index}`}
-                  expanded={lessonExpanded}
-                  handleChange={handleLessonChange}
-                  handleOpenEdit={() => handleOpenEdit(lesson, index)} // Pasar índice
-                  handleOpenQuestions={handleOpenQuestions}
-                  isMobile={isMobile}
-                />
-              ))
+              editableLessons.length === 0 ? (
+                <Box sx={{ textAlign: 'center', mt: 3 }}>
+                  <Typography variant="body1" sx={{ mb: 2 }}>
+                    No hay lecciones disponibles.
+                  </Typography>
+                </Box>
+              ) : (
+                editableLessons.map((lesson, index) => (
+                  <LessonAccordion
+                    key={index}
+                    lecture={lesson}
+                    panel={`panel-${index}`}
+                    expanded={lessonExpanded}
+                    handleChange={handleLessonChange}
+                    handleOpenEdit={() => handleOpenEdit(lesson, index)}
+                    handleOpenQuestions={handleOpenQuestions}
+                    isMobile={isMobile}
+                  />
+                ))
+              )
             )}
           </Box>
           {/* Dialog para agregar nueva lección */}
