@@ -118,6 +118,24 @@ namespace MyApiProyect.Services
 
         }
 
+        public async Task<bool> SubmitQuiz(int id_curso, int id_alumno, int cal){
+            var Insc = await context.InscripcionCursos.Where(i=>i.IdCurso == id_curso && i.IdEstudiante == id_alumno).
+                                                Select(i=>i.IdInscripcionCurso).
+                                                FirstOrDefaultAsync();
+            var sub = new QuizSubmition{
+                IdInscripcionCurso = Insc,
+                Calificacion = cal
+            };
+            context.Add(sub);
+            try{
+                await context.SaveChangesAsync();
+            }catch (Exception e){
+                Console.WriteLine(e);
+                return false;
+            }
+            return true;
+        }
+
 
     }
 }

@@ -45,5 +45,19 @@ namespace MyApiProyect.Controllers
             }
         }
 
+        [HttpPatch]
+        [Route("Quiz")]
+        public async Task<IActionResult> SubmitQuiz(QuizSubmitionDTO sub){
+            var id = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (id is null)
+                return Unauthorized();
+            var res = await questionService.SubmitQuiz(sub.id_curso, int.Parse(id), sub.cal);
+            if(!res){
+                return StatusCode(500);
+            }
+            return NoContent();
+
+        }
+
     }
 }

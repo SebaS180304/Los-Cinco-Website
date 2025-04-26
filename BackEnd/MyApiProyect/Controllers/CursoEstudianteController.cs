@@ -22,7 +22,7 @@ namespace MyApiProyect.Controllers
         [Route("All")]
         public async Task<ActionResult<List<CursoInscripcionDTO>>> getAll(){
             var I =  User.FindFirstValue(ClaimTypes.Name);
-            if(I is null) return BadRequest();
+            if(I is null) return Unauthorized();
             int id = int.Parse(I);
             return Ok(await cursosDeAlumnoService.GetCursos(id));
         }
@@ -31,8 +31,10 @@ namespace MyApiProyect.Controllers
         [Route("Single")]
         public async Task<ActionResult<CursoInscripcionDTO>> getSingle(int IdCurso){
             var I =  User.FindFirstValue(ClaimTypes.Name);
-            if(I is null) return BadRequest();
+            if(I is null) return Unauthorized();
             int id = int.Parse(I);
+            var pass = await cursosDeAlumnoService.PerteneceCurso(IdCurso, id);
+            if (!pass) return Unauthorized();
             var single =  await cursosDeAlumnoService.GetCurso(id, IdCurso);
             if(single is null){return NotFound();}
             return single;
@@ -43,7 +45,7 @@ namespace MyApiProyect.Controllers
 
         public async Task<ActionResult<CursoInscripcionDTO>> getRecent(){
             var I =  User.FindFirstValue(ClaimTypes.Name);
-            if(I is null) return BadRequest();
+            if(I is null) return Unauthorized();
             int id = int.Parse(I);
             var recent = await cursosDeAlumnoService.GetCursoReciente(id);
             if(recent is null) return NoContent();
@@ -55,7 +57,7 @@ namespace MyApiProyect.Controllers
 
         public async Task<ActionResult<EstadisticasSemana>> getEstadistcas(){
             var I =  User.FindFirstValue(ClaimTypes.Name);
-            if(I is null) return BadRequest();
+            if(I is null) return Unauthorized();
             int id = int.Parse(I);
             return await cursosDeAlumnoService.GetEstadisticas(id); 
         }
@@ -64,7 +66,7 @@ namespace MyApiProyect.Controllers
         [Route("Leccion")]
         public async Task<ActionResult<LeccionInscripcionDTO>> getLeccion(int id_leccion){
             var I =  User.FindFirstValue(ClaimTypes.Name);
-            if(I is null) return BadRequest();
+            if(I is null) return Unauthorized();
             int id = int.Parse(I);
             var re = await cursosDeAlumnoService.GetLeccion(id_leccion, id); 
             if (re is null) return StatusCode(500);
@@ -73,12 +75,25 @@ namespace MyApiProyect.Controllers
 
         [HttpGet]
         [Route("Lecciones")]
-        public async Task<ActionResult<List<LeccionInscripcionSimpleDTO>>> getLecciones(int id_leccion){
+        public async Task<ActionResult<CursoSimpleDTO>> getLecciones(int id_leccion){
             var I =  User.FindFirstValue(ClaimTypes.Name);
-            if(I is null) return BadRequest();
+            if(I is null) return Unauthorized();
             int id = int.Parse(I);
-            var re = await cursosDeAlumnoService.GetLeccionesSimple(id_leccion, id); 
+            var re = await cursosDeAlumnoService.GetCursoSimple(id_leccion, id); 
             if (re is null) return StatusCode(500);
+            return re;
+        }
+
+        [HttpGet]
+        [Route("PDF")]
+        public async Task<ActionResult<CursoPDF_DTO>> getPDF(int id_curso){
+            var I =  User.FindFirstValue(ClaimTypes.Name);
+            if(I is null) return Unauthorized();
+            int id = int.Parse(I);
+            var pass = await cursosDeAlumnoService.PerteneceCurso(id_curso, id);
+            if (!pass) return Unauthorized();
+            var re = await cursosDeAlumnoService.GetPDFInfo(id_curso, id); 
+            if (re is null) return NotFound();
             return re;
         }
 
