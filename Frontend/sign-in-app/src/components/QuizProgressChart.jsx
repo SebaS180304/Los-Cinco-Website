@@ -17,7 +17,7 @@ const QuizProgressChart = ({ course }) => {
   if (filtCourse.length === 0) {
     return (
       <Box sx={{ p: 2 }}>
-        <Typography>Regresa aquí cuando hayas completado tu primera evaluación final.</Typography>
+        <Typography>Regresa aquí cuando hayas completado tu primera evaluación final para visualizar la calificación de tus exámenes de curso y su promedio.</Typography>
       </Box>
     );
   }

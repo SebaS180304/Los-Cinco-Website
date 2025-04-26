@@ -19,17 +19,6 @@ namespace MyApiProyect.Services
         public AlumnosService(WebsiteContext context){
             _context = context;
         }
-
-        public async Task<List<DetallesBaseAlumno>> GetAlumnos(){
-            var alumnos = await _context.Usuarios.
-                                Where(c=> c.Rol ==0).ToListAsync();
-            return alumnos.Select(a=> new DetallesBaseAlumno{
-                IdAlumno = a.IdUsuario,
-                Nombre = a.NombreCompleto
-            }).ToList();
-        }
-
-
         public async Task<List<DetallesBaseAlumno>> GetOwnAlumnos(int id_profesor){
             var InscripcionesA = await _context.InscripcionInstructors.
                                     Include(i=> i.IdEstudianteNavigation).
@@ -87,6 +76,15 @@ namespace MyApiProyect.Services
             }
             return true;
 
+        }
+
+        public async Task<List<DetallesBaseAlumno>> GetALL(){
+            var alumnos = await _context.Usuarios.Where(a=>a.Rol == 0).ToListAsync();
+            var all = alumnos.Select(a=> new DetallesBaseAlumno{
+                IdAlumno = a.IdUsuario,
+                Nombre = a.NombreCompleto
+            }).ToList();
+            return all;
         }
 
     }

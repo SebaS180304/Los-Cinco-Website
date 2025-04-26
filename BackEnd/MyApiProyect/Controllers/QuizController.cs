@@ -6,11 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using MyApiProyect.Services;
 using MyApiProyect.DTO;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MyApiProyect.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class QuizController : ControllerBase
     {
         private IQuestionService quizService;
@@ -47,6 +49,19 @@ namespace MyApiProyect.Controllers
             var response = await quizService.GetLeccionPreguntas( id_leccion);
             return response;
 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ModificarQuizPreguntas([FromBody] List<PreguntaDTO> preguntas, int id_curso){
+            var id = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (id is null)
+                return Unauthorized();
+            var response = await quizService.ModificarQuizFinal(preguntas, id_curso);
+            if(response){
+                return NoContent();
+            }else{
+                return StatusCode(500);
+            }
         }
 
     }

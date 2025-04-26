@@ -22,6 +22,17 @@ namespace MyApiProyect.Controllers
         public AlumnosController(IAlumnosService alumnoService_) => alumnoService = alumnoService_;
 
         [HttpGet]
+        [Route("All")]
+        public async Task<ActionResult<List<DetallesBaseAlumno>>> SearchAll()
+        {
+            var id = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (id is null)
+                return Unauthorized();
+            var response = await alumnoService.GetALL();
+            return response;
+        }
+
+        [HttpGet]
         [Route("Busqueda")]
         public async Task<ActionResult<List<DetallesBaseAlumno>>> SearchCaption()
         {

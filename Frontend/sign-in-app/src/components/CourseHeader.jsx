@@ -10,12 +10,6 @@ const CUSTOM_COLOR = '#FFB300';
 const CourseHeader = ({ course, courseLessons, isMobile }) => {
     const currentLesson = course?.lecciones?.find(leccion => !leccion.completada);
 
-    const buttonStyles = {
-        fontWeight: 'bold',
-        color: 'black',
-        width: isMobile ? '100%' : '50%',
-    };
-
     return (
         <Stack
             direction={isMobile ? 'column' : 'row'}
@@ -35,23 +29,26 @@ const CourseHeader = ({ course, courseLessons, isMobile }) => {
                         display: 'flex',
                         flexDirection: isMobile ? 'column' : 'row',
                         gap: 2,
-                        mb: 2,
+                        width: '100%',
                     }}
                 >
+                    <Box sx={{ width: isMobile ? '100%' : '50%' }}>
+                        <DownloadCoursePDF />
+                    </Box>
                     <Button
                         component={Link}
                         to={`/lesson/${currentLesson?.idLeccion}`}
                         variant="contained"
-                        startIcon={<ArrowForwardIcon />}
+                        endIcon={<ArrowForwardIcon />}
                         sx={{
-                            ...buttonStyles,
                             backgroundColor: CUSTOM_COLOR,
                             '&:hover': { backgroundColor: `${CUSTOM_COLOR}CC` },
+                            width: isMobile ? '100%' : '50%',
+                            color: 'white'
                         }}
                     >
                         Continuar
                     </Button>
-                    <DownloadCoursePDF />
                 </Box>
             </Box>
             <Box {...(!isMobile ? { flex: 2 } : {})}>
