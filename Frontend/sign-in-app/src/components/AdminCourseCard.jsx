@@ -92,7 +92,7 @@ const AdminCourseCard = ({ course, isAddCard, onAddCurso }) => {
                 />
                 <CardContent sx={{ p: 1.5 }}>
                     <Box>
-                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                        <Typography variant="h5" sx={{ fontWeight: 'bold', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             {course.title || 'Curso Indefinido'}
                         </Typography>
                         <Typography color="text.secondary" sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
