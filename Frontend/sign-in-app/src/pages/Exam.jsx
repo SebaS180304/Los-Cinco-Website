@@ -5,7 +5,7 @@ import axios from '../api/axios';
 import Lectbar from '../components/LectBar';
 import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
 
-const LESSON_ARRAY_URL = '/CursoEstudiante/Single?IdCurso=';
+const LESSON_ARRAY_URL = '/CursoEstudiante/LeccionesIdCurso?id_curso=';
 
 const CUSTOM_COLOR = '#FFB300';
 

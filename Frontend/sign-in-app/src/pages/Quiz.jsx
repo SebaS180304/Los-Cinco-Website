@@ -145,6 +145,7 @@ const Quiz = () => {
           setCurrentLectureIndex={setCurrentLectureIndex}
           quizCompleted={quizCompleted}
           lessons={lessonsArray}
+          courseId={lessons?.idCurso}
         />
       )}
     </Box>
