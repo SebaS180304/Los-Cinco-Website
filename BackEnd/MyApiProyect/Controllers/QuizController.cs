@@ -12,14 +12,13 @@ namespace MyApiProyect.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize]
     public class QuizController : ControllerBase
     {
         private IQuestionService quizService;
         public QuizController(IQuestionService _quizService) => quizService = _quizService;
 
         [HttpGet]
-        public async Task<ActionResult<List<PreguntaDTO>>> GetQuizzes(int id_curso, int id_alumno)
+        public async Task<ActionResult<List<PreguntaDTO>>> GetQuizzes(int id_curso)
         {
             var quizzes = await quizService.GetQuizPreguntas(id_curso);
             if (quizzes is null) return NotFound();
