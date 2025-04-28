@@ -4,9 +4,11 @@ using System.Diagnostics.Tracing;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Runtime.Serialization;
+using System.Security.AccessControl;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using MyApiProyect.DTO;
@@ -203,10 +205,12 @@ namespace MyApiProyect.Services
         public async Task<CursoSimpleDTO?> GetCursoSimple(int id_leccion, int id_alumno){
             var cur = await _context.Lecciones.Where(l=> l.IdLeccion == id_leccion).Select(l=> l.IdCurso).FirstOrDefaultAsync();
             var curs = await _context.Cursos.Where(l=> l.IdCurso == cur ).Include(c=> c.Lecciones).ThenInclude(l=> l.LeccionCompletada).FirstOrDefaultAsync();
+            var quest = await _context.Preguntas.Where(p=> p.IdCurso == cur).FirstOrDefaultAsync();
             if (curs is null) return null;
             var a =  new CursoSimpleDTO{
                 IdCurso = curs.IdCurso,
                 TituloCurso = curs.TituloCurso,
+                Preguntas = quest is not null,
                 lecciones = curs.Lecciones.Select(l=> new LeccionInscripcionSimpleDTO{
                     IdLeccion = l.IdLeccion,
                     TituloLeccion = l.TituloLeccion,
@@ -215,6 +219,21 @@ namespace MyApiProyect.Services
             };
             return a;
         } 
+
+        public async Task<CursoSimpleDTO?> getCursobyId(int id_curso, int id_alumno){
+            var curs = await GetCurso(id_alumno, id_curso);
+            if (curs is null) return null;
+            return new CursoSimpleDTO{
+                IdCurso = curs.IdCurso,
+                TituloCurso = curs.TituloCurso,
+                Preguntas = false,
+                lecciones = curs.lecciones.Select(l=> new LeccionInscripcionSimpleDTO{
+                    IdLeccion = l.IdLeccion,
+                    TituloLeccion = l.TituloLeccion,
+                    completada = l.completada
+                }).ToList()
+            };
+        }
 
         public async Task<LeccionInscripcionDTO?> GetLeccion(int id_leccion, int id_estudiante){
             var leccionI = await _context.Lecciones.Where(l=>l.IdLeccion == id_leccion).
