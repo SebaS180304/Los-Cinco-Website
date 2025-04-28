@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Stack, Typography, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import CourseDetails from './CourseDetails';
 import DownloadCoursePDF from './DownloadCoursePDF';
 
@@ -9,6 +10,8 @@ const CUSTOM_COLOR = '#FFB300';
 
 const CourseHeader = ({ course, courseLessons, isMobile }) => {
     const currentLesson = course?.lecciones?.find(leccion => !leccion.completada);
+    const areAllLessonsCompleted = course?.lecciones?.every(leccion => leccion.completada);
+    const lastLesson = course?.lecciones?.[course.lecciones.length - 1];
 
     return (
         <Stack
@@ -37,17 +40,25 @@ const CourseHeader = ({ course, courseLessons, isMobile }) => {
                     </Box>
                     <Button
                         component={Link}
-                        to={`/lesson/${currentLesson?.idLeccion}`}
-                        variant="contained"
-                        endIcon={<ArrowForwardIcon />}
+                        to={`/lesson/${areAllLessonsCompleted ? lastLesson?.idLeccion : currentLesson?.idLeccion}`}
+                        variant={areAllLessonsCompleted ? "outlined" : "contained"}
+                        endIcon={areAllLessonsCompleted ? <RefreshIcon /> : <ArrowForwardIcon />}
                         sx={{
-                            backgroundColor: CUSTOM_COLOR,
-                            '&:hover': { backgroundColor: `${CUSTOM_COLOR}CC` },
-                            width: isMobile ? '100%' : '50%',
-                            color: 'white'
+                            ...(areAllLessonsCompleted 
+                                ? {
+                                    color: CUSTOM_COLOR,
+                                    border: `2px solid ${CUSTOM_COLOR}`,
+                                    '&:hover': { opacity: 0.8 }
+                                }
+                                : {
+                                    backgroundColor: CUSTOM_COLOR,
+                                    '&:hover': { backgroundColor: `${CUSTOM_COLOR}CC`, color: 'black' }
+                                }
+                            ),
+                            width: isMobile ? '100%' : '50%'
                         }}
                     >
-                        Continuar
+                        {areAllLessonsCompleted ? 'Repasar' : 'Continuar'}
                     </Button>
                 </Box>
             </Box>
