@@ -4,9 +4,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
 import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import categoryMapping from './constants/categoryMapping';
 
 const CUSTOM_COLOR = '#FFB300';
+const SECONDARY_COLOR = '#0c1633';
 
 const CourseCard = ({ course }) => {
     const navigate = useNavigate();
@@ -77,6 +79,8 @@ const CourseCard = ({ course }) => {
 
     const currentLesson = course?.lecciones?.find(leccion => !leccion.completada);
     const categoryName = categoryMapping[course?.categoria] || "Indefinida";
+    const areAllLessonsCompleted = course?.lecciones?.every(leccion => leccion.completada);
+    const lastLesson = course?.lecciones?.[course.lecciones.length - 1];
 
     return (
         <Card sx={{ maxWidth: '100%', borderRadius: '16px', border: '1px solid #000' }}>
@@ -124,7 +128,7 @@ const CourseCard = ({ course }) => {
                             to={`/exam/${course?.idCurso}`}
                             variant="outlined"
                             startIcon={<HistoryEduIcon />}
-                            disabled={!!currentLesson}
+                            disabled={!areAllLessonsCompleted}
                             sx={{
                                 color: CUSTOM_COLOR,
                                 border: `2px solid ${CUSTOM_COLOR}`,
@@ -137,16 +141,16 @@ const CourseCard = ({ course }) => {
                         <Divider orientation="vertical" flexItem sx={{ border: '1px solid #000', mx: 2 }} />
                         <Button
                             component={Link}
-                            to={`/lesson/${currentLesson?.idLeccion}`}
+                            to={`/lesson/${areAllLessonsCompleted ? lastLesson?.idLeccion : currentLesson?.idLeccion}`}
                             variant="contained"
-                            endIcon={<ArrowForwardIcon />}
+                            endIcon={areAllLessonsCompleted ? <RefreshIcon /> : <ArrowForwardIcon />}
                             sx={{
-                                backgroundColor: CUSTOM_COLOR,
-                                '&:hover': { backgroundColor: `${CUSTOM_COLOR}CC` },
+                                backgroundColor: areAllLessonsCompleted ? SECONDARY_COLOR : CUSTOM_COLOR,
+                                '&:hover': { backgroundColor: areAllLessonsCompleted ? `${SECONDARY_COLOR}CC` : `${CUSTOM_COLOR}CC` },
                                 flex: 1
                             }}
                         >
-                            Continuar
+                            {areAllLessonsCompleted ? 'Repasar' : 'Continuar'}
                         </Button>
                     </Box>
                 </Stack>

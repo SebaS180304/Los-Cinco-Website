@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Divider, List, ListItem, ListItemIcon, Typography } from '@mui/material';
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
+import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import categoryMapping from './constants/categoryMapping';
 
 const CUSTOM_COLOR = '#FFB300';

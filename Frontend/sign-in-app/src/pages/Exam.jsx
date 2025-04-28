@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { AppBar, Box, Button, CircularProgress, Dialog, Toolbar, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { AppBar, Box, Button, CircularProgress, Dialog, Toolbar, Typography, LinearProgress, useMediaQuery, useTheme } from '@mui/material';
 import axios from '../api/axios';
 import Lectbar from '../components/LectBar';
 import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
+import { Unity, useUnityContext } from "react-unity-webgl";
 
-const LESSON_ARRAY_URL = '/CursoEstudiante/Single?IdCurso=';
+const LESSON_ARRAY_URL = '/CursoEstudiante/LeccionesIdCurso?id_curso=';
 
 const CUSTOM_COLOR = '#FFB300';
 
@@ -21,6 +22,14 @@ const Exam = () => {
     const [loading, setLoading] = useState(true);
     const [lessons, setLessons] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
+    const [isGameLaunched, setIsGameLaunched] = useState(false);
+
+    const { unityProvider, loadingProgression, isLoaded } = useUnityContext({
+        loaderUrl: "/assets/unity/FIxIt_Web.loader.js",
+        dataUrl: "/assets/unity/FIxIt_Web.data.gz",
+        frameworkUrl: "/assets/unity/FIxIt_Web.framework.js.gz",
+        codeUrl: "/assets/unity/FIxIt_Web.wasm.gz",
+    });
 
     useEffect(() => {
         const fetchLessonsArray = async () => {
@@ -83,7 +92,7 @@ const Exam = () => {
     return (
        <Box sx={{ display: 'flex', mt: '64px', backgroundColor: '#0F172A' }}>
             <Lectbar selectedView="quiz" setSelectedView={() => {}} lessons={lessons} disableMedia={true} mode="quiz" isMobile={isMobile} />
-            <Box component="main" sx={{ display: 'flex', flexDirection: 'column', width: '100%', height: 'calc(100vh - 128px)' }}>
+            <Box component="main" sx={{ display: 'flex', flexDirection: 'column', width: '100%', height: 'calc(100vh - 64px)' }}>
                 <AppBar position="static" sx={{ backgroundColor: '#273661', boxShadow: 'none' }}>
                     <Toolbar>
                         <HistoryEduIcon sx={{ fontSize: 40 }} />
@@ -93,29 +102,66 @@ const Exam = () => {
                     </Toolbar>
                 </AppBar>
                 <Box component="main" sx={{ p: 3, overflow: 'auto', flexGrow: 1, textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                    <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ color: 'white' }}>
-                        Has terminado todas las lecciones del curso.
-                    </Typography>
-                    <Typography variant="h4" fontWeight="bold" gutterBottom sx={{ color: 'white' }}>
-                        ¡Ahora puedes realizar el examen final de curso!
-                    </Typography>
-                    <Button
-                        variant="outlined"
-                        startIcon={<HistoryEduIcon />}
-                        sx={{
-                            color: CUSTOM_COLOR,
-                            border: `2px solid ${CUSTOM_COLOR}`,
-                            '&:hover': { opacity: 0.8 },
-                        }}
-                    >
-                        Comenzar Examen
-                    </Button>
+                    {!isGameLaunched ? (
+                        <Box>
+                            <Typography variant="h5" fontWeight="bold" gutterBottom sx={{ color: 'white' }}>
+                                Has terminado todas las lecciones del curso.
+                            </Typography>
+                            <Typography variant="h4" fontWeight="bold" gutterBottom sx={{ color: 'white' }}>
+                                ¡Ahora puedes realizar el examen final de curso!
+                            </Typography>
+                            <Button
+                                variant="outlined"
+                                onClick={()=> setIsGameLaunched(true)}
+                                startIcon={<HistoryEduIcon />}
+                                sx={{
+                                    color: CUSTOM_COLOR,
+                                    border: `2px solid ${CUSTOM_COLOR}`,
+                                    '&:hover': { opacity: 0.8 },
+                                }}
+                            >
+                                Comenzar Examen
+                            </Button>
+                    </Box>
+                    ) : (
+                        <Box>
+                            {!isLoaded && (
+                                <>
+                                    <LinearProgress
+                                        variant="determinate"
+                                        value={Math.round(loadingProgression * 100)}
+                                        sx={{
+                                            height: '20px',
+                                            borderRadius: '10px',
+                                            backgroundColor: `${CUSTOM_COLOR}40`,
+                                            '& .MuiLinearProgress-bar': {
+                                                borderRadius: '10px',
+                                                backgroundColor: CUSTOM_COLOR,
+                                            },
+                                        }}
+                                    />
+                                    <Typography variant="body1" sx={{ mt: 2, color: 'white' }}>
+                                        Cargando el examen... {Math.round(loadingProgression * 100)}%
+                                    </Typography>
+                                </>
+                            )}
+                            <Unity unityProvider={unityProvider} style={{ width: "100%", height: "auto" }} />
+                            <Button
+                                variant="outlined"
+                                onClick={()=> setIsGameLaunched(false)}
+                                startIcon={<HistoryEduIcon />}
+                                sx={{
+                                    color: CUSTOM_COLOR,
+                                    border: `2px solid ${CUSTOM_COLOR}`,
+                                    '&:hover': { opacity: 0.8 },
+                                }}
+                            >
+                                Cerrar Examen
+                            </Button>
+                        </Box>
+                    )}
                 </Box>
             </Box>
-            <AppBar position="fixed" sx={{ top: 'auto', bottom: 0, backgroundColor: 'black', height: '64px' }}>
-            <Toolbar>
-            </Toolbar>
-        </AppBar>
        </Box>
     )
 }

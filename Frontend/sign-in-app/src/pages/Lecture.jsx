@@ -139,6 +139,7 @@ function Lecture() {
                     setCurrentLectureIndex={setCurrentLectureIndex} 
                     quizCompleted={lessonsArray[currentLectureIndex]?.completada}
                     lessons={lessonsArray}
+                    courseId={lessons?.idCurso}
                 />
             )}
         </Box>

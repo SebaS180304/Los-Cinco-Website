@@ -19,7 +19,7 @@ namespace MyApiProyect.Controllers
         public QuizController(IQuestionService _quizService) => quizService = _quizService;
 
         [HttpGet]
-        public async Task<ActionResult<List<PreguntaDTO>>> GetQuizzes(int id_curso, int id_alumno)
+        public async Task<ActionResult<List<PreguntaDTO>>> GetQuizzes(int id_curso)
         {
             var quizzes = await quizService.GetQuizPreguntas(id_curso);
             if (quizzes is null) return NotFound();

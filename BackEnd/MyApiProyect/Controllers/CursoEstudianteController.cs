@@ -21,6 +21,7 @@ namespace MyApiProyect.Controllers
         [HttpGet]
         [Route("All")]
         public async Task<ActionResult<List<CursoInscripcionDTO>>> getAll(){
+            
             var I =  User.FindFirstValue(ClaimTypes.Name);
             if(I is null) return Unauthorized();
             int id = int.Parse(I);

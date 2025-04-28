@@ -45,7 +45,7 @@ namespace MyApiProyect.Controllers
             }
         }
 
-        [HttpPatch]
+        [HttpPost]
         [Route("Quiz")]
         public async Task<IActionResult> SubmitQuiz(QuizSubmitionDTO sub){
             var id = User.FindFirst(ClaimTypes.Name)?.Value;
@@ -57,6 +57,18 @@ namespace MyApiProyect.Controllers
             }
             return NoContent();
 
+        }
+
+        [HttpGet]
+        [Route("Submitions")]
+        public async Task<ActionResult<List<QuizValuesDTO>>> getSubmitions(int id_curso){
+            var I = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (I is null)
+                return Unauthorized();
+            var id = int.Parse(I);
+            var res = await cursosDeAlumnoService.RecentSubmitions(id_curso, id);
+            return res;
+            
         }
 
     }
