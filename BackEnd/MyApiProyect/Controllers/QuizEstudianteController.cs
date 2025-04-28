@@ -12,7 +12,6 @@ namespace MyApiProyect.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize]
     public class QuizEstudianteController : ControllerBase
     {
         private ICursosDeAlumnoService cursosDeAlumnoService;
@@ -45,13 +44,14 @@ namespace MyApiProyect.Controllers
             }
         }
 
-        [HttpPatch]
+        [HttpPost]
         [Route("Quiz")]
         public async Task<IActionResult> SubmitQuiz(QuizSubmitionDTO sub){
-            var id = User.FindFirst(ClaimTypes.Name)?.Value;
+            /*var id = User.FindFirst(ClaimTypes.Name)?.Value;
             if (id is null)
-                return Unauthorized();
-            var res = await questionService.SubmitQuiz(sub.id_curso, int.Parse(id), sub.cal);
+                return Unauthorized();*/
+            int id = 1000;
+            var res = await questionService.SubmitQuiz(sub.id_curso, id, sub.cal);
             if(!res){
                 return StatusCode(500);
             }
