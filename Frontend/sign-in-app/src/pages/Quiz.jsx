@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Box, useTheme, useMediaQuery, Dialog, CircularProgress, Typography } from '@mui/material';
 import Lectbar from '../components/LectBar';
 import Bottombar from '../components/Bottombar';
@@ -12,48 +12,62 @@ const LESSON_ARRAY_URL = '/CursoEstudiante/Lecciones?id_leccion=';
 const CUSTOM_COLOR = '#FFB300';
 
 const Quiz = () => {
+  const navigate = useNavigate();
+
   const { id } = useParams();
   const lessonId = Number(id);
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const [loading, setLoading] = useState(true);
   const [quiz, setQuiz] = useState(null);
+  const [lessons, setLessons] = useState(null);
   const [lessonsArray, setLessonsArray] = useState([]);
   const [currentLectureIndex, setCurrentLectureIndex] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
+  const [errorMsg, setErrorMsg] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchQuiz = async () => {
       try {
         setLoading(true);
-        // Obtener el quiz y el array de lecciones en paralelo
-        const [quizResponse, lessonsArrayResponse] = await Promise.all([
-          axios.get(`${QUIZ_URL}${lessonId}`, {
-            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-          }),
-          axios.get(`${LESSON_ARRAY_URL}${lessonId}`, {
-            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-          })
-        ]);
-
-        setQuiz(quizResponse.data);
-        setLessonsArray(lessonsArrayResponse.data);
-        
-        // Validar si el quiz ya está completado
-        if (quizResponse.data?.completado) {
-          setQuizCompleted(true);
+        const response = await axios.get(`${QUIZ_URL}${lessonId}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        });
+        if (!response.data.preguntas || response.data.preguntas.length === 0) {
+          setErrorMsg("La evaluación no cuenta con contenido.");
+          setTimeout(() => {
+            navigate(`/lesson/${lessonId}`);
+          }, 3000);
+          return;
         }
-
+        setQuiz(response.data);
+        setQuizCompleted(response.data.completado);
       } catch (error) {
-        console.error('Error al obtener datos:', error.message);
+        console.error('Error al obtener el quiz: ', error.message);
       } finally {
+        await new Promise(resolve => setTimeout(resolve, 500));
         setLoading(false);
       }
     };
-
-    fetchData();
-  }, [lessonId]);
+    const fetchLessonsArray = async () => {
+      try {
+        const response = await axios.get(`${LESSON_ARRAY_URL}${lessonId}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        });
+        setLessons(response.data);
+        setLessonsArray(response.data.lecciones);
+      } catch (error) {
+        console.error('Error al obtener el array de lecciones: ', error.message);
+      } finally {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        setLoading(false);
+      }
+    };
+    fetchQuiz();
+    fetchLessonsArray();
+  }, [lessonId, navigate]);
 
   useEffect(() => {
     if (lessonsArray?.length > 0) {
@@ -75,37 +89,35 @@ const Quiz = () => {
 
   if (loading) {
     return (
-      <Box sx={{ 
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        backgroundColor: '#101626',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 1000
-      }}>
-        <Dialog 
-          open={true} 
-          PaperProps={{ 
-            sx: { 
-              textAlign: 'center', 
-              padding: 4,
-              bgcolor: '#212633',
-              borderRadius: 2
-            } 
-          }}
-        >
+      <Box sx={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: '#101626', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
+        <Dialog open={true} PaperProps={{ sx: { textAlign: 'center', padding: 4, bgcolor: '#212633' ,borderRadius: 2 } }}>
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <CircularProgress sx={{ color: CUSTOM_COLOR }} />
           </Box>
           <Typography variant="h6" sx={{ mt: 2, color: 'white' }}>
-            Cargando Quiz...
+            Cargando Información de la Evaluación...
           </Typography>
         </Dialog>
       </Box>
+    );
+  }
+
+  // Agregar el diálogo de error
+  if (errorMsg) {
+    return (
+        <Box sx={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: '#101626', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
+            <Dialog open={true} PaperProps={{ sx: { textAlign: 'center', padding: 4, bgcolor: '#212633', borderRadius: 2 } }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                <CircularProgress sx={{ color: CUSTOM_COLOR }} />
+            </Box>
+            <Typography variant="body1" sx={{ mt: 2, color: 'white' }}>
+                {errorMsg}
+            </Typography>
+            <Typography variant="body2" sx={{ mt: 1, color: 'white' }}>
+                Por favor, contacta al administrador del curso para más detalles.
+            </Typography>
+            </Dialog>
+        </Box>
     );
   }
 
@@ -117,7 +129,7 @@ const Quiz = () => {
         disableMedia={true}
         mode="quiz"
         isMobile={isMobile}
-        lessons={lessonsArray}
+        lessons={lessons}
       />
       <Box component="main" sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
         <QuizContainer

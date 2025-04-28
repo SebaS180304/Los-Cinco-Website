@@ -16,6 +16,6 @@ namespace MyApiProyect.Services
         public Task<bool> ModificarLeccionQuiz(List<PreguntaDTO> questions, int id_leccion);
         public Task<bool> SubmitionLeccion(int id_leccion, int id_alumno);
 
-        //public Task<List<
+        public Task<bool> SubmitQuiz(int id_curso, int id_alumno, int cal);
     }
 }

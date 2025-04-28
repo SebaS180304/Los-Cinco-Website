@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Box, CircularProgress, Dialog, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { Box, Button, CircularProgress, Dialog, Typography, useMediaQuery, useTheme } from '@mui/material';
 import Navbar from '../components/Navbar';
 import ProgressSection from '../components/ProgressSection';
 import LessonAccordion from '../components/LessonAccordion';
 import CourseHeader from '../components/CourseHeader';
 import axios from '../api/axios';
+import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
 
 const COURSE_URL = '/CursoEstudiante/Single?IdCurso=';
 
@@ -47,8 +48,6 @@ const EnrolledCourse = () => {
         fetchCourse();
     }, [courseId, navigate]);
 
-
-
     // Si aún no se cargó la información de los endopoints, mostrar un loader
     if (loading) {
         return (
@@ -57,7 +56,7 @@ const EnrolledCourse = () => {
                     <CircularProgress sx={{ color: CUSTOM_COLOR }} />
                 </Box>
                 <Typography variant="h6" sx={{ mt: 2 }}>
-                    Cargando Información...
+                    Cargando Información del Curso...
                 </Typography>
             </Dialog>
         );
@@ -87,6 +86,8 @@ const EnrolledCourse = () => {
         setLessonExpanded(isExpanded ? panel : false);
     };
 
+    const currentLesson = courseLessons.find(leccion => !leccion.completada);
+
     return (
         <Box sx={{ display: 'flex', mt: '64px' }}>
             <Navbar />
@@ -106,9 +107,26 @@ const EnrolledCourse = () => {
                     </Box>
                 </Box>
                 <Box sx={{ pt: 7 }}>
-                    <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3 }}>
-                        Contenido del Curso
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 3  }}>
+                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                            Contenido del Curso
+                        </Typography>
+                        <Button
+                            component={Link}
+                            to={`/exam/${course?.idCurso}`}
+                            variant="outlined"
+                            startIcon={<HistoryEduIcon />}
+                            disabled={!!currentLesson}
+                            sx={{
+                                color: CUSTOM_COLOR,
+                                border: `2px solid ${CUSTOM_COLOR}`,
+                                '&:hover': { opacity: 0.8 },
+                                ml: 'auto',
+                            }}
+                        >
+                            Examen
+                        </Button>
+                    </Box>
                     {courseLessons.map(lecture => (
                         <LessonAccordion 
                             key={lecture.idLeccion}

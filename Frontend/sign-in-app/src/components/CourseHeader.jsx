@@ -33,7 +33,7 @@ const CourseHeader = ({ course, courseLessons, isMobile }) => {
                     }}
                 >
                     <Box sx={{ width: isMobile ? '100%' : '50%' }}>
-                        <DownloadCoursePDF />
+                        <DownloadCoursePDF courseId={course.idCurso} />
                     </Box>
                     <Button
                         component={Link}

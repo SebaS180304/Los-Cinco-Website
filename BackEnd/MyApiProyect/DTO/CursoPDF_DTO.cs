@@ -6,17 +6,13 @@ using System.Threading.Tasks;
 namespace MyApiProyect.DTO
 
 {
-    public class CursoInscripcionDTO
+    public class CursoPDF_DTO
     {
        public int IdCurso { get; set; } = 0;
         public string TituloCurso { get; set; } = null!;
         public string DescripcionCurso { get; set; } = null!;
         public int? Categoria { get; set; } = 0;
-        public int IntentosMax {get; set;}= 0;
-        public int Intentos {get; set;} = 0;
-        public int CalificacionExamen {get; set;} = 0;
-        public int Porcentaje {get; set;} = 0;
-        public List<LeccionInscripcionDTO> lecciones {get; set;} = new List<LeccionInscripcionDTO>();
+        public List<LeccionPDF_DTO> lecciones {get; set;} = new List<LeccionPDF_DTO>();
 
 
 
