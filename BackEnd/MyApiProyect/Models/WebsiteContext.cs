@@ -40,6 +40,7 @@ public partial class WebsiteContext : DbContext
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -57,8 +58,7 @@ public partial class WebsiteContext : DbContext
                 .HasDefaultValueSql("'0'")
                 .HasColumnName("categoria");
             entity.Property(e => e.Descripcion)
-                .HasMaxLength(600)
-                .HasDefaultValueSql("'null'")
+                .HasColumnType("text")
                 .HasColumnName("descripcion");
             entity.Property(e => e.IdInstructor).HasColumnName("id_instructor");
             entity.Property(e => e.IntentosMax).HasColumnName("intentos_max");

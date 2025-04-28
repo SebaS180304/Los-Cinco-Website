@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using System.Security.AccessControl;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -103,9 +104,10 @@ namespace MyApiProyect.Services
                 (ic, l) => l.IdLeccion
             )
             .ToListAsync();
-
+            
             if (!leccionIds.Any())
             {
+                Console.WriteLine("NoHayC");
                 return null;
             }
 
@@ -123,7 +125,9 @@ namespace MyApiProyect.Services
 
             if (completedLesson == null)
             {
-                return null;
+                Console.WriteLine("No Hay completadas");
+                return await FirstCourse(id_estudiante);
+                
             }
 
             // Get course ID for the most recent completed lesson
@@ -132,7 +136,24 @@ namespace MyApiProyect.Services
                 .Select(l => l.IdCurso)
                 .FirstOrDefaultAsync();
 
-            return await GetCurso(id_estudiante, cursoId);
+            var S = await GetCurso(id_estudiante, cursoId);
+            if(S is null){
+                Console.WriteLine("LeccionCompletada pero no disponible el curso");
+                return await FirstCourse(id_estudiante);
+            }else{
+                return S;
+            }
+        }
+
+        public async Task<CursoInscripcionDTO?> FirstCourse(int id_alumno){
+            var te = await GetCursos(id_alumno);
+                var gg = te.FirstOrDefault();
+                
+                if (gg is null) {
+                    return null;
+                }
+                Console.WriteLine(gg.IdCurso);
+                return await GetCurso(id_alumno, gg.IdCurso);
         }
 
         public async Task<EstadisticasSemana> GetEstadisticas(int id_estudiante)
@@ -309,6 +330,19 @@ namespace MyApiProyect.Services
             return !(curso is null);
         }
 
-
+        public async Task<List<QuizValuesDTO>> RecentSubmitions( int id_curso, int id_alumno){
+            var inscripc = await _context.InscripcionCursos.Where(ic=> ic.IdCurso == id_curso && ic.IdEstudiante == id_alumno).
+                                                            FirstOrDefaultAsync();
+            if(inscripc is null) return new List<QuizValuesDTO>();
+            var submitions = await _context.QuizSubmitions.Where(q => q.IdInscripcionCurso == inscripc.IdInscripcionCurso).
+                                                            Take(inscripc.Intento).
+                                                            OrderByDescending(q=> q.FechaSubmition).ToListAsync();
+            var res = submitions.Select( s=> new QuizValuesDTO{
+                    cal = s.Calificacion,
+                    intento = s.IdSubmition,
+                    Fecha = s.FechaSubmition ?? System.DateTime.Today
+            }).ToList();
+            return res;
+        }
     }
 }

@@ -59,5 +59,17 @@ namespace MyApiProyect.Controllers
 
         }
 
+        [HttpGet]
+        [Route("Submitions")]
+        public async Task<ActionResult<List<QuizValuesDTO>>> getSubmitions(int id_curso){
+            var I = User.FindFirst(ClaimTypes.Name)?.Value;
+            if (I is null)
+                return Unauthorized();
+            var id = int.Parse(I);
+            var res = await cursosDeAlumnoService.RecentSubmitions(id_curso, id);
+            return res;
+            
+        }
+
     }
 }
