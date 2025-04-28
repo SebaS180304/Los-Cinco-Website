@@ -28,7 +28,8 @@ function Media({ mediaType, src, isMobile }) {
     const handleError = useCallback(() => {
         setLoadError(true);
         setIsLoading(false);
-    }, []);
+        console.error(`Error al cargar la imagen desde la URL: ${src}`);
+    }, [src]);
 
     const handleLoad = useCallback(() => {
         setIsLoading(false);
@@ -69,14 +70,16 @@ function Media({ mediaType, src, isMobile }) {
     } else if (mediaType === 1) {
         mediaContent = (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                <img 
+                <iframe 
                     key={reloadKey}
                     onError={handleError}
-                    onLoad={handleLoad}
+                    onLoadedData={handleLoad}
                     src={src}
-                    alt="Contenido multimedia"
-                    style={{ width: '100%', maxHeight: '500px', objectFit: 'contain' }}
-                />
+                    width="100%"
+                    height="70%"
+                    style={{ objectFit: 'contain' }}
+                    frameBorder="0"
+                ></iframe>
             </Box>
         );
         mediaIcon = <ImageOutlinedIcon sx={{ color: 'white', fontSize: 40 }} />;

@@ -5,15 +5,10 @@ import axios from 'axios';
 const FileUploader = ({ lesson, onFileUploaded, open, onClose }) => {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
-  const [tipoArchivo, setTipoArchivo] = useState(0);
-  const [fileId, setFileId] = useState(null); // Guardar el fileId
-  const [fileUrl, setFileUrl] = useState(null); // Guardar la URL del archivo
 
   const handleFileChange = (e) => {
       const selectedFile = e.target.files[0];
       setFile(selectedFile);
-
-      
   };
 
   const handleUpload = async () => {
@@ -24,61 +19,65 @@ const FileUploader = ({ lesson, onFileUploaded, open, onClose }) => {
       formData.append('file', file);
 
       try {
-          setUploading(true);
+        setUploading(true);
 
-          // Subir el archivo al backend (Google Drive)
-          const response = await axios.post('http://localhost:5010/upload', formData, {
-              headers: { 'Content-Type': 'multipart/form-data' },
-          });
+        // Subir el archivo al backend (Google Drive)
+        const response = await axios.post('http://localhost:5010/upload', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        });
 
-          const uploadedFileId = response.data.url; // Recibir el fileId
-          setFileId(uploadedFileId);
-          // Determinar el tipo de archivo basado en la extensión
-          if (file) {
-            const extension = file.name.split('.').pop().toLowerCase();
-            if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
-                setTipoArchivo(1); // Imagen
-                const uploadedFileUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
-                setFileUrl(uploadedFileUrl);
-                console.log('fileUrl ', fileUrl);
-            } else if (['mp4', 'avi', 'mov', 'mkv'].includes(extension)) {
-                setTipoArchivo(2); // Video
-                const uploadedFileUrl = `https://drive.google.com/file/d/${fileId}/preview`;
-                setFileUrl(uploadedFileUrl);
-                console.log('fileUrl ', fileUrl);
-            } else if (['obj', 'fbx', 'stl', 'gltf'].includes(extension)) {
-                setTipoArchivo(3); // Archivo 3D
-            } else {
-                setTipoArchivo(0); // Otro tipo de archivo
-                console.log('No se reconoce el tipo de archivo');
+        const uploadedFileId = response.data.url; // Recibir el fileId
+        // Determinar el tipo de archivo basado en la extensión
+        let generatedUrl = null;
+        let tipoArchivo = 0; // Inicializar tipoArchivo
+        const extension = file.name.split('.').pop().toLowerCase();
+        if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
+            tipoArchivo = 1; // Imagen
+            generatedUrl = `https://drive.google.com/file/d/${uploadedFileId}/preview`;
+            console.log('URL de la imagen generada:', generatedUrl);
+        } else if (['mp4', 'avi', 'mov', 'mkv'].includes(extension)) {
+            tipoArchivo = 2; // Video
+            generatedUrl = `https://drive.google.com/file/d/${uploadedFileId}/preview`;
+            console.log('URL del video generada:', generatedUrl);
+        } else if (['obj', 'fbx', 'stl', 'gltf'].includes(extension)) {
+            tipoArchivo = 3; // Archivo 3D
+            generatedUrl = `https://drive.google.com/file/d/${uploadedFileId}`;
+        } else {
+            tipoArchivo = 0; // Otro tipo de archivo
+            console.log('No se reconoce el tipo de archivo');
+        }
+
+        if (!generatedUrl) {
+            alert('No se pudo generar la URL para este tipo de archivo.');
+            return;
+        }
+
+        // Enviar el fileId y la URL generada al backend para actualizar la lección
+        await axios.patch(
+            'http://localhost:5011/CursoAdmin/Leccion/Edit',
+            {
+                IdLeccion: lesson.IdLeccion,
+                TituloLeccion: lesson.TituloLeccion,
+                Contenido: lesson.Contenido,
+                tipo: tipoArchivo,
+                Url: generatedUrl, // Guardar la URL generada en la base de datos
+            },
+            {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
             }
-          }
-          console.log('fileId ', uploadedFileId);
-          console.log('Url ', fileUrl);
-          // Enviar el fileId al backend para actualizar la lección
-          await axios.patch(
-              'http://localhost:5011/CursoAdmin/Leccion/Edit',
-              {
-                  IdLeccion: lesson.IdLeccion,
-                  TituloLeccion: lesson.TituloLeccion,
-                  Contenido: lesson.Contenido,
-                  tipo: tipoArchivo,
-                  Url: fileUrl, // Guardar el fileId en la base de datos
-              },
-              {
-                  headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-              }
-          );
-          console.log('Lección actualizada con éxito:', lesson.IdLeccion, lesson.TituloLeccion, lesson.Contenido, fileUrl, tipoArchivo);
-          alert('Archivo subido y fileId guardado con éxito.');
+        );
 
-          // Llamar a la función de callback (si se proporciona) para actualizar el estado en el componente padre
-          if (onFileUploaded) {
-              onFileUploaded(uploadedFileId);
-          }
+        console.log('Lección actualizada con éxito:', lesson.IdLeccion, lesson.TituloLeccion, lesson.Contenido, generatedUrl, tipoArchivo);
+        alert('Archivo subido y URL guardada con éxito.');
 
-          // Cerrar el diálogo
-          onClose();
+        // Llamar a la función de callback (si se proporciona) para actualizar el estado en el componente padre
+        if (onFileUploaded) {
+            onFileUploaded(uploadedFileId);
+        }
+
+        // Limpiar el estado y cerrar el diálogo
+        setFile(null);
+        onClose();
       } catch (error) {
           console.error('Error al subir el archivo o guardar el fileId:', error);
           alert('Hubo un error al subir el archivo o guardar el fileId.');
