@@ -10,6 +10,7 @@ namespace MyApiProyect.DTO
         public int IdLeccion { get; set; } = 0;
         public string TituloLeccion { get; set; } = null!;
         public bool completada {get; set;} = false;
+        public bool preguntas {get;set;} = false;
         
     }
     
