@@ -13,23 +13,7 @@ const FileUploader = ({ lesson, onFileUploaded, open, onClose }) => {
       const selectedFile = e.target.files[0];
       setFile(selectedFile);
 
-      // Determinar el tipo de archivo basado en la extensión
-      if (selectedFile) {
-          const extension = selectedFile.name.split('.').pop().toLowerCase();
-          if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
-              setTipoArchivo(1); // Imagen
-              setFileUrl(`https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`);
-              console.log('fileUrl ', fileUrl);
-          } else if (['mp4', 'avi', 'mov', 'mkv'].includes(extension)) {
-              setTipoArchivo(2); // Video
-              setFileUrl(`https://drive.google.com/file/d/${fileId}/preview`);
-              console.log('fileUrl ', fileUrl);
-          } else if (['obj', 'fbx', 'stl', 'gltf'].includes(extension)) {
-              setTipoArchivo(3); // Archivo 3D
-          } else {
-              setTipoArchivo(0); // Otro tipo de archivo
-          }
-      }
+      
   };
 
   const handleUpload = async () => {
@@ -49,6 +33,26 @@ const FileUploader = ({ lesson, onFileUploaded, open, onClose }) => {
 
           const uploadedFileId = response.data.url; // Recibir el fileId
           setFileId(uploadedFileId);
+          // Determinar el tipo de archivo basado en la extensión
+          if (file) {
+            const extension = file.name.split('.').pop().toLowerCase();
+            if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
+                setTipoArchivo(1); // Imagen
+                const uploadedFileUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`;
+                setFileUrl(uploadedFileUrl);
+                console.log('fileUrl ', fileUrl);
+            } else if (['mp4', 'avi', 'mov', 'mkv'].includes(extension)) {
+                setTipoArchivo(2); // Video
+                const uploadedFileUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+                setFileUrl(uploadedFileUrl);
+                console.log('fileUrl ', fileUrl);
+            } else if (['obj', 'fbx', 'stl', 'gltf'].includes(extension)) {
+                setTipoArchivo(3); // Archivo 3D
+            } else {
+                setTipoArchivo(0); // Otro tipo de archivo
+                console.log('No se reconoce el tipo de archivo');
+            }
+          }
           console.log('fileId ', uploadedFileId);
           console.log('Url ', fileUrl);
           // Enviar el fileId al backend para actualizar la lección
