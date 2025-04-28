@@ -20,7 +20,7 @@ namespace MyApiProyect.Services
         public Task<CursoPDF_DTO?> GetPDFInfo(int id_curso, int id_alumno);
 
 
-
+        public Task<CursoSimpleDTO?> getCursobyId(int id_curso, int id_alumno);
 
         public Task<bool> PerteneceCurso(int id_curso, int id_alumno);
 

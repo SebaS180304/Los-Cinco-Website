@@ -69,7 +69,7 @@ namespace MyApiProyect.Controllers
             if(I is null) return Unauthorized();
             int id = int.Parse(I);
             var re = await cursosDeAlumnoService.GetLeccion(id_leccion, id); 
-            if (re is null) return StatusCode(500);
+            if (re is null) return StatusCode(404);
             return re;
         }
 
@@ -80,7 +80,18 @@ namespace MyApiProyect.Controllers
             if(I is null) return Unauthorized();
             int id = int.Parse(I);
             var re = await cursosDeAlumnoService.GetCursoSimple(id_leccion, id); 
-            if (re is null) return StatusCode(500);
+            if (re is null) return StatusCode(404);
+            return re;
+        }
+
+        [HttpGet]
+        [Route("LeccionesIdCurso")]
+        public async Task<ActionResult<CursoSimpleDTO>> getLeccionesCurso(int id_curso){
+            var I =  User.FindFirstValue(ClaimTypes.Name);
+            if(I is null) return Unauthorized();
+            int id = int.Parse(I);
+            var re = await cursosDeAlumnoService.getCursobyId(id_curso, id); 
+            if (re is null) return StatusCode(404);
             return re;
         }
 
