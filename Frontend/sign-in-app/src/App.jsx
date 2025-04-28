@@ -126,7 +126,10 @@ function App() {
             element={
               <PrivateRoute>
                 <TechnicianRoute>
-                  <Quiz />
+                  <ThemeProvider theme={theme}>
+                    <CssBaseline />
+                    <Quiz />
+                  </ThemeProvider>
                 </TechnicianRoute>
               </PrivateRoute>
             } 
@@ -136,7 +139,10 @@ function App() {
             element={
               <PrivateRoute>
                 <TechnicianRoute>
-                  <Exam />
+                  <ThemeProvider theme={theme}>
+                    <CssBaseline />
+                    <Exam />
+                  </ThemeProvider>
                 </TechnicianRoute>
               </PrivateRoute>
             } 

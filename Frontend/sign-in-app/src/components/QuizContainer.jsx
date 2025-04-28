@@ -17,7 +17,9 @@ const QuizContainer = ({ questions, onQuizComplete, isLectureComplete, quizCompl
   }, [quizCompleted]);
 
   const handleSubmit = () => {
-    const wasCorrect = question?.opciones[selected]?.correcta;
+    // Acceder a la pregunta actual usando el índice
+    const currentQuestion = questions[current];
+    const wasCorrect = currentQuestion?.opciones[selected]?.correcta;
     setIsCorrect(wasCorrect);
     setSubmitted(true);
   };
