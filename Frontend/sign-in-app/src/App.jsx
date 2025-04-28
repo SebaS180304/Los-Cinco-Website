@@ -10,6 +10,27 @@ import { GlobalProvider } from './context/GlobalContext';
 import EnrolledCourse from './pages/EnrolledCourse';
 import Quiz from './pages/Quiz';
 import Exam from './pages/Exam';
+import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
+
+const theme = createTheme({
+    components: {
+        MuiCssBaseline: {
+            styleOverrides: {
+                body: {
+                    margin: 0,
+                    padding: 0,
+                    width: '100%',
+                    overflowX: 'hidden',
+                },
+                html: {
+                    margin: 0,
+                    padding: 0,
+                    width: '100%',
+                },
+            },
+        },
+    },
+});
 
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -92,7 +113,10 @@ function App() {
             element={
               <PrivateRoute>
                 <TechnicianRoute>
-                  <Lecture />
+                  <ThemeProvider theme={theme}>
+                    <CssBaseline />
+                    <Lecture />
+                  </ThemeProvider>
                 </TechnicianRoute>
               </PrivateRoute>
             } 

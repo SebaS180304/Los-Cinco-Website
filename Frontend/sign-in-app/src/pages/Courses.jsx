@@ -17,6 +17,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckMark from '@mui/icons-material/Check';
 import categoryMapping from '../components/constants/categoryMapping';
 import ConfirmationPopup from '../components/ConfirmationPopup';
+import ExamQuestions from '../components/ExamQuestions';
+import FileUploader from '../components/FileUploader';
 
 const CUSTOM_COLOR = '#FFB300';
 
@@ -172,7 +174,7 @@ const CourseDetailsList = ({ courseLessons, handleSaveChanges, editableCourse, s
 };
 
 // Acordeón para cada lección
-function LessonAccordion({ lecture, panel, expanded, handleChange, handleOpenEdit, handleOpenQuestions, isMobile }) {
+function LessonAccordion({ lecture, panel, expanded, handleChange, handleOpenEdit, handleOpenQuestions, isMobile, handleOpenFileUploader, fileUploaderOpen, handleCloseFileUploader, handleUrl }) {
   return (
     <Accordion expanded={expanded === panel} onChange={handleChange(panel)} sx={{ mb: 2 }}>
       <AccordionSummary
@@ -308,6 +310,24 @@ function LessonAccordion({ lecture, panel, expanded, handleChange, handleOpenEdi
           >
             Editar Lección
           </Button>
+          <Button
+              variant="contained"
+              color="success"
+              startIcon={<AddIcon />}
+              onClick={handleOpenFileUploader} // Abrir el diálogo de FileUploader
+          >
+              Subir Archivo
+          </Button>
+          <FileUploader
+              lessonId={lecture.IdLeccion}
+              titulo={lecture.TituloLeccion}
+              contenido={lecture.Contenido}
+              open={fileUploaderOpen} // Controlar visibilidad del diálogo
+              onClose={handleCloseFileUploader} // Cerrar el diálogo
+              onFileUploaded={(fileUrl) => {
+                  handleUrl(fileUrl); // Actualizar el estado local con el nuevo URL del archivo
+              }}
+          />
         </Box>
       </AccordionDetails>
     </Accordion>
@@ -344,6 +364,29 @@ function Courses() {
     const [error, setError] = useState(false); // Estado para manejar errores
 
     const [showPopup, setShowPopup] = useState(false);
+    const [viewingExam, setViewingExam] = useState(false);
+    const [fileUploaderOpen, setFileUploaderOpen] = useState(false); // Estado para controlar el diálogo de FileUploader
+
+    const handleOpenFileUploader = () => {
+        setFileUploaderOpen(true); // Abrir el diálogo
+    };
+  
+    const handleCloseFileUploader = () => {
+        setFileUploaderOpen(false); // Cerrar el diálogo
+    };
+    
+    const handleUrl = (index, fileUrl) => {
+      // Encuentra la lección correspondiente por su ID
+      const updatedLessons = editableLessons.map((lesson) =>
+          lesson.IdLeccion === index
+              ? { ...lesson, Url: fileUrl } // Actualiza el campo Url de la lección
+              : lesson
+      );
+  
+      // Actualiza el estado local
+      setEditableLessons(updatedLessons);
+      console.log(`URL actualizado para la lección ${index}: ${fileUrl}`);
+    };
 
     // Obtener detalles del curso
     useEffect(() => {
@@ -368,6 +411,7 @@ function Courses() {
             IdLeccion: lesson.idLeccion,
             TituloLeccion: lesson.tituloLeccion,
             Contenido: lesson.contenido,
+            Url: lesson.url,
             questions: lesson.preguntas || [],
           })));
         } catch (error) {
@@ -385,14 +429,22 @@ function Courses() {
       setCurrentLecture(lecture); // Establecer la lección actual
       setOpenQuestions(true); // Abrir el diálogo de preguntas
       if (!lecture.questions || lecture.questions.length === 0) {
-        handleAddQuestion(); // Agregar una pregunta vacía si no hay preguntas
+        const updatedQuestions = [...(lecture.questions || [])];
+        updatedQuestions.push({
+          texto: '',
+          opciones: [
+            { texto: '', correcta: false },
+            { texto: '', correcta: false },
+          ],
+        });
+        setCurrentLecture({ ...lecture, questions: updatedQuestions });
       }
     };
     
     const handleCloseQuestions = () => {
       // currentLecture.questions = currentLecture.questions.filter((question) => question.texto.trim() !== ''); // Filtrar preguntas vacías
-      setCurrentLecture(null); // Limpiar la lección actual
       setOpenQuestions(false); // Cerrar el diálogo de preguntas
+      setCurrentLecture(null); // Limpiar la lección actual
     };
     
     const handleQuestionChange = (questionIndex, field, value) => {
@@ -482,6 +534,7 @@ function Courses() {
       } catch (error) {
         console.error('Error al guardar las preguntas en la API:', error);
         alert('Hubo un error al guardar las preguntas.');
+        console.log(currentLecture.IdLeccion);
       }
     };
 
@@ -906,37 +959,42 @@ function Courses() {
                   Agregar Lección
                 </Button>
                 <Button
-                  variant='outlined'
+                  variant="outlined"
                   color="secondary"
                   startIcon={<AssignmentOutlinedIcon />}
-                  onClick={() => {
-                    // Aquí puedes agregar la lógica para ver el examen
-                    console.log('Ver examen');
-                  }}
+                  onClick={() => setViewingExam(!viewingExam)}
                 >
-                  Ver Examen
+                  {viewingExam ? 'Ver Lecciones' : 'Ver Examen'}
                 </Button>
               </Box>
             </Box>
-            {editableLessons.length === 0 ? (
-              <Box sx={{ textAlign: 'center', mt: 3 }}>
-                <Typography variant="body1" sx={{ mb: 2 }}>
-                  No hay lecciones disponibles.
-                </Typography>
-              </Box>
+            {viewingExam ? (
+              <ExamQuestions courseId={courseId} />
             ) : (
-              editableLessons.map((lesson, index) => (
-                <LessonAccordion
-                  key={index}
-                  lecture={lesson}
-                  panel={`panel-${index}`}
-                  expanded={lessonExpanded}
-                  handleChange={handleLessonChange}
-                  handleOpenEdit={() => handleOpenEdit(lesson, index)} // Pasar índice
-                  handleOpenQuestions={handleOpenQuestions}
-                  isMobile={isMobile}
-                />
-              ))
+              editableLessons.length === 0 ? (
+                <Box sx={{ textAlign: 'center', mt: 3 }}>
+                  <Typography variant="body1" sx={{ mb: 2 }}>
+                    No hay lecciones disponibles.
+                  </Typography>
+                </Box>
+              ) : (
+                editableLessons.map((lesson, index) => (
+                  <LessonAccordion
+                    key={index}
+                    lecture={lesson}
+                    panel={`panel-${index}`}
+                    expanded={lessonExpanded}
+                    handleChange={handleLessonChange}
+                    handleOpenEdit={() => handleOpenEdit(lesson, index)}
+                    handleOpenQuestions={handleOpenQuestions}
+                    isMobile={isMobile}
+                    handleOpenFileUploader={handleOpenFileUploader}
+                    fileUploaderOpen={fileUploaderOpen}
+                    handleCloseFileUploader={handleCloseFileUploader}
+                    handleUrl={() => handleUrl(index, lesson.Url)}
+                  />
+                ))
+              )
             )}
           </Box>
           {/* Dialog para agregar nueva lección */}
