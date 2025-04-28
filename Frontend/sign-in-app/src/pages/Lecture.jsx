@@ -21,16 +21,9 @@ function Lecture() {
     const [selectedView, setSelectedView] = useState('content');
     const [loading, setLoading] = useState(true);
     const [lesson, setLesson] = useState(null);
+    const [lessons, setLessons] = useState(null);
     const [lessonsArray, setLessonsArray] = useState([]);
     const [currentLectureIndex, setCurrentLectureIndex] = useState(0);
-
-    const disableMedia = lesson?.tipo === 0 || lesson?.url === 'NA';
-
-    useEffect(() => {
-        if (disableMedia && selectedView === 'model') {
-            setSelectedView('content');
-        }
-    }, [disableMedia, selectedView]);
 
     useEffect(() => {
         const fetchLesson = async () => {
@@ -52,7 +45,8 @@ function Lecture() {
                 const response = await axios.get(`${LESSON_ARRAY_URL}${lessonId}`, {
                     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
                 });
-                setLessonsArray(response.data);
+                setLessons(response.data);
+                setLessonsArray(response.data.lecciones);
             } catch (error) {
                 console.error('Error al obtener el array de lecciones: ', error.message);
             } finally {
@@ -71,6 +65,14 @@ function Lecture() {
         }
     }, [lessonsArray, lessonId]);
 
+    const disableMedia = lesson?.tipo === 0 || lesson?.url === 'NA';
+
+    useEffect(() => {
+        if (disableMedia && selectedView === 'model') {
+            setSelectedView('content');
+        }
+    }, [disableMedia, selectedView]);
+
     if (loading) {
         return (
             <Box sx={{ 
@@ -83,7 +85,7 @@ function Lecture() {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                zIndex: 1000     // Asegura que esté por encima de otros elementos
+                zIndex: 1000
             }}>
                 <Dialog 
                     open={true} 
@@ -100,7 +102,7 @@ function Lecture() {
                         <CircularProgress sx={{ color: CUSTOM_COLOR }} />
                     </Box>
                     <Typography variant="h6" sx={{ mt: 2, color: 'white' }}>
-                        Cargando Información...
+                        Cargando Información de la Lección...
                     </Typography>
                 </Dialog>
             </Box>
@@ -108,14 +110,14 @@ function Lecture() {
     }
 
     return (
-        <Box sx={{ display: 'flex', mt: '64px', mb: '64px'}}>
+        <Box sx={{ display: 'flex', mt: '64px', mb: '64px', width: '100%', backgroundColor: '#0F172A' }}>
             <Lectbar 
                 selectedView={selectedView} 
                 setSelectedView={setSelectedView} 
                 disableMedia={disableMedia}
                 mode='lesson'
                 isMobile={isMobile}
-                lessons={lessonsArray}
+                lessons={lessons}
             />
             <Box component="main" sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
                 {isMobile ? (

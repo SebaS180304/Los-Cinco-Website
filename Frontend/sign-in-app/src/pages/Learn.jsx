@@ -38,7 +38,7 @@ function Learn() {
             } catch (error) {
                 console.error('Error al obtener el curso más reciente: ', error.message);
             } finally {
-                await new Promise(resolve => setTimeout(resolve, 500));
+                await new Promise(resolve => setTimeout(resolve, 1000));
                 setLoading(false);
             }
         };
@@ -52,7 +52,7 @@ function Learn() {
             } catch (error) {
                 console.error('Error al obtener la información del curso: ', error.message);
             } finally {
-                await new Promise(resolve => setTimeout(resolve, 500));
+                await new Promise(resolve => setTimeout(resolve, 1000));
                 setLoading(false);
             }
         };
@@ -66,7 +66,7 @@ function Learn() {
             } catch (error) {
                 console.error('Error al obtener el progreso semanal: ', error.message);
             } finally {
-                await new Promise(resolve => setTimeout(resolve, 500));
+                await new Promise(resolve => setTimeout(resolve, 1000));
                 setLoading(false);
             }
         }
