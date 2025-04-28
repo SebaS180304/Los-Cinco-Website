@@ -12,6 +12,7 @@ namespace MyApiProyect.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class QuizController : ControllerBase
     {
         private IQuestionService quizService;
