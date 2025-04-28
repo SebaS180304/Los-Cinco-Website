@@ -12,18 +12,23 @@ namespace MyApiProyect.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class LogInController : Controller
+    public class LogInController : ControllerBase
     {
-        
         private readonly IUserLogin _userLoginService;
-        public LogInController(IUserLogin userLoginService) => _userLoginService = userLoginService;
+
+        public LogInController(IUserLogin userLoginService)
+        {
+            _userLoginService = userLoginService;
+        }
 
         [HttpPost]
-        public async Task<ActionResult<LogInResponse>> LogIn( LogInRequest logInRequest)
+        public async Task<ActionResult<LogInResponse>> LogIn(LogInRequest logInRequest)
         {
             var response = await _userLoginService.Authentification(logInRequest);
-            if (response is null) return Unauthorized();
-            return response;
+            if (response == null)
+                return Unauthorized();
+
+            return Ok(response);
         }
     }
 }
