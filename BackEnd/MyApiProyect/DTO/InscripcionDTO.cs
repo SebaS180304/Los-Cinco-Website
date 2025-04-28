@@ -9,7 +9,6 @@ namespace MyApiProyect.DTO
     {
         public int IdInscripcion {get; set;}
         public int IdProfesor {get; set;}
-        
         public int  IdAlumno {get; set;}
 
     }

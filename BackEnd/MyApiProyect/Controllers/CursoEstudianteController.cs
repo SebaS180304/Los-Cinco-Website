@@ -101,9 +101,7 @@ namespace MyApiProyect.Controllers
             var I =  User.FindFirstValue(ClaimTypes.Name);
             if(I is null) return Unauthorized();
             int id = int.Parse(I);
-            var pass = await cursosDeAlumnoService.PerteneceCurso(id_curso, id);
-            if (!pass) return Unauthorized();
-            var re = await cursosDeAlumnoService.GetPDFInfo(id_curso, id); 
+            var re = await cursosDeAlumnoService.GetPDFInfo(id_curso); 
             if (re is null) return NotFound();
             return re;
         }
