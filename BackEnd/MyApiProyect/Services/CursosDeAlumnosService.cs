@@ -205,12 +205,12 @@ namespace MyApiProyect.Services
         public async Task<CursoSimpleDTO?> GetCursoSimple(int id_leccion, int id_alumno){
             var cur = await _context.Lecciones.Where(l=> l.IdLeccion == id_leccion).Select(l=> l.IdCurso).FirstOrDefaultAsync();
             var curs = await _context.Cursos.Where(l=> l.IdCurso == cur ).Include(c=> c.Lecciones).ThenInclude(l=> l.LeccionCompletada).FirstOrDefaultAsync();
-            var quest = await _context.Preguntas.Where(p=> p.IdCurso == cur).FirstOrDefaultAsync();
+            var quest = await _context.PreguntaLeccions.Where(p=> p.IdLeccion == id_leccion).FirstOrDefaultAsync();
             if (curs is null) return null;
             var a =  new CursoSimpleDTO{
                 IdCurso = curs.IdCurso,
                 TituloCurso = curs.TituloCurso,
-                Preguntas = quest is not null,
+                Preguntas = !(quest is null),
                 lecciones = curs.Lecciones.Select(l=> new LeccionInscripcionSimpleDTO{
                     IdLeccion = l.IdLeccion,
                     TituloLeccion = l.TituloLeccion,
