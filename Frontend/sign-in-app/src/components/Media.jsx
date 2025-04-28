@@ -14,6 +14,8 @@ function Media({ mediaType, src, isMobile }) {
     const [reloadKey, setReloadKey] = useState(0);
     const [loadError, setLoadError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    console.log('mediaType', mediaType);
+    console.log('src', src);
 
     const handleReload = useCallback(() => {
         setIsLoading(true);
@@ -49,16 +51,17 @@ function Media({ mediaType, src, isMobile }) {
     } else if (mediaType === 2) {
         mediaContent = (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                <video 
+                <iframe 
                     key={reloadKey}
                     onError={handleError}
                     onLoadedData={handleLoad}
-                    controls
-                    style={{ width: '100%', maxHeight: '500px', objectFit: 'contain' }}
+                    src={src}
+                    width="100%"
+                    height="70%"
+                    style={{ objectFit: 'contain' }}
+                    frameBorder="0"
                 >
-                    <source src={src} type="video/mp4" />
-                    Tu navegador no soporta videos.
-                </video>
+                </iframe>
             </Box>
         );
         mediaIcon = <VideoCameraBackOutlinedIcon sx={{ color: 'white', fontSize: 40 }} />;

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import axios from '../api/axios';
-import { Box, Divider, List, ListItem, ListItemIcon, Stack, Typography, Button, useTheme, useMediaQuery, Accordion, AccordionSummary, AccordionDetails, CircularProgress, Dialog, DialogContent, DialogTitle, TextField, Breadcrumbs, MenuItem, InputAdornment, Switch, FormControlLabel } from '@mui/material';
+import { Box, Divider, List, ListItem, ListItemIcon, Stack, Typography, Button, useTheme, useMediaQuery, Accordion, AccordionSummary, AccordionDetails, CircularProgress, Dialog, DialogContent, DialogTitle, TextField, Breadcrumbs, MenuItem, InputAdornment, Switch, FormControlLabel, IconButton } from '@mui/material';
 import { Link as LinkComp} from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Navbar from '../components/NavbarAdmin';
@@ -10,15 +10,17 @@ import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
 import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import DownloadIcon from '@mui/icons-material/Download';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckMark from '@mui/icons-material/Check';
+import SaveIcon from '@mui/icons-material/Save';
+import DeleteIcon from '@mui/icons-material/Delete';
 import categoryMapping from '../components/constants/categoryMapping';
 import ConfirmationPopup from '../components/ConfirmationPopup';
 import ExamQuestions from '../components/ExamQuestions';
 import FileUploader from '../components/FileUploader';
+import DownloadCoursePDF from '../components/DownloadCoursePDF';
 
 const CUSTOM_COLOR = '#FFB300';
 
@@ -124,8 +126,39 @@ const CourseDetailsList = ({ courseLessons, handleSaveChanges, editableCourse, s
               <AssignmentOutlinedIcon />
             </ListItemIcon>
             <Typography variant="body1" sx={{ color: 'white' }}>
-              Evaluaciones: <strong>{courseLessons.length}</strong>
+              Intentos Examen: 
             </Typography>
+            <TextField
+              id="category-select"
+              type='number'
+              variant="standard"
+              value={editableCourse?.IntentosMax || 1}
+              onChange={(e) => {
+                const value = Math.max(1, Math.min(5, parseInt(e.target.value) || 1)); // Limitar entre 1 y 5
+                setEditableCourse({ ...editableCourse, IntentosMax: value }); // Actualizar el estado
+              }}
+              InputProps={{
+                readOnly: !isEditing, // Deshabilitar edición si no está en modo edición
+                startAdornment: isEditing ? (
+                  <InputAdornment position="start">
+                    <EditIcon sx={{ color: 'white' }} />
+                  </InputAdornment>
+                ) : null, // Mostrar el ícono solo si isEditing es true
+              }}
+              slotProps={{
+                inputLabel: {
+                  shrink: true,
+                },
+              }}
+              sx={{
+                '& .MuiInputBase-root': { color: 'white' },
+                '& .MuiSelect-select': { color: 'white' },
+                '& .MuiInput-underline:before': { borderBottomColor: 'white' },
+                '& .MuiInput-underline:after': { borderBottomColor: 'white' },
+                '& .MuiSelect-icon': { color: 'white' },
+                ml: 1,
+              }}
+            ></TextField>
           </ListItem>
           <Divider sx={{ backgroundColor: 'white' }} />
           <ListItem sx={{ p: 2 }}>
@@ -174,7 +207,7 @@ const CourseDetailsList = ({ courseLessons, handleSaveChanges, editableCourse, s
 };
 
 // Acordeón para cada lección
-function LessonAccordion({ lecture, panel, expanded, handleChange, handleOpenEdit, handleOpenQuestions, isMobile, handleOpenFileUploader, fileUploaderOpen, handleCloseFileUploader, handleUrl }) {
+function LessonAccordion({ lecture, panel, expanded, handleChange, handleOpenEdit, handleOpenQuestions, isMobile, handleOpenFileUploader, handleRemoveLesson }) {
   return (
     <Accordion expanded={expanded === panel} onChange={handleChange(panel)} sx={{ mb: 2 }}>
       <AccordionSummary
@@ -198,6 +231,13 @@ function LessonAccordion({ lecture, panel, expanded, handleChange, handleOpenEdi
               <Typography variant="h5" sx={{ fontWeight: 'bold', ml: 3 }}>
                 {lecture.TituloLeccion}
               </Typography>
+              <IconButton
+                color="error"
+                onClick={() => handleRemoveLesson(lecture.IdLeccion)} // Llamar a la función para eliminar la lección
+                sx={{ ml: 'auto' }} // Alinear a la derecha
+              >
+                <DeleteIcon />
+              </IconButton>
             </Box>
           </Box>
         </Stack>
@@ -314,20 +354,10 @@ function LessonAccordion({ lecture, panel, expanded, handleChange, handleOpenEdi
               variant="contained"
               color="success"
               startIcon={<AddIcon />}
-              onClick={handleOpenFileUploader} // Abrir el diálogo de FileUploader
+              onClick={() => handleOpenFileUploader(lecture)} // Abrir el diálogo de FileUploader
           >
               Subir Archivo
           </Button>
-          <FileUploader
-              lessonId={lecture.IdLeccion}
-              titulo={lecture.TituloLeccion}
-              contenido={lecture.Contenido}
-              open={fileUploaderOpen} // Controlar visibilidad del diálogo
-              onClose={handleCloseFileUploader} // Cerrar el diálogo
-              onFileUploaded={(fileUrl) => {
-                  handleUrl(fileUrl); // Actualizar el estado local con el nuevo URL del archivo
-              }}
-          />
         </Box>
       </AccordionDetails>
     </Accordion>
@@ -340,6 +370,7 @@ function Courses() {
     const [course, setCourse] = useState(null);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const examQuestionsRef = useRef(null);
 
     // Verificar si el curso existe
     const courseLessons = course?.lecciones || [];
@@ -367,27 +398,6 @@ function Courses() {
     const [viewingExam, setViewingExam] = useState(false);
     const [fileUploaderOpen, setFileUploaderOpen] = useState(false); // Estado para controlar el diálogo de FileUploader
 
-    const handleOpenFileUploader = () => {
-        setFileUploaderOpen(true); // Abrir el diálogo
-    };
-  
-    const handleCloseFileUploader = () => {
-        setFileUploaderOpen(false); // Cerrar el diálogo
-    };
-    
-    const handleUrl = (index, fileUrl) => {
-      // Encuentra la lección correspondiente por su ID
-      const updatedLessons = editableLessons.map((lesson) =>
-          lesson.IdLeccion === index
-              ? { ...lesson, Url: fileUrl } // Actualiza el campo Url de la lección
-              : lesson
-      );
-  
-      // Actualiza el estado local
-      setEditableLessons(updatedLessons);
-      console.log(`URL actualizado para la lección ${index}: ${fileUrl}`);
-    };
-
     // Obtener detalles del curso
     useEffect(() => {
       const fetchCourse = async () => {
@@ -403,6 +413,7 @@ function Courses() {
             DescripcionCurso: response.data.descripcionCurso,
             Categoria: response.data.categoria,
             Visible: response.data.visible,
+            IntentosMax: response.data.intentosMax || 1,
           });
           if (response.data.tituloCurso === '') {
             setIsEditing(true); // Activar el modo de edición si no hay título
@@ -424,6 +435,28 @@ function Courses() {
       };
       fetchCourse();
     }, [courseId]);
+
+
+    const handleOpenFileUploader = (lesson) => {
+      setCurrentLecture(lesson); // Establecer la lección actual
+      setFileUploaderOpen(true); // Abrir el diálogo
+    };
+  
+    const handleCloseFileUploader = () => {
+        setFileUploaderOpen(false); // Cerrar el diálogo
+    };
+    
+    const handleUrl = (lessonId, fileUrl) => {
+      // Encuentra la lección correspondiente por su ID
+      const updatedLessons = editableLessons.map((lesson) =>
+          lesson.IdLeccion === lessonId
+              ? { ...lesson, Url: fileUrl } // Actualiza el campo Url de la lección
+              : lesson
+      );
+  
+      // Actualiza el estado local
+      setEditableLessons(updatedLessons);
+    };
 
     const handleOpenQuestions = (lecture) => {
       setCurrentLecture(lecture); // Establecer la lección actual
@@ -491,6 +524,24 @@ function Courses() {
           { texto: '', correcta: false },
         ],
       });
+      setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
+    };
+
+    const handleAddQuestionFromCourses = () => {
+      if (examQuestionsRef.current) {
+        examQuestionsRef.current.addQuestion(); // Llamar a la función addQuestion expuesta por ExamQuestions
+      }
+    };
+    
+    const handleSaveQuestionFromCourses = () => {
+      if (examQuestionsRef.current) {
+        examQuestionsRef.current.saveQuestions(); // Llamar a la función saveQuestions expuesta por ExamQuestions
+      }
+    };
+
+    const handleRemoveQuestion = (questionIndex) => {
+      const updatedQuestions = [...currentLecture.questions];
+      updatedQuestions.splice(questionIndex, 1); // Eliminar la pregunta en el índice especificado
       setCurrentLecture({ ...currentLecture, questions: updatedQuestions });
     };
     
@@ -664,6 +715,7 @@ function Courses() {
             TituloCurso: editableCourse.TituloCurso,
             DescripcionCurso: editableCourse.DescripcionCurso,
             Categoria: editableCourse.Categoria,
+            IntentosMax: editableCourse.IntentosMax,
           },
           {
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
@@ -699,6 +751,24 @@ function Courses() {
       } catch (error) {
         console.error('Error al actualizar la visibilidad:', error);
         alert('Hubo un error al actualizar la visibilidad.');
+      }
+    };
+
+    const handleRemoveLesson = async (lessonId) => {
+      try {
+        // Eliminar la lección del backend
+        await axios.delete(`/CursoAdmin/Lecciones/Eliminar?id_leccion=${lessonId}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        });
+  
+        // Actualizar el estado local eliminando la lección
+        const updatedLessons = editableLessons.filter((lesson) => lesson.IdLeccion !== lessonId);
+        setEditableLessons(updatedLessons);
+  
+        alert('Lección eliminada exitosamente.');
+      } catch (error) {
+        console.error('Error al eliminar la lección:', error);
+        alert('Hubo un error al eliminar la lección.');
       }
     };
 
@@ -919,21 +989,9 @@ function Courses() {
                     mb: 2,
                   }}
                 >
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    startIcon={<DownloadIcon />}
-                    href="/manual.pdf"
-                    download="manual.pdf"
-                    sx={{
-                      color: 'black',
-                      fontWeight: 'bold',
-                      width: isMobile ? '100%' : '50%',
-                      '&:hover': { backgroundColor: `CC` },
-                    }}
-                  >
-                    PDF
-                  </Button>
+                  <Box sx={{ width: isMobile ? '100%' : '50%' }}>
+                        <DownloadCoursePDF courseId={courseId} />
+                    </Box>
                 </Box>
               </Box>
               <Box {...(!isMobile ? { flex: 2 } : {})}>
@@ -950,13 +1008,26 @@ function Courses() {
                 Contenido del Curso
               </Typography>
               <Box sx={{ display: 'flex', gap: 2 }}>
+                {viewingExam && (
+                  <Button
+                    variant="contained"
+                    startIcon={<SaveIcon />}
+                    onClick={handleSaveQuestionFromCourses}
+                    sx={{
+                      backgroundColor: '#FFB300',
+                      color: '#ffffff',
+                    }}
+                  >
+                    Guardar Cambios
+                  </Button>
+                )}
                 <Button
                   variant="contained"
                   color="primary"
                   startIcon={<AddIcon />}
-                  onClick={handleOpenAdd}
+                  onClick={viewingExam ? handleAddQuestionFromCourses : handleOpenAdd}
                 >
-                  Agregar Lección
+                  {viewingExam ? 'Agregar Pregunta' : 'Agregar Lección'}
                 </Button>
                 <Button
                   variant="outlined"
@@ -969,7 +1040,7 @@ function Courses() {
               </Box>
             </Box>
             {viewingExam ? (
-              <ExamQuestions courseId={courseId} />
+              <ExamQuestions ref={examQuestionsRef} courseId={courseId} />
             ) : (
               editableLessons.length === 0 ? (
                 <Box sx={{ textAlign: 'center', mt: 3 }}>
@@ -992,6 +1063,7 @@ function Courses() {
                     fileUploaderOpen={fileUploaderOpen}
                     handleCloseFileUploader={handleCloseFileUploader}
                     handleUrl={() => handleUrl(index, lesson.Url)}
+                    handleRemoveLesson={handleRemoveLesson}
                   />
                 ))
               )
@@ -1069,6 +1141,16 @@ function Courses() {
             onRemoveOption={handleRemoveOption}
             onAddQuestion={handleAddQuestion}
             onSaveQuestions={handleSaveQuestions}
+            onRemoveQuestion={handleRemoveQuestion}
+          />
+          {/* Pop-up para subir archivos */}
+          <FileUploader
+              lesson={currentLecture}
+              open={fileUploaderOpen} // Controlar visibilidad del diálogo
+              onClose={handleCloseFileUploader} // Cerrar el diálogo
+              onFileUploaded={(fileUrl) => {
+                  handleUrl(currentLecture.IdLeccion, fileUrl); // Actualizar el estado local con el nuevo URL del archivo
+              }}
           />
           {showPopup && (
             <ConfirmationPopup

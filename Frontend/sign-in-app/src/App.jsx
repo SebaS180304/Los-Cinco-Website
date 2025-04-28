@@ -63,7 +63,16 @@ function App() {
     <GlobalProvider>
       <Router>
         <Routes>
-          <Route path="/" element={<Login />} />
+
+          <Route 
+            path="/" 
+            element={
+              <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <Login />
+              </ThemeProvider>
+            } 
+          />
           
           {/* Rutas exclusivas para admin */}
           <Route 

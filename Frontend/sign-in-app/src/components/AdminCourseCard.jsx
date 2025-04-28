@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Box, Card, CardActionArea, CardContent, CardMedia, Divider, Typography, } from '@mui/material';
+import { Box, Card, CardActionArea, CardContent, CardMedia, Divider, Typography, IconButton, Tooltip } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from '../api/axios';
 import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 import client from '../assets/images/client-course.jpg';
 import mechanical from '../assets/images/mechanical-course.jpg';
 import electronics from '../assets/images/electrical-course.jpg';
@@ -13,13 +14,13 @@ import categoryMapping from './constants/categoryMapping';
 const CUSTOM_COLOR = '#FFB300';
 
 const courseBackground = [
-    { text: 'Atención al Cliente', src: client },
-    { text: 'Mecánica', src: mechanical },
-    { text: 'Electrónica', src: electronics },
-    { text: 'Seguridad', src: security },
+  { text: 'Mecánica', src: mechanical },
+  { text: 'Electrónica', src: electronics },
+  { text: 'Seguridad', src: security },
+  { text: 'Atención al Cliente', src: client },
 ];
 
-const AdminCourseCard = ({ course, isAddCard, onAddCurso }) => {
+const AdminCourseCard = ({ course, isAddCard, onAddCurso, onDeleteCurso }) => {
     const navigate = useNavigate();
     const [newCurso, setNewCurso] = useState('');
     const categoryName = categoryMapping[course?.category] || "Indefinida";
@@ -44,8 +45,8 @@ const AdminCourseCard = ({ course, isAddCard, onAddCurso }) => {
         return (
             <Card
                 onClick={() => {
-                    setNewCurso('');
-                    handleAddCurso();
+                  setNewCurso('');
+                  handleAddCurso();
                 }}
                 sx={{
                     width: '100%',
@@ -80,8 +81,30 @@ const AdminCourseCard = ({ course, isAddCard, onAddCurso }) => {
                 maxWidth: '425px',
                 borderRadius: '16px',
                 border: '1px solid #000',
+                position: 'relative',
             }}
         >
+          <Tooltip title="Eliminar Curso">
+            <IconButton
+              onClick={() => onDeleteCurso(course.id)} // Llamar a la función para eliminar el curso
+              sx={{
+                position: 'absolute',
+                top: 5,
+                right: 5,
+                backgroundColor: '#B40000', // Rojo oscuro
+                color: 'white',
+                zIndex: 1,
+                width: '35px', // Reducir el tamaño del botón
+                height: '35px', // Reducir el tamaño del botón
+                '&:hover': {
+                  backgroundColor: '#5A0000', // Rojo más oscuro al pasar el mouse
+                },
+              }}
+            >
+              <RemoveIcon sx={{ fontSize: 30 }} /> {/* Aumentar el tamaño del ícono */}
+            </IconButton>
+          </Tooltip>
+
             <CardActionArea onClick={() => navigate(`/courses/${course.id}`)}>
                 <CardMedia 
                     component="img" 
