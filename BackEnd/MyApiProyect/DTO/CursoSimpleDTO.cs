@@ -9,6 +9,7 @@ namespace MyApiProyect.DTO
     {
         public int IdCurso {get; set;}
         public string TituloCurso {get; set;} = "NA";
+        public bool Preguntas {get; set;} = false;
         public List<LeccionInscripcionSimpleDTO> lecciones {get; set;} = new List<LeccionInscripcionSimpleDTO>();
         
     }

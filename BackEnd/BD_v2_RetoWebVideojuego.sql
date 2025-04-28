@@ -128,7 +128,27 @@ for each row
 		end if;
 	END;
 delimiter //
+
+###reseteo de curso
+create trigger ResetCurso before update on InscripcionCurso
+for each row
+begin
+	declare MaxInt int;
+	select intentos_max into MaxInt from Cursos where id_curso = old.id_curso;
+	if(old.intento != new.intento and new.intento > MaxInt) then
+		set new.intento = 0;
+		update LeccionCompletada set valida = false where id_usuario = old.id_estudiante 
+        and id_leccion in (
+            select id_leccion 
+            from Lecciones 
+            where id_curso = old.id_curso
+        );
+	end if;
+end;
 #--------------------------------------Insert--------------------------------------#
+
+
+
 ####insert Alumno into leccionesCompletadas after inscripcion curso
 delimiter $$
 create Trigger InsertIntoInscripcionLeccion after insert on InscripcionCurso
@@ -168,7 +188,7 @@ end;
 delimiter $$
 
 delimiter //
-#### modify inscripcion curso after quiz submition
+#### modify puntaje e intento  curso after quiz submition
 create trigger InsertIntoSubmition after insert on QuizSubmition
 for each row 
 begin	
