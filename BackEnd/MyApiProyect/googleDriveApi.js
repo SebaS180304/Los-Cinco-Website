@@ -44,10 +44,9 @@ app.post('/upload', upload.single('file'), async (req, res) => {
           requestBody: { role: 'reader', type: 'anyone' },
       });
 
-      const fileUrl = `https://drive.google.com/uc?id=${fileId}`;
-      console.log('URL del archivo subido:', fileUrl);
+      console.log('URL del archivo subido:', fileId);
 
-      res.status(200).send({ url: fileUrl });
+      res.status(200).send({ url: fileId });
 
       // Eliminar archivo temporal
       fs.unlinkSync(req.file.path);

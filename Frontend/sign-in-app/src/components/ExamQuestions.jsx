@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
 import {
   Accordion,
   AccordionSummary,
@@ -16,20 +16,24 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
 import CloseIcon from '@mui/icons-material/Close';
 import CheckMark from '@mui/icons-material/Check';
+import DeleteIcon from '@mui/icons-material/Delete';
 import axios from '../api/axios';
+import ConfirmationPopup from './ConfirmationPopup';
 
-const ExamQuestions = ({ courseId }) => {
+const ExamQuestions = forwardRef(({ courseId }, ref) => {
   const [examQuestions, setExamQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState({}); // Estado para manejar los errores
+  const [expandedPanels, setExpandedPanels] = useState([]); // Estado para manejar los paneles expandidos
+  const [showPopup, setShowPopup] = useState(false);
 
-  // Obtener las preguntas del examen
   useEffect(() => {
     const fetchExamQuestions = async () => {
       try {
         const response = await axios.get(`/CursoAdmin/Single?IdCurso=${courseId}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
-        setExamQuestions(response.data?.quiz || []); // Guardar las preguntas
+        setExamQuestions(response.data?.quiz || []);
       } catch (error) {
         console.error('Error al obtener las preguntas del examen:', error);
         alert('Hubo un error al obtener las preguntas del examen.');
@@ -41,21 +45,38 @@ const ExamQuestions = ({ courseId }) => {
     fetchExamQuestions();
   }, [courseId]);
 
-  // Manejar cambios en las preguntas
+  const handleAccordionChange = (panel) => (event, isExpanded) => {
+    setExpandedPanels((prev) =>
+      isExpanded ? [...prev, panel] : prev.filter((p) => p !== panel)
+    );
+  };
+
   const handleQuestionChange = (questionIndex, field, value) => {
     const updatedQuestions = [...examQuestions];
     updatedQuestions[questionIndex][field] = value;
     setExamQuestions(updatedQuestions);
+
+    // Eliminar el error de la pregunta si existe
+    setErrors((prevErrors) => {
+      const updatedErrors = { ...prevErrors };
+      delete updatedErrors[`question-${questionIndex}`];
+      return updatedErrors;
+    });
   };
 
-  // Manejar cambios en las opciones
   const handleOptionChange = (questionIndex, optionIndex, field, value) => {
     const updatedQuestions = [...examQuestions];
     updatedQuestions[questionIndex].opciones[optionIndex][field] = value;
     setExamQuestions(updatedQuestions);
+
+    // Eliminar el error del campo de texto si existe
+    setErrors((prevErrors) => {
+      const updatedErrors = { ...prevErrors };
+      delete updatedErrors[`option-${questionIndex}-${optionIndex}`];
+      return updatedErrors;
+    });
   };
 
-  // Cambiar la opción correcta
   const handleCorrectOptionChange = (questionIndex, optionIndex) => {
     const updatedQuestions = [...examQuestions];
     updatedQuestions[questionIndex].opciones = updatedQuestions[questionIndex].opciones.map((opcion, i) => ({
@@ -63,9 +84,15 @@ const ExamQuestions = ({ courseId }) => {
       correcta: i === optionIndex,
     }));
     setExamQuestions(updatedQuestions);
+
+    // Eliminar el error del checkbox si existe
+    setErrors((prevErrors) => {
+      const updatedErrors = { ...prevErrors };
+      delete updatedErrors[`correct-${questionIndex}`];
+      return updatedErrors;
+    });
   };
 
-  // Agregar una nueva opción
   const handleAddOption = (questionIndex) => {
     const updatedQuestions = [...examQuestions];
     if (updatedQuestions[questionIndex].opciones.length < 4) {
@@ -74,14 +101,12 @@ const ExamQuestions = ({ courseId }) => {
     }
   };
 
-  // Eliminar una opción
   const handleRemoveOption = (questionIndex, optionIndex) => {
     const updatedQuestions = [...examQuestions];
     updatedQuestions[questionIndex].opciones = updatedQuestions[questionIndex].opciones.filter((_, i) => i !== optionIndex);
     setExamQuestions(updatedQuestions);
   };
 
-  // Agregar una nueva pregunta
   const handleAddQuestion = () => {
     const updatedQuestions = [...examQuestions];
     updatedQuestions.push({
@@ -92,10 +117,49 @@ const ExamQuestions = ({ courseId }) => {
       ],
     });
     setExamQuestions(updatedQuestions);
+    setExpandedPanels((prev) => [...prev, updatedQuestions.length - 1]); // Expandir automáticamente la nueva pregunta
   };
 
-  // Guardar las preguntas en el backend
+  const handleRemoveQuestion = (questionIndex) => {
+    const updatedQuestions = [...examQuestions];
+    updatedQuestions.splice(questionIndex, 1);
+    setExamQuestions(updatedQuestions);
+  };
+
   const handleSaveQuestions = async () => {
+    const newErrors = {};
+    const panelsToExpand = [];
+
+    // Validar preguntas
+    examQuestions.forEach((question, questionIndex) => {
+      if (!question.texto.trim()) {
+        newErrors[`question-${questionIndex}`] = 'La pregunta no puede estar vacía.';
+        panelsToExpand.push(questionIndex);
+      }
+
+      question.opciones.forEach((opcion, optionIndex) => {
+        if (!opcion.texto.trim()) {
+          newErrors[`option-${questionIndex}-${optionIndex}`] = 'La opción no puede estar vacía.';
+          panelsToExpand.push(questionIndex);
+        }
+      });
+
+      const noCorrectOption = !question.opciones.some((opcion) => opcion.correcta);
+      if (noCorrectOption) {
+        newErrors[`correct-${questionIndex}`] = 'Debe seleccionar al menos una opción correcta.';
+        panelsToExpand.push(questionIndex);
+      }
+    });
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      setExpandedPanels([...new Set(panelsToExpand)]);
+      return;
+    }
+
+    setErrors({});
+    setExpandedPanels([]);
+
     try {
       const payload = examQuestions.map((question) => ({
         texto: question.texto,
@@ -109,12 +173,17 @@ const ExamQuestions = ({ courseId }) => {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
 
-      alert('Preguntas guardadas exitosamente.');
+      setShowPopup(true);
     } catch (error) {
       console.error('Error al guardar las preguntas:', error);
       alert('Hubo un error al guardar las preguntas.');
     }
   };
+
+  useImperativeHandle(ref, () => ({
+    addQuestion: handleAddQuestion,
+    saveQuestions: handleSaveQuestions,
+  }));
 
   if (loading) {
     return (
@@ -135,24 +204,63 @@ const ExamQuestions = ({ courseId }) => {
   return (
     <Box sx={{ mt: 3 }}>
       {examQuestions.map((question, index) => (
-        <Accordion key={index} defaultExpanded={index === 0}>
+        <Accordion
+          key={index}
+          expanded={expandedPanels.includes(index)}
+          onChange={handleAccordionChange(index)}
+        >
           <AccordionSummary expandIcon={<ExpandMoreIcon />}>
             <Typography variant="h6">{question.texto || 'Nueva Pregunta'}</Typography>
+            <IconButton
+              color="error"
+              onClick={() => handleRemoveQuestion(index)}
+              sx={{ ml: 'auto' }}
+            >
+              <DeleteIcon />
+            </IconButton>
           </AccordionSummary>
           <AccordionDetails>
-            <TextField
-              label="Pregunta"
-              variant="outlined"
-              fullWidth
-              value={question.texto}
-              onChange={(e) => handleQuestionChange(index, 'texto', e.target.value)}
-              sx={{ mb: 2 }}
-            />
+            <Tooltip
+              title={errors[`question-${index}`] || ''}
+              open={expandedPanels.includes(index) && !!errors[`question-${index}`]}
+              arrow
+            >
+              <TextField
+                label="Pregunta"
+                variant="outlined"
+                fullWidth
+                value={question.texto}
+                onChange={(e) => handleQuestionChange(index, 'texto', e.target.value)}
+                sx={{ mb: 2 }}
+                error={!!errors[`question-${index}`]}
+              />
+            </Tooltip>
             {question.opciones.map((opcion, i) => (
               <Box key={i} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <FormControlLabel
-                  control={
-                    <Tooltip title="Opción Correcta">
+                {i === question.opciones.length - 1 && (
+                  <Tooltip
+                    title={errors[`correct-${index}`] || ''}
+                    open={expandedPanels.includes(index) && !!errors[`correct-${index}`]}
+                    arrow
+                  >
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={opcion.correcta}
+                          onChange={() => handleCorrectOptionChange(index, i)}
+                          sx={{
+                            '&.Mui-checked': {
+                              color: '#FFB300',
+                            },
+                          }}
+                        />
+                      }
+                    />
+                  </Tooltip>
+                )}
+                {i !== question.opciones.length - 1 && (
+                  <FormControlLabel
+                    control={
                       <Checkbox
                         checked={opcion.correcta}
                         onChange={() => handleCorrectOptionChange(index, i)}
@@ -162,17 +270,24 @@ const ExamQuestions = ({ courseId }) => {
                           },
                         }}
                       />
-                    </Tooltip>
-                  }
-                />
-                <TextField
-                  label={`Opción ${i + 1}`}
-                  variant="outlined"
-                  fullWidth
-                  value={opcion.texto}
-                  onChange={(e) => handleOptionChange(index, i, 'texto', e.target.value)}
-                  sx={{ mr: 2 }}
-                />
+                    }
+                  />
+                )}
+                <Tooltip
+                  title={errors[`option-${index}-${i}`] || ''}
+                  open={expandedPanels.includes(index) && !!errors[`option-${index}-${i}`]}
+                  arrow
+                >
+                  <TextField
+                    label={`Opción ${i + 1}`}
+                    variant="outlined"
+                    fullWidth
+                    value={opcion.texto}
+                    onChange={(e) => handleOptionChange(index, i, 'texto', e.target.value)}
+                    sx={{ mr: 2 }}
+                    error={!!errors[`option-${index}-${i}`]}
+                  />
+                </Tooltip>
                 <IconButton
                   color="error"
                   onClick={() => handleRemoveOption(index, i)}
@@ -197,30 +312,15 @@ const ExamQuestions = ({ courseId }) => {
           </AccordionDetails>
         </Accordion>
       ))}
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3, gap: 2 }}>
-        <Button
-          variant="outlined"
-          color="primary"
-          onClick={handleAddQuestion}
-          startIcon={<AddIcon />}
-        >
-          Agregar Pregunta
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSaveQuestions}
-          startIcon={<CheckMark />}
-          sx={{
-            backgroundColor: '#FFB300',
-            color: '#ffffff',
-          }}
-        >
-          Guardar Preguntas
-        </Button>
-      </Box>
+      {showPopup && (
+        <ConfirmationPopup
+          message="Los cambios se han guardado correctamente."
+          duration={3000}
+          onClose={() => setShowPopup(false)}
+        />
+      )}
     </Box>
   );
-};
+});
 
 export default ExamQuestions;

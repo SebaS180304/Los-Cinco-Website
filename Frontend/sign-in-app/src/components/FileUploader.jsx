@@ -2,61 +2,86 @@ import React, { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, Button, Box, CircularProgress } from '@mui/material';
 import axios from 'axios';
 
-const FileUploader = ({ lessonId, titulo, contenido, onFileUploaded, open, onClose }) => {
-    const [file, setFile] = useState(null);
-    const [uploading, setUploading] = useState(false);
+const FileUploader = ({ lesson, onFileUploaded, open, onClose }) => {
+  const [file, setFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [tipoArchivo, setTipoArchivo] = useState(0);
+  const [fileId, setFileId] = useState(null); // Guardar el fileId
+  const [fileUrl, setFileUrl] = useState(null); // Guardar la URL del archivo
 
-    const handleFileChange = (e) => {
-        setFile(e.target.files[0]);
-    };
+  const handleFileChange = (e) => {
+      const selectedFile = e.target.files[0];
+      setFile(selectedFile);
 
-    const handleUpload = async () => {
-        if (!file) return alert('Selecciona un archivo primero.');
-        if (!lessonId) return alert('No se ha proporcionado el ID de la lección.');
+      // Determinar el tipo de archivo basado en la extensión
+      if (selectedFile) {
+          const extension = selectedFile.name.split('.').pop().toLowerCase();
+          if (['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
+              setTipoArchivo(1); // Imagen
+              setFileUrl(`https://drive.google.com/thumbnail?id=${fileId}&sz=w1000`);
+              console.log('fileUrl ', fileUrl);
+          } else if (['mp4', 'avi', 'mov', 'mkv'].includes(extension)) {
+              setTipoArchivo(2); // Video
+              setFileUrl(`https://drive.google.com/file/d/${fileId}/preview`);
+              console.log('fileUrl ', fileUrl);
+          } else if (['obj', 'fbx', 'stl', 'gltf'].includes(extension)) {
+              setTipoArchivo(3); // Archivo 3D
+          } else {
+              setTipoArchivo(0); // Otro tipo de archivo
+          }
+      }
+  };
 
-        const formData = new FormData();
-        formData.append('file', file);
+  const handleUpload = async () => {
+      if (!file) return alert('Selecciona un archivo primero.');
+      if (!lesson.IdLeccion) return alert('No se ha proporcionado el ID de la lección.');
 
-        try {
-            setUploading(true);
+      const formData = new FormData();
+      formData.append('file', file);
 
-            // Subir el archivo al backend (Google Drive)
-            const response = await axios.post('http://localhost:5010/upload', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
-            });
+      try {
+          setUploading(true);
 
-            const fileUrl = response.data.url;
+          // Subir el archivo al backend (Google Drive)
+          const response = await axios.post('http://localhost:5010/upload', formData, {
+              headers: { 'Content-Type': 'multipart/form-data' },
+          });
 
-            // Enviar el URL del archivo al backend para actualizar la lección
-            await axios.patch(
-                'http://localhost:5011/CursoAdmin/Leccion/Edit',
-                {
-                    IdLeccion: lessonId,
-                    TituloLeccion: titulo,
-                    Contenido: contenido,
-                    Url: fileUrl,
-                },
-                {
-                    headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-                }
-            );
-            console.log('Lección actualizada con éxito:', lessonId, titulo, contenido, fileUrl);
-            alert('Archivo subido y URL guardado con éxito.');
+          const uploadedFileId = response.data.url; // Recibir el fileId
+          setFileId(uploadedFileId);
+          console.log('fileId ', uploadedFileId);
+          console.log('Url ', fileUrl);
+          // Enviar el fileId al backend para actualizar la lección
+          await axios.patch(
+              'http://localhost:5011/CursoAdmin/Leccion/Edit',
+              {
+                  IdLeccion: lesson.IdLeccion,
+                  TituloLeccion: lesson.TituloLeccion,
+                  Contenido: lesson.Contenido,
+                  tipo: tipoArchivo,
+                  Url: fileUrl, // Guardar el fileId en la base de datos
+              },
+              {
+                  headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+              }
+          );
+          console.log('Lección actualizada con éxito:', lesson.IdLeccion, lesson.TituloLeccion, lesson.Contenido, fileUrl, tipoArchivo);
+          alert('Archivo subido y fileId guardado con éxito.');
 
-            // Llamar a la función de callback (si se proporciona) para actualizar el estado en el componente padre
-            if (onFileUploaded) {
-                onFileUploaded(fileUrl);
-            }
+          // Llamar a la función de callback (si se proporciona) para actualizar el estado en el componente padre
+          if (onFileUploaded) {
+              onFileUploaded(uploadedFileId);
+          }
 
-            // Cerrar el diálogo
-            onClose();
-        } catch (error) {
-            console.error('Error al subir el archivo o guardar el URL:', error);
-            alert('Hubo un error al subir el archivo o guardar el URL.');
-        } finally {
-            setUploading(false);
-        }
-    };
+          // Cerrar el diálogo
+          onClose();
+      } catch (error) {
+          console.error('Error al subir el archivo o guardar el fileId:', error);
+          alert('Hubo un error al subir el archivo o guardar el fileId.');
+      } finally {
+          setUploading(false);
+      }
+  };
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
