@@ -20,9 +20,22 @@ const CourseCard = ({ course }) => {
                             <Typography variant="body2" color="text.secondary" gutterBottom>
                                 <strong>Sin progreso...</strong>
                             </Typography>
+                            <LinearProgress
+                            variant="determinate"
+                            value={0}
+                            sx={{
+                                height: '20px',
+                                borderRadius: '10px',
+                                backgroundColor: `#E0E0E0`,
+                                '& .MuiLinearProgress-bar': {
+                                    borderRadius: '10px',
+                                    backgroundColor: '#9E9E9E',
+                                },
+                            }}
+                        />
                         </Box>
                         <CardActionArea disabled>
-                            <Box sx={{ p: 2, textAlign: 'center' }}>
+                            <Box sx={{ py: 6, px: 2, textAlign: 'center' }}>
                                 <Typography variant="h5" sx={{ fontWeight: 'bold', textTransform: 'uppercase'}}>
                                     No hay curso disponible
                                 </Typography>

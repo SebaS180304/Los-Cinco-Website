@@ -9,6 +9,7 @@ import Learn from './pages/Learn';
 import { GlobalProvider } from './context/GlobalContext';
 import EnrolledCourse from './pages/EnrolledCourse';
 import Quiz from './pages/Quiz';
+import Exam from './pages/Exam';
 import { createTheme, ThemeProvider, CssBaseline } from '@mui/material';
 
 const theme = createTheme({
@@ -126,6 +127,16 @@ function App() {
               <PrivateRoute>
                 <TechnicianRoute>
                   <Quiz />
+                </TechnicianRoute>
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/exam/:id" 
+            element={
+              <PrivateRoute>
+                <TechnicianRoute>
+                  <Exam />
                 </TechnicianRoute>
               </PrivateRoute>
             } 
