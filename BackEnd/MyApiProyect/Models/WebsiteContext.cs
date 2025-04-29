@@ -40,7 +40,6 @@ public partial class WebsiteContext : DbContext
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
 
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder
@@ -70,7 +69,7 @@ public partial class WebsiteContext : DbContext
             entity.HasOne(d => d.IdInstructorNavigation).WithMany(p => p.Cursos)
                 .HasForeignKey(d => d.IdInstructor)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("cursos_ibfk_1");
+                .HasConstraintName("Cursos_ibfk_1");
         });
 
         modelBuilder.Entity<InscripcionCurso>(entity =>
@@ -96,12 +95,12 @@ public partial class WebsiteContext : DbContext
             entity.HasOne(d => d.IdCursoNavigation).WithMany(p => p.InscripcionCursos)
                 .HasForeignKey(d => d.IdCurso)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("inscripcioncurso_ibfk_2");
+                .HasConstraintName("InscripcionCurso_ibfk_2");
 
             entity.HasOne(d => d.IdEstudianteNavigation).WithMany(p => p.InscripcionCursos)
                 .HasForeignKey(d => d.IdEstudiante)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("inscripcioncurso_ibfk_1");
+                .HasConstraintName("InscripcionCurso_ibfk_1");
         });
 
         modelBuilder.Entity<InscripcionInstructor>(entity =>
@@ -121,12 +120,12 @@ public partial class WebsiteContext : DbContext
             entity.HasOne(d => d.IdEstudianteNavigation).WithMany(p => p.InscripcionInstructorIdEstudianteNavigations)
                 .HasForeignKey(d => d.IdEstudiante)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("inscripcioninstructor_ibfk_1");
+                .HasConstraintName("InscripcionInstructor_ibfk_1");
 
             entity.HasOne(d => d.IdInstructorNavigation).WithMany(p => p.InscripcionInstructorIdInstructorNavigations)
                 .HasForeignKey(d => d.IdInstructor)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("inscripcioninstructor_ibfk_2");
+                .HasConstraintName("InscripcionInstructor_ibfk_2");
         });
 
         modelBuilder.Entity<LeccionCompletadum>(entity =>
@@ -147,12 +146,12 @@ public partial class WebsiteContext : DbContext
             entity.HasOne(d => d.IdLeccionNavigation).WithMany(p => p.LeccionCompletada)
                 .HasForeignKey(d => d.IdLeccion)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("leccioncompletada_ibfk_1");
+                .HasConstraintName("LeccionCompletada_ibfk_1");
 
             entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.LeccionCompletada)
                 .HasForeignKey(d => d.IdUsuario)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("leccioncompletada_ibfk_2");
+                .HasConstraintName("LeccionCompletada_ibfk_2");
         });
 
         modelBuilder.Entity<Leccione>(entity =>
@@ -178,7 +177,7 @@ public partial class WebsiteContext : DbContext
             entity.HasOne(d => d.IdCursoNavigation).WithMany(p => p.Lecciones)
                 .HasForeignKey(d => d.IdCurso)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("lecciones_ibfk_1");
+                .HasConstraintName("Lecciones_ibfk_1");
         });
 
         modelBuilder.Entity<OpcionLeccion>(entity =>
@@ -200,7 +199,7 @@ public partial class WebsiteContext : DbContext
             entity.HasOne(d => d.IdPreguntaLeccionNavigation).WithMany(p => p.OpcionLeccions)
                 .HasForeignKey(d => d.IdPreguntaLeccion)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("opcionleccion_ibfk_1");
+                .HasConstraintName("OpcionLeccion_ibfk_1");
         });
 
         modelBuilder.Entity<Opcione>(entity =>
@@ -221,7 +220,7 @@ public partial class WebsiteContext : DbContext
             entity.HasOne(d => d.IdPreguntaNavigation).WithMany(p => p.Opciones)
                 .HasForeignKey(d => d.IdPregunta)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("opciones_ibfk_1");
+                .HasConstraintName("Opciones_ibfk_1");
         });
 
         modelBuilder.Entity<Pregunta>(entity =>
@@ -240,7 +239,7 @@ public partial class WebsiteContext : DbContext
             entity.HasOne(d => d.IdCursoNavigation).WithMany(p => p.Pregunta)
                 .HasForeignKey(d => d.IdCurso)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("preguntas_ibfk_1");
+                .HasConstraintName("Preguntas_ibfk_1");
         });
 
         modelBuilder.Entity<PreguntaLeccion>(entity =>
@@ -261,7 +260,7 @@ public partial class WebsiteContext : DbContext
             entity.HasOne(d => d.IdLeccionNavigation).WithMany(p => p.PreguntaLeccions)
                 .HasForeignKey(d => d.IdLeccion)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("preguntaleccion_ibfk_1");
+                .HasConstraintName("PreguntaLeccion_ibfk_1");
         });
 
         modelBuilder.Entity<QuizSubmition>(entity =>
@@ -283,7 +282,7 @@ public partial class WebsiteContext : DbContext
             entity.HasOne(d => d.IdInscripcionCursoNavigation).WithMany(p => p.QuizSubmitions)
                 .HasForeignKey(d => d.IdInscripcionCurso)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("quizsubmition_ibfk_1");
+                .HasConstraintName("QuizSubmition_ibfk_1");
         });
 
         modelBuilder.Entity<RegistroLeccionCompletadum>(entity =>
@@ -303,7 +302,7 @@ public partial class WebsiteContext : DbContext
             entity.HasOne(d => d.IdLeccionCompletadaNavigation).WithMany()
                 .HasForeignKey(d => d.IdLeccionCompletada)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("registroleccioncompletada_ibfk_1");
+                .HasConstraintName("RegistroLeccionCompletada_ibfk_1");
         });
 
         modelBuilder.Entity<Usuario>(entity =>
