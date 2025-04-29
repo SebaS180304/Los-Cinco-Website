@@ -1,3 +1,7 @@
+drop database Website;
+create database Website;
+use Website;
+
 
 create table Usuarios (
 	id_usuario int not null auto_increment,
@@ -160,8 +164,12 @@ delimiter $$
 create Trigger InsertIntoInscripcionCurso after insert on InscripcionInstructor
 for each row
 	begin	
-		insert into InscripcionCurso (id_estudiante, id_curso) 
-		select new.id_estudiante, id_curso from cursos where (id_instructor = new.id_instructor);
+		declare Ncurs int ;
+		select Count(*) into Ncurs from Cursos where id_instructor == new.id_instructor);
+		if(Ncurs > 0) then
+			insert into InscripcionCurso (id_estudiante, id_curso) 
+			select new.id_estudiante, id_curso from cursos where (id_instructor = new.id_instructor);
+		end if;
 	end;
 delimiter $$
 #### insert inscripionCurso after insert into cursos
@@ -288,4 +296,13 @@ insert into Usuarios (nombre_completo, rol, contrasena) values
 ("Romeo Mejor Juanin", 1, "123456"),
 ("Otro Instructor", 1, "abcde");
 delimiter //
+
+delimiter @@
+insert into InscripcionInstructor ( id_estudiante, id_instructor) values
+(1000,1001),
+(1000, 1002);
+delimiter @@
+
+select * from InscripcionInstructor;
+
 
