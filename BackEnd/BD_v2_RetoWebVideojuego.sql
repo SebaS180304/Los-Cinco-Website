@@ -1,6 +1,3 @@
-drop database Website;
-create database Website;
-use Website;
 
 create table Usuarios (
 	id_usuario int not null auto_increment,
@@ -236,7 +233,7 @@ for each row
 begin
 	delete from LeccionCompletada where (id_leccion = old.id_leccion);
 	delete from PreguntaLeccion where (id_leccion = old.id_leccion);
-end
+end;
 delimiter $$
 ## delete opciones before preguntas en lecciones
 delimiter @@
@@ -244,7 +241,7 @@ create trigger deleteOpcionesLecciones before delete on PreguntaLeccion
 for each row 
 begin
 	delete from OpcionLeccion where (id_pregunta_leccion = old.id_pregunta_leccion);
-end
+end;
 
 delimiter @@
 
@@ -255,7 +252,7 @@ create trigger deleteOpciones before delete on Preguntas
 for each row 
 begin
 	delete from Opciones where (id_pregunta = old.id_pregunta);
-end
+end;
 
 
 delimiter $$
@@ -278,7 +275,7 @@ create trigger deleteRegistrosLecciones
 for each row 
 begin
 	delete from RegistroLeccionCompletada where old.id_leccion_completada = id_leccion_completada;
-end
+end;
 delimiter @@
 
 #----------------------------------------MiniDB-----------------------------------#
@@ -291,51 +288,4 @@ insert into Usuarios (nombre_completo, rol, contrasena) values
 ("Romeo Mejor Juanin", 1, "123456"),
 ("Otro Instructor", 1, "abcde");
 delimiter //
-delimiter $$ 
-insert into Cursos(titulo_curso, categoria, id_instructor, intentos_max, descripcion) values 
-("Lavadoras 3", 2, 1002, 2, "Curso avanzado sobre lavadoras industriales"),
-("Lavadoras 2", 2, 1002, 4, "Curso menos avanzado sobre lavadoras industriales"),
-("Lavadoras 1", 2, 1003, 4, "Curso para principiantes sobre lavadoras industriales");
-delimiter $$
-delimiter //
-insert into Lecciones(titulo_leccion, contenido, tipo_media, url_media, id_curso) values
-("Componentes Necesarios", "Información relevante, realmente relevante, muy relevante y confidencial. Whirlpool :)", 
-0, "https://www.lg.com/content/dam/channel/wcms/mx/images/lavadoras-y-secadoras/wm22vv2s6gr_asselat_enms_mx_c/gallery/DZ_01.jpg", 1),
-("Verdades de la mecánica", "La mecánica puede ser muy intimidante a veces, pero recuerda....", 1, "https://nullc.com", 1),
-("Lavadoras, artefactos o ciencia", "Entre las características más importantes de las lavadoras está su capacidad de...", 1, "https://nullc.com", 1);
-delimiter //
-delimiter @@
-insert into InscripcionInstructor ( id_estudiante, id_instructor) values
-(1000,1001),
-(1000, 1002);
-delimiter @@
-delimiter $$
-insert into Preguntas (texto_pregunta, id_curso) values 
-("¿Cuáles son las mejores marcas de lavadoras?", 1),
-("¿Cuáles electrodomésticos son los más peligrosos de instalar erróneamente?", 1);
-delimiter $$
-delimiter //
-insert into Opciones(texto_opcion, id_pregunta, correcta) values 
-("Whirlpool", 		1, 1),
-("Samsung", 		1 ,0),
-("LG", 				1, 0),
-("Lavadoras",		2, 0),
-("Secadoras",		2, 1),
-("Refrigeradores", 	2, 0),
-("Horno", 			2, 1);
-delimiter //
-delimiter @@
-update LeccionCompletada set valida = 1 where id_leccion_completada = 1;
-delimiter @@
-delimiter @@
-update LeccionCompletada set valida = 1 where id_leccion_completada = 2;
-delimiter @@
-delimiter //
-insert into QuizSubmition(id_inscripcion_curso, calificacion) values(1,60);
-delimiter //
-delimiter $$
-insert into PreguntaLeccion(id_leccion, texto_pregunta) values (1, "¿Mejores formas de lavar?");
-delimiter $$
-delimiter $$
-insert into OpcionLeccion(id_pregunta_leccion, texto_opcion, correcto) values (1, "No lavar", false);
-delimiter $$
+
