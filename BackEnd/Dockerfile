@@ -22,6 +22,8 @@ RUN dotnet publish -c Release -o /out
 # Use the official .NET 8.0 runtime image for running the application
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 # Set the working directory inside the container
 WORKDIR /app
 
