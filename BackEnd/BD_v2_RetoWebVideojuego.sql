@@ -155,8 +155,12 @@ delimiter $$
 create Trigger InsertIntoInscripcionLeccion after insert on InscripcionCurso
 for each row 
 	begin
-		insert into LeccionCompletada (id_leccion, id_usuario, valida) 
-		select id_leccion,  new.id_estudiante, 0 from Lecciones where (id_curso = new.id_curso) ;
+		declare Nlecc int ;
+		select Count(*) into Nlecc from Lecciones where id_curso = new.id_curso;
+		if Nlecc > 0 then
+			insert into LeccionCompletada (id_leccion, id_usuario, valida) 
+			select id_leccion,  new.id_estudiante, 0 from Lecciones where (id_curso = new.id_curso) ;
+		end if;
 	end;
 delimiter $$	
 ####insert alumno into InscripcionCursos after Inscripcion Instructor
@@ -165,7 +169,7 @@ create Trigger InsertIntoInscripcionCurso after insert on InscripcionInstructor
 for each row
 	begin	
 		declare Ncurs int ;
-		select Count(*) into Ncurs from Cursos where id_instructor == new.id_instructor);
+		select Count(*) into Ncurs from Cursos where id_instructor = new.id_instructor;
 		if(Ncurs > 0) then
 			insert into InscripcionCurso (id_estudiante, id_curso) 
 			select new.id_estudiante, id_curso from cursos where (id_instructor = new.id_instructor);
@@ -302,7 +306,14 @@ insert into InscripcionInstructor ( id_estudiante, id_instructor) values
 (1000,1001),
 (1000, 1002);
 delimiter @@
+delimiter $$
+insert into Cursos(titulo_curso, categoria, id_instructor, intentos_max, descripcion) values 
+("Lavadoras 3", 2, 1002, 2, "Curso avanzado sobre lavadoras industriales");
+delimiter $$
 
-select * from InscripcionInstructor;
+
+select * from Usuarios;
+
+
 
 
