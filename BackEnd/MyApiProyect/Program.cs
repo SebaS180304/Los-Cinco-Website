@@ -81,7 +81,7 @@ builder.Services.AddCors(options =>
         });
 });
 
-
+builder.Services.AddHealthChecks();
 builder.WebHost.UseUrls( "http://0.0.0.0:5011");
 
 var app = builder.Build();
@@ -93,6 +93,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+app.MapHealthChecks("/health");
 //app.UseHttpsRedirection();
 app.UseRouting();
 app.UseCors("AllowAllOrigins");
