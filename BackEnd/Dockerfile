@@ -33,7 +33,7 @@ ENV WhirlpoolDBConnectionString=""
 ENV WhirlpoolDBEncodingKey=""
 
 # Expose the port the app runs on
-EXPOSE 5013
+EXPOSE 5011
 
 # Add a health check for Coolify
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
