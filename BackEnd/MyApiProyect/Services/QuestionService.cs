@@ -126,8 +126,10 @@ namespace MyApiProyect.Services
                 IdInscripcionCurso = Insc,
                 Calificacion = cal
             };
-            context.Add(sub);
+            Console.WriteLine(sub.IdInscripcionCurso);
+            Console.WriteLine(sub.Calificacion);
             try{
+                context.Add(sub);
                 await context.SaveChangesAsync();
             }catch (Exception e){
                 Console.WriteLine(e);

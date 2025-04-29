@@ -51,6 +51,8 @@ namespace MyApiProyect.Controllers
             var id = User.FindFirst(ClaimTypes.Name)?.Value;
             if (id is null)
                 return Unauthorized();
+            Console.WriteLine(sub.id_curso);
+            Console.WriteLine(int.Parse(id));
             var res = await questionService.SubmitQuiz(sub.id_curso, int.Parse(id), sub.cal);
             if(!res){
                 return StatusCode(500);
