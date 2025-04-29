@@ -39,7 +39,7 @@ EXPOSE 5011
 
 # Add a health check for Coolify
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl --fail http://localhost:5011 || exit 1
+    CMD curl --fail http://localhost:5011/health || exit 1
 
 # Set the entry point for the container
 ENTRYPOINT ["dotnet", "MyApiProyect.dll"]
