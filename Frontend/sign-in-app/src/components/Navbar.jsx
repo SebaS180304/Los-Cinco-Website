@@ -1,5 +1,5 @@
 import React from 'react';
-import logoA from '../assets/logoA.png';
+import logoA from '../assets/images/logoA.png';
 import { AppBar, Toolbar, Divider, Box, Button, Tooltip, Menu, Typography, MenuItem } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';

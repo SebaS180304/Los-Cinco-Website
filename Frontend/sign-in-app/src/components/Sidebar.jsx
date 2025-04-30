@@ -10,8 +10,6 @@ const CUSTOM_COLOR = '#FFB300';
 const menuItems = [
     { text: 'Panel', icon: <CoPresentOutlinedIcon /> },
     { text: 'Aprender', icon: <SchoolOutlinedIcon /> },
-    { text: 'Liga', icon: <ShieldOutlinedIcon /> },
-    { text: 'Practicar', icon: <RocketLaunchOutlinedIcon /> }
 ];
 
 function Sidebar({ selectedTab, onChange, course }) {

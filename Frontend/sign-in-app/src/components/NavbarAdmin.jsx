@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { AppBar, Toolbar, Box, Button, Tooltip, Menu, Typography, MenuItem, Divider } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
-import logo from '../assets/images/logo.png'; // Importa la imagen del logo
+import logo from '../assets/images/logoA.png';
 import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
 
 const settings = ['Cerrar Sesión'];

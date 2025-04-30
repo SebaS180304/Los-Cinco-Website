@@ -9,9 +9,11 @@ import DownloadCoursePDF from './DownloadCoursePDF';
 const CUSTOM_COLOR = '#FFB300';
 
 const CourseHeader = ({ course, courseLessons, isMobile }) => {
-    const currentLesson = course?.lecciones?.find(leccion => !leccion.completada);
-    const areAllLessonsCompleted = course?.lecciones?.every(leccion => leccion.completada);
-    const lastLesson = course?.lecciones?.[course.lecciones.length - 1];
+    // Verificar si hay lecciones
+    const hasLessons = courseLessons?.length > 0;
+    const currentLesson = hasLessons ? course?.lecciones?.find(leccion => !leccion.completada) : null;
+    const areAllLessonsCompleted = hasLessons && course?.lecciones?.every(leccion => leccion.completada);
+    const lastLesson = hasLessons ? course?.lecciones?.[course.lecciones.length - 1] : null;
 
     return (
         <Stack
@@ -36,13 +38,14 @@ const CourseHeader = ({ course, courseLessons, isMobile }) => {
                     }}
                 >
                     <Box sx={{ width: isMobile ? '100%' : '50%' }}>
-                        <DownloadCoursePDF courseId={course.idCurso} />
+                        <DownloadCoursePDF courseId={course.idCurso} disabled={!hasLessons} />
                     </Box>
                     <Button
                         component={Link}
                         to={`/lesson/${areAllLessonsCompleted ? lastLesson?.idLeccion : currentLesson?.idLeccion}`}
                         variant={areAllLessonsCompleted ? "outlined" : "contained"}
                         endIcon={areAllLessonsCompleted ? <RefreshIcon /> : <ArrowForwardIcon />}
+                        disabled={!hasLessons}
                         sx={{
                             ...(areAllLessonsCompleted 
                                 ? {
@@ -55,7 +58,11 @@ const CourseHeader = ({ course, courseLessons, isMobile }) => {
                                     '&:hover': { backgroundColor: `${CUSTOM_COLOR}CC`, color: 'black' }
                                 }
                             ),
-                            width: isMobile ? '100%' : '50%'
+                            width: isMobile ? '100%' : '50%',
+                            '&.Mui-disabled': {
+                                color: 'rgba(255, 255, 255, 0.3)',
+                                borderColor: 'rgba(255, 255, 255, 0.3)'
+                            }
                         }}
                     >
                         {areAllLessonsCompleted ? 'Repasar' : 'Continuar'}

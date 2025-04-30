@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import logoA from '../assets/logo-c.png';
-import logo from '../assets/logo.png';
+import logoA from '../assets/images/logo-c.png';
+import logo from '../assets/images/logo.png';
 import { AppBar, Toolbar, Box, ButtonGroup, Button, Tooltip, Menu, Typography, MenuItem, IconButton, Drawer } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';

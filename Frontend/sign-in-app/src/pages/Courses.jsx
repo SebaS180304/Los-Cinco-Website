@@ -716,6 +716,7 @@ function Courses() {
             DescripcionCurso: editableCourse.DescripcionCurso,
             Categoria: editableCourse.Categoria,
             IntentosMax: editableCourse.IntentosMax,
+            Visible: editableCourse.Visible,
           },
           {
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
@@ -741,6 +742,7 @@ function Courses() {
             TituloCurso: editableCourse.TituloCurso,
             DescripcionCurso: editableCourse.DescripcionCurso,
             Categoria: editableCourse.Categoria,
+            IntentosMax: editableCourse.IntentosMax,
             Visible: isChecked,
           },
           {

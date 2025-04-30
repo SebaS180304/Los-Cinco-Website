@@ -79,8 +79,8 @@ const EnrolledCourse = () => {
         );
     }
 
-    // Derivar las lecciones desde el objeto course
-    const courseLessons = course?.lecciones || [];
+    // Derivar las lecciones desde el objeto course y verificar que sea un array
+    const courseLessons = Array.isArray(course?.lecciones) ? course.lecciones : [];
 
     const handleLessonChange = (panel) => (event, isExpanded) => {
         setLessonExpanded(isExpanded ? panel : false);
@@ -107,8 +107,8 @@ const EnrolledCourse = () => {
                     </Box>
                 </Box>
                 <Box sx={{ pt: 7 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 3  }}>
-                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                        <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'black' }}>
                             Contenido del Curso
                         </Typography>
                         <Button
@@ -116,27 +116,45 @@ const EnrolledCourse = () => {
                             to={`/exam/${course?.idCurso}`}
                             variant="outlined"
                             startIcon={<HistoryEduIcon />}
-                            disabled={!!currentLesson}
+                            disabled={!!currentLesson || courseLessons.length === 0}
                             sx={{
                                 color: CUSTOM_COLOR,
                                 border: `2px solid ${CUSTOM_COLOR}`,
                                 '&:hover': { opacity: 0.8 },
                                 ml: 'auto',
+                                '&.Mui-disabled': {
+                                    color: 'rgba(255, 255, 255, 0.3)',
+                                    borderColor: 'rgba(255, 255, 255, 0.3)'
+                                }
                             }}
                         >
                             Examen
                         </Button>
                     </Box>
-                    {courseLessons.map(lecture => (
-                        <LessonAccordion 
-                            key={lecture.idLeccion}
-                            lecture={lecture}
-                            lessons={courseLessons}
-                            panel={`panel-${lecture.idLeccion}`}
-                            expanded={lessonExpanded}
-                            handleChange={handleLessonChange}
-                        />
-                    ))}
+                    {!courseLessons || courseLessons.length === 0 ? (
+                        <Box>
+                            <Typography 
+                                variant="h6" 
+                                sx={{ 
+                                    color: 'black',
+                                    mb: 2
+                                }}
+                            >
+                                No hay lecciones disponibles para este curso.
+                            </Typography>
+                        </Box>
+                    ) : (
+                        courseLessons.map(lecture => (
+                            <LessonAccordion 
+                                key={lecture.idLeccion}
+                                lecture={lecture}
+                                lessons={courseLessons}
+                                panel={`panel-${lecture.idLeccion}`}
+                                expanded={lessonExpanded}
+                                handleChange={handleLessonChange}
+                            />
+                        ))
+                    )}
                 </Box>
             </Box>
         </Box>

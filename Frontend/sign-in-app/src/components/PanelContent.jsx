@@ -31,19 +31,10 @@ const PanelContent = ({ onVerAprender, course, recentCourse, weekProgress }) => 
                     Sigue tu Progreso
                 </Typography>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} md={8.5}>
+                    <Grid item xs={12} md={12}>
                         <ProgressCharts course={course} weekProgress={weekProgress} />
                     </Grid>
-                    <Grid item xs={12} md={3.5}>
-                        <Box sx={{ borderRadius: '16px', border: '1px solid #000', p: 3 }}>
-                            <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-                                Sección de Ligas
-                            </Typography>
-                            <Typography variant="body1">
-                                Aquí los técnicos podrán visualizar su posición dentro del ranking de su grupo asignado por su instructor. La puntuación se obtiene por medio de los ejercicios de repaso y evaluaciones.
-                            </Typography>
-                        </Box>
-                    </Grid>
+                    
                 </Grid>
             </Box>
         </Box>
