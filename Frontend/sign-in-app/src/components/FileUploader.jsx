@@ -2,15 +2,17 @@ import React, { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, Button, Box, CircularProgress } from '@mui/material';
 import axios from 'axios';
 
-const FileUploader = ({ lesson, onFileUploaded, open, onClose }) => {
+const FileUploader = ({ lesson, onFileUploaded, open, onClose, setShowPopup }) => {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+  
 
   const handleFileChange = (e) => {
       const selectedFile = e.target.files[0];
       setFile(selectedFile);
   };
-
+// console.log('Lección:', lesson);
+//   console.log('URL de la lección:', lesson.Url);
   const handleUpload = async () => {
       if (!file) return alert('Selecciona un archivo primero.');
       if (!lesson.IdLeccion) return alert('No se ha proporcionado el ID de la lección.');
@@ -68,11 +70,12 @@ const FileUploader = ({ lesson, onFileUploaded, open, onClose }) => {
         );
 
         console.log('Lección actualizada con éxito:', lesson.IdLeccion, lesson.TituloLeccion, lesson.Contenido, generatedUrl, tipoArchivo);
-        alert('Archivo subido y URL guardada con éxito.');
+        // alert('Archivo subido y URL guardada con éxito.');
+        setShowPopup(true);
 
         // Llamar a la función de callback (si se proporciona) para actualizar el estado en el componente padre
         if (onFileUploaded) {
-            onFileUploaded(uploadedFileId);
+            onFileUploaded(generatedUrl);
         }
 
         // Limpiar el estado y cerrar el diálogo
@@ -89,6 +92,7 @@ const FileUploader = ({ lesson, onFileUploaded, open, onClose }) => {
     return (
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
             <DialogTitle>Subir Archivo</DialogTitle>
+            
             <DialogContent>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                     <input type="file" onChange={handleFileChange} />
@@ -101,6 +105,18 @@ const FileUploader = ({ lesson, onFileUploaded, open, onClose }) => {
                     >
                         {uploading ? 'Subiendo...' : 'Subir Archivo'}
                     </Button>
+                    {/* Iframe para visualizar el archivo cargado */}
+                    {lesson?.Url && lesson.Url.trim() !== '' && (
+                      <Box sx={{ mt: 2, border: '1px solid #ccc', borderRadius: '8px', overflow: 'hidden' }}>
+                        <iframe
+                          src={lesson.Url}
+                          title="Vista previa del archivo"
+                          width="100%"
+                          height="300px"
+                          style={{ border: 'none' }}
+                        ></iframe>
+                      </Box>
+                    )}
                 </Box>
             </DialogContent>
         </Dialog>

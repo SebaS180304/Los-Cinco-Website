@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Box, AppBar, Toolbar, Typography, Button, Alert, CircularProgress } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
@@ -14,81 +14,64 @@ function Media({ mediaType, src, isMobile }) {
     const [reloadKey, setReloadKey] = useState(0);
     const [loadError, setLoadError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    console.log('mediaType', mediaType);
-    console.log('src', src);
+    const iframeRef = useRef(null);
 
     const handleReload = useCallback(() => {
         setIsLoading(true);
         setLoadError(false);
-        setTimeout(() => {
-            setReloadKey(prevKey => prevKey + 1);
-        }, 100);
+        setReloadKey(prevKey => prevKey + 1);
     }, []);
 
-    const handleError = useCallback(() => {
-        setLoadError(true);
-        setIsLoading(false);
-        console.error(`Error al cargar la imagen desde la URL: ${src}`);
-    }, [src]);
+    useEffect(() => {
+        const iframe = iframeRef.current;
 
-    const handleLoad = useCallback(() => {
-        setIsLoading(false);
-    }, []);
+        if (iframe) {
+            const handleLoad = () => {
+                setIsLoading(false);
+            };
+
+            const handleError = () => {
+                setLoadError(true);
+                setIsLoading(false);
+                console.error(`Error al cargar el contenido desde la URL: ${src}`);
+            };
+
+            iframe.addEventListener('load', handleLoad);
+            iframe.addEventListener('error', handleError);
+
+            return () => {
+                iframe.removeEventListener('load', handleLoad);
+                iframe.removeEventListener('error', handleError);
+            };
+        }
+    }, [src, reloadKey]);
 
     let mediaContent;
     let mediaIcon;
     let mediaText;
-    if (mediaType === 3) {
-        mediaContent = (
-            <ComputerCanvas 
-                src={src}
-                key={reloadKey} 
-                onError={handleError}
-                onLoad={handleLoad}
-            />
-        );
-        mediaIcon = <ViewInArOutlinedIcon sx={{ color: 'white', fontSize: 40 }} />;
-        mediaText = 'Modelo 3D';
-    } else if (mediaType === 2) {
-        mediaContent = (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                <iframe 
-                    key={reloadKey}
-                    onError={handleError}
-                    onLoadedData={handleLoad}
-                    src={src}
-                    width="100%"
-                    height="70%"
-                    style={{ objectFit: 'contain' }}
-                    frameBorder="0"
-                >
-                </iframe>
-            </Box>
-        );
-        mediaIcon = <VideoCameraBackOutlinedIcon sx={{ color: 'white', fontSize: 40 }} />;
-        mediaText = 'Video';
-    } else if (mediaType === 1) {
-        mediaContent = (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                <iframe 
-                    key={reloadKey}
-                    onError={handleError}
-                    onLoadedData={handleLoad}
-                    src={src}
-                    width="100%"
-                    height="70%"
-                    style={{ objectFit: 'contain' }}
-                    frameBorder="0"
-                ></iframe>
-            </Box>
-        );
-        mediaIcon = <ImageOutlinedIcon sx={{ color: 'white', fontSize: 40 }} />;
-        mediaText = 'Imagen';
-    } else {
-        mediaContent = <Typography color="white">Tipo de contenido no soportado</Typography>;
-        mediaIcon = <ImageOutlinedIcon sx={{ color: 'white', fontSize: 40 }} />;
-        mediaText = "Imagen";
-    }
+    if (mediaType === 2 || mediaType === 1) {
+      mediaContent = (
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+              <iframe
+                  key={reloadKey}
+                  ref={iframeRef}
+                  src={src}
+                  width="100%"
+                  height="70%"
+                  style={{ objectFit: 'contain' }}
+                  frameBorder="0"
+              ></iframe>
+          </Box>
+      );
+      mediaIcon = mediaType === 2
+          ? <VideoCameraBackOutlinedIcon sx={{ color: 'white', fontSize: 40 }} />
+          : <ImageOutlinedIcon sx={{ color: 'white', fontSize: 40 }} />;
+      mediaText = mediaType === 2 ? 'Video' : 'Imagen';
+  } else {
+      mediaContent = <Typography color="white">Tipo de contenido no soportado</Typography>;
+      mediaIcon = <ImageOutlinedIcon sx={{ color: 'white', fontSize: 40 }} />;
+      mediaText = "Imagen";
+  }
 
     return (
         <Box bgcolor={'#212633'} 

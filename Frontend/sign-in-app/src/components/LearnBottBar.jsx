@@ -8,8 +8,6 @@ import { BottomNavigationAction, BottomNavigation, Box, Divider } from '@mui/mat
 const menuItems = [
     { text: 'Panel', icon: <CoPresentOutlinedIcon /> },
     { text: 'Aprender', icon: <SchoolOutlinedIcon /> },
-    { text: 'Liga', icon: <ShieldOutlinedIcon /> },
-    { text: 'Practicar', icon: <RocketLaunchOutlinedIcon /> }
 ];
 
 function LearnBottBar({ selectedTab, onChange }) {

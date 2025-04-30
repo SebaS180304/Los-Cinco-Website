@@ -1,16 +1,22 @@
 import React, { useEffect, useContext, useState } from 'react';
-import { Box, Breadcrumbs, Typography, Divider, Link, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Box, Breadcrumbs, Typography, Divider, Link, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, useMediaQuery } from '@mui/material';
+import { useTheme } from '@mui/material/styles'; // Importa useTheme
 import { CursosContext } from '../context/GlobalContext';
 import axios from '../api/axios';
 import NavbarAdmin from '../components/NavbarAdmin';
 import AdminCourseCard from '../components/AdminCourseCard';
 import ConfirmationPopup from '../components/ConfirmationPopup';
+import AdminBottBar from '../components/AdminBottBar';
 
 const Dashboard = () => {
   const { cursos, setCursos } = useContext(CursosContext);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); // Estado para controlar el diálogo
-  const [selectedCursoId, setSelectedCursoId] = useState(null); // ID del curso seleccionado para eliminar
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedCursoId, setSelectedCursoId] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
+
+  // Usa el tema de Material-UI para detectar si el dispositivo es móvil
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     const fetchCursos = async () => {
@@ -33,12 +39,12 @@ const Dashboard = () => {
 
   const handleDeleteCurso = async () => {
     try {
-      await axios.delete(`http://localhost:5011/CursoAdmin/Eliminar?id_curso=${selectedCursoId}`, {
+      await axios.delete(`/CursoAdmin/Eliminar?id_curso=${selectedCursoId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
       });
       setCursos((prevCursos) => prevCursos.filter((curso) => curso.idCurso !== selectedCursoId));
       setShowPopup(true);
-      setDeleteDialogOpen(false); // Cerrar el diálogo después de eliminar
+      setDeleteDialogOpen(false);
     } catch (error) {
       console.error('Error al eliminar el curso:', error);
       alert('Hubo un error al eliminar el curso.');
@@ -46,20 +52,19 @@ const Dashboard = () => {
   };
 
   const handleOpenDeleteDialog = (idCurso) => {
-    setSelectedCursoId(idCurso); // Guardar el ID del curso seleccionado
-    setDeleteDialogOpen(true); // Abrir el diálogo
+    setSelectedCursoId(idCurso);
+    setDeleteDialogOpen(true);
   };
 
   const handleCloseDeleteDialog = () => {
-    setDeleteDialogOpen(false); // Cerrar el diálogo sin eliminar
-    setSelectedCursoId(null); // Limpiar el ID seleccionado
+    setDeleteDialogOpen(false);
+    setSelectedCursoId(null);
   };
 
   return (
     <Box sx={{ display: 'flex', mt: '64px' }}>
       <NavbarAdmin />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        {/* Breadcrumbs */}
         <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 2 }}>
           <Link underline="hover" color="inherit">
             Cursos
@@ -80,14 +85,13 @@ const Dashboard = () => {
                   visible: curso.visible || false,
                 }}
                 key={curso.idCurso}
-                onDeleteCurso={handleOpenDeleteDialog} // Abrir el diálogo de confirmación
+                onDeleteCurso={handleOpenDeleteDialog}
               />
             ))}
           <AdminCourseCard isAddCard onAddCurso={handleAddCurso} />
         </Box>
       </Box>
 
-      {/* Diálogo de confirmación */}
       <Dialog
         open={deleteDialogOpen}
         onClose={handleCloseDeleteDialog}
@@ -116,6 +120,9 @@ const Dashboard = () => {
           onClose={() => setShowPopup(false)}
         />
       )}
+
+      {/* Renderiza AdminBottBar solo si isMobile es true */}
+      {isMobile && <AdminBottBar />}
     </Box>
   );
 };

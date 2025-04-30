@@ -5,6 +5,7 @@ import { Box, Divider, List, ListItem, ListItemIcon, Stack, Typography, Button, 
 import { Link as LinkComp} from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Navbar from '../components/NavbarAdmin';
+import AdminBottBar from '../components/AdminBottBar';
 import QuestionsDialog from '../components/QuestionsDialog';
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
 import AssignmentOutlinedIcon from '@mui/icons-material/AssignmentOutlined';
@@ -25,41 +26,10 @@ import DownloadCoursePDF from '../components/DownloadCoursePDF';
 const CUSTOM_COLOR = '#FFB300';
 
 // Lista de detalles del curso
-const CourseDetailsList = ({ courseLessons, handleSaveChanges, editableCourse, setEditableCourse, isEditing, setIsEditing, originalCourse, setOriginalCourse }) => {
-  const categoryName = categoryMapping[editableCourse?.Categoria] || "Indefinida";
-  const categoryOriginal = categoryMapping[originalCourse?.Categoria] || "Indefinida";
-  const [selectedCategory, setSelectedCategory] = useState(categoryName);
-
-  const handleEditOrSave = () => {
-    if (isEditing) {
-      // Si está en modo edición, guarda los cambios y desactiva el modo edición
-      handleSaveChanges();
-      setIsEditing(false);
-    } else {
-      // Si no está en modo edición, guarda los valores originales y activa el modo edición
-      setOriginalCourse({ ...editableCourse });
-      setIsEditing(true);
-    }
-  };
-
-  const handleCancel = () => {
-    setEditableCourse({ ...originalCourse }); // Restaura el curso original
-    setSelectedCategory(categoryOriginal); // Restaura la categoría original
-    setIsEditing(false); // Desactiva el modo edición
-  };
-
-  const handleCategoryChange = (event) => {
-    const selectedValue = event.target.value;
-    const selectedKey = Object.entries(categoryMapping).find(([key, value]) => value === selectedValue)?.[0];
-    if (selectedKey !== undefined) {
-      setSelectedCategory(selectedValue); // Actualizar el valor seleccionado
-      setEditableCourse({ ...editableCourse, Categoria: parseInt(selectedKey, 10) }); // Guardar el key como número en editableCourse.Categoria
-    }
-  };
-
+const CourseDetailsList = ({ courseLessons, editableCourse, setEditableCourse, isEditing, isMobile, selectedCategory, handleEditOrSave, handleCancel, handleCategoryChange }) => {
   return (
     <Box sx={{ pb: 2 }}>
-      {!isEditing && (
+      {!isEditing && !isMobile && (
         <Box sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
           <Button
             variant="contained"
@@ -76,8 +46,8 @@ const CourseDetailsList = ({ courseLessons, handleSaveChanges, editableCourse, s
           </Button>
         </Box>
       )}
-      {isEditing && (
-        <Box sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center', gap: 2 }}>
+      {isEditing && !isMobile && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
           <Button
             variant="contained"
             startIcon={<CloseIcon />}
@@ -333,31 +303,80 @@ function LessonAccordion({ lecture, panel, expanded, handleChange, handleOpenEdi
             </Box>
           </Box>
         </Box>
-        <Box sx={{ pt: 3, display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-          <Button
-            variant="contained"
-            color="secondary"
-            startIcon={lecture.questions && lecture.questions.length > 0 ? <AssignmentOutlinedIcon /> : <AddIcon />}
-            onClick={() => handleOpenQuestions(lecture)}
-          >
-            {lecture.questions && lecture.questions.length > 0 ? 'Editar Preguntas' : 'Agregar Preguntas'}
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<EditIcon />}
-            onClick={() => handleOpenEdit(lecture)}
-          >
-            Editar Lección
-          </Button>
-          <Button
-              variant="contained"
-              color="success"
-              startIcon={<AddIcon />}
-              onClick={() => handleOpenFileUploader(lecture)} // Abrir el diálogo de FileUploader
-          >
-              Subir Archivo
-          </Button>
+        <Box sx={{ pt: 3 }}>
+          {isMobile ? (
+            // Vista móvil: Botones en columna
+            <Box 
+              sx={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: 2, 
+                justifyContent: 'flex-end', 
+                alignItems: 'stretch' // Alinear los botones al ancho completo
+              }}
+            >
+              <Button
+                variant="contained"
+                color="success"
+                startIcon={<AddIcon />}
+                onClick={() => handleOpenFileUploader(lecture)} // Abrir el diálogo de FileUploader
+              >
+                Subir Archivo
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<EditIcon />}
+                onClick={() => handleOpenEdit(lecture)}
+              >
+                Editar Lección
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                startIcon={lecture.questions && lecture.questions.length > 0 ? <AssignmentOutlinedIcon /> : <AddIcon />}
+                onClick={() => handleOpenQuestions(lecture)}
+              >
+                {lecture.questions && lecture.questions.length > 0 ? 'Editar Preguntas' : 'Agregar Preguntas'}
+              </Button>
+            </Box>
+          ) : (
+            // Vista escritorio: Botones en fila
+            <Box 
+              sx={{ 
+                display: 'flex', 
+                flexDirection: 'row', 
+                gap: 2, 
+                justifyContent: 'flex-end', 
+                alignItems: 'center' // Alinear los botones en el centro verticalmente
+              }}
+            >
+              <Button
+                variant="contained"
+                color="secondary"
+                startIcon={lecture.questions && lecture.questions.length > 0 ? <AssignmentOutlinedIcon /> : <AddIcon />}
+                onClick={() => handleOpenQuestions(lecture)}
+              >
+                {lecture.questions && lecture.questions.length > 0 ? 'Editar Preguntas' : 'Agregar Preguntas'}
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<EditIcon />}
+                onClick={() => handleOpenEdit(lecture)}
+              >
+                Editar Lección
+              </Button>
+              <Button
+                variant="contained"
+                color="success"
+                startIcon={<AddIcon />}
+                onClick={() => handleOpenFileUploader(lecture)} // Abrir el diálogo de FileUploader
+              >
+                Subir Archivo
+              </Button>
+            </Box>
+          )}
         </Box>
       </AccordionDetails>
     </Accordion>
@@ -435,6 +454,48 @@ function Courses() {
       };
       fetchCourse();
     }, [courseId]);
+
+    // 
+
+    // const categoryName = categoryMapping[editableCourse?.Categoria] || "Indefinido";
+    const categoryOriginal = categoryMapping[originalCourse?.Categoria] || "Indefinida";
+    const [selectedCategory, setSelectedCategory] = useState("");
+
+    useEffect(() => {
+      if (editableCourse?.Categoria !== undefined) {
+        const categoryName = categoryMapping[editableCourse.Categoria] || "Indefinido";
+        setSelectedCategory(categoryName);
+      }
+    }, [editableCourse]);
+  
+    const handleEditOrSave = () => {
+      if (isEditing) {
+        // Si está en modo edición, guarda los cambios y desactiva el modo edición
+        handleSaveChanges();
+        setIsEditing(false);
+      } else {
+        // Si no está en modo edición, guarda los valores originales y activa el modo edición
+        setOriginalCourse({ ...editableCourse });
+        setIsEditing(true);
+      }
+    };
+  
+    const handleCancel = () => {
+      setEditableCourse({ ...originalCourse }); // Restaura el curso original
+      setSelectedCategory(categoryOriginal); // Restaura la categoría original
+      setIsEditing(false); // Desactiva el modo edición
+    };
+  
+    const handleCategoryChange = (event) => {
+      const selectedValue = event.target.value;
+      const selectedKey = Object.entries(categoryMapping).find(([key, value]) => value === selectedValue)?.[0];
+      if (selectedKey !== undefined) {
+        setSelectedCategory(selectedValue); // Actualizar el valor seleccionado
+        setEditableCourse({ ...editableCourse, Categoria: parseInt(selectedKey, 10) }); // Guardar el key como número en editableCourse.Categoria
+      }
+    };
+
+    // 
 
 
     const handleOpenFileUploader = (lesson) => {
@@ -861,7 +922,7 @@ function Courses() {
     }
   
     return (
-      <Box sx={{ display: 'flex', mt: '64px' }}>
+      <Box sx={{ display: 'flex', mt: '64px', mb: isMobile ? '64px': '0' }}>
         <Navbar />
         <Box component="main" sx={{ p: 3, display: 'flex', flexDirection: 'column', width: '100%' }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -891,6 +952,57 @@ function Courses() {
               sx={{ px: 7, pt: 2 }}
             >
               <Box {...(!isMobile ? { flex: 3 } : {})} sx={{ mt: 2, pt: 5 }}>
+              {!isEditing && isMobile && (
+                  <Box sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      startIcon={<EditIcon />}
+                      onClick={handleEditOrSave}
+                      sx={{
+                        mb: '1rem',
+                        transition: 'opacity 0.3s ease, transform 0.3s ease',
+                        '&:hover': { transform: 'scale(1.05)' }, // Efecto de hover
+                      }}
+                    >
+                      Editar Curso
+                    </Button>
+                  </Box>
+                )}
+                {isEditing && isMobile && (
+                  <Box sx={{ display: 'flex', justifyContent: 'end', alignItems: 'center', gap: 2 }}>
+                    <Button
+                      variant="contained"
+                      startIcon={<CloseIcon />}
+                      color="primary"
+                      onClick={handleCancel}
+                      sx={{
+                        mb: '1rem',
+                        transition: 'opacity 0.3s ease, transform 0.3s ease',
+                        '&:hover': { transform: 'scale(1.05)' }, // Efecto de hover
+                      }}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      variant="contained"
+                      startIcon={<CheckMark />}
+                      onClick={handleEditOrSave}
+                      sx={{
+                        mb: '1rem',
+                        transition: 'opacity 0.3s ease, transform 0.3s ease',
+                        backgroundColor: CUSTOM_COLOR,
+                        color: '#ffffff',
+                        '&:hover': {
+                          transform: 'scale(1.05)',
+                          backgroundColor: '#FFA000',
+                        },
+                      }}
+                    >
+                      Guardar
+                    </Button>
+                  </Box>
+                )}
                {/* Nombre del curso */}
                 <Box
                   sx={{ display: 'flex', alignItems: 'center', position: 'relative', py: 1 }}
@@ -997,7 +1109,7 @@ function Courses() {
                 </Box>
               </Box>
               <Box {...(!isMobile ? { flex: 2 } : {})}>
-                <CourseDetailsList courseLessons={courseLessons} handleSaveChanges={handleSaveChanges} editableCourse={editableCourse} setEditableCourse={setEditableCourse} isEditing={isEditing} setIsEditing={setIsEditing} originalCourse={originalCourse} setOriginalCourse={setOriginalCourse} />
+                <CourseDetailsList courseLessons={courseLessons} editableCourse={editableCourse} setEditableCourse={setEditableCourse} isEditing={isEditing} isMobile={isMobile} selectedCategory={selectedCategory} handleEditorSave={handleEditOrSave} handleCancel={handleCancel} handleCategoryChange={handleCategoryChange} />
               </Box>
             </Stack>
             {/* <Box sx={{ pt: 3 }}>
@@ -1005,41 +1117,101 @@ function Courses() {
             </Box> */}
           </Box>
           <Box sx={{ pt: 7 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-              <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+          <Box 
+              sx={{ 
+                display: 'flex', 
+                flexDirection: isMobile ? 'column' : 'row', // Cambiar la dirección según isMobile
+                justifyContent: 'space-between', 
+                alignItems: isMobile ? 'flex-start' : 'center', // Alinear los botones correctamente
+                mb: 3 
+              }}
+            >
+              <Typography variant="h5" sx={{ fontWeight: 'bold', mb: isMobile ? 2 : 0 }}>
                 Contenido del Curso
               </Typography>
-              <Box sx={{ display: 'flex', gap: 2 }}>
-                {viewingExam && (
+
+              {/* Contenedor para los botones */}
+              {isMobile ? (
+                // Vista móvil: Botones en columna con el orden deseado
+                <Box 
+                  sx={{ 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    gap: 2, 
+                    width: '100%' // Ocupan todo el ancho en móvil
+                  }}
+                >
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    startIcon={<AssignmentOutlinedIcon />}
+                    onClick={() => setViewingExam(!viewingExam)}
+                  >
+                    {viewingExam ? 'Ver Lecciones' : 'Ver Examen'}
+                  </Button>
                   <Button
                     variant="contained"
-                    startIcon={<SaveIcon />}
-                    onClick={handleSaveQuestionFromCourses}
-                    sx={{
-                      backgroundColor: '#FFB300',
-                      color: '#ffffff',
-                    }}
+                    color="primary"
+                    startIcon={<AddIcon />}
+                    onClick={viewingExam ? handleAddQuestionFromCourses : handleOpenAdd}
                   >
-                    Guardar Cambios
+                    {viewingExam ? 'Agregar Pregunta' : 'Agregar Lección'}
                   </Button>
-                )}
-                <Button
-                  variant="contained"
-                  color="primary"
-                  startIcon={<AddIcon />}
-                  onClick={viewingExam ? handleAddQuestionFromCourses : handleOpenAdd}
+                  {viewingExam && (
+                    <Button
+                      variant="contained"
+                      startIcon={<SaveIcon />}
+                      onClick={handleSaveQuestionFromCourses}
+                      sx={{
+                        backgroundColor: '#FFB300',
+                        color: '#ffffff',
+                      }}
+                    >
+                      Guardar Cambios
+                    </Button>
+                  )}
+                </Box>
+              ) : (
+                // Vista escritorio: Botones en fila con el orden original
+                <Box 
+                  sx={{ 
+                    display: 'flex', 
+                    gap: 2, 
+                    flexDirection: 'row', 
+                    width: 'auto' // Mantienen su tamaño automático en escritorio
+                  }}
                 >
-                  {viewingExam ? 'Agregar Pregunta' : 'Agregar Lección'}
-                </Button>
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  startIcon={<AssignmentOutlinedIcon />}
-                  onClick={() => setViewingExam(!viewingExam)}
-                >
-                  {viewingExam ? 'Ver Lecciones' : 'Ver Examen'}
-                </Button>
-              </Box>
+                  {viewingExam && (
+                    <Button
+                      variant="contained"
+                      startIcon={<SaveIcon />}
+                      onClick={handleSaveQuestionFromCourses}
+                      sx={{
+                        backgroundColor: '#FFB300',
+                        color: '#ffffff',
+                      }}
+                    >
+                      Guardar Cambios
+                    </Button>
+                  )}
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<AddIcon />}
+                    onClick={viewingExam ? handleAddQuestionFromCourses : handleOpenAdd}
+                  >
+                    {viewingExam ? 'Agregar Pregunta' : 'Agregar Lección'}
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    startIcon={<AssignmentOutlinedIcon />}
+                    onClick={() => setViewingExam(!viewingExam)}
+                  >
+                    {viewingExam ? 'Ver Lecciones' : 'Ver Examen'}
+                  </Button>
+                </Box>
+              )}
             </Box>
             {viewingExam ? (
               <ExamQuestions ref={examQuestionsRef} courseId={courseId} />
@@ -1144,15 +1316,18 @@ function Courses() {
             onAddQuestion={handleAddQuestion}
             onSaveQuestions={handleSaveQuestions}
             onRemoveQuestion={handleRemoveQuestion}
+            isMobile={isMobile}
           />
           {/* Pop-up para subir archivos */}
           <FileUploader
               lesson={currentLecture}
+              editableLessons={editableLessons}
               open={fileUploaderOpen} // Controlar visibilidad del diálogo
               onClose={handleCloseFileUploader} // Cerrar el diálogo
               onFileUploaded={(fileUrl) => {
                   handleUrl(currentLecture.IdLeccion, fileUrl); // Actualizar el estado local con el nuevo URL del archivo
               }}
+              setShowPopup={setShowPopup}
           />
           {showPopup && (
             <ConfirmationPopup
@@ -1162,6 +1337,7 @@ function Courses() {
             />
           )}
         </Box>
+        {isMobile && <AdminBottBar />}
       </Box>
     );
   }

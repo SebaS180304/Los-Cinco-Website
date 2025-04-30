@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { AppBar, Toolbar, Box, Button, Tooltip, Menu, Typography, MenuItem, Divider } from '@mui/material';
+import { AppBar, Toolbar, Box, Button, Tooltip, Menu, Typography, MenuItem, Divider, useMediaQuery } from '@mui/material';
+import { useTheme } from '@mui/material/styles'; // Importa useTheme
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/images/logoA.png';
 import PermIdentityOutlinedIcon from '@mui/icons-material/PermIdentityOutlined';
@@ -9,6 +10,10 @@ const settings = ['Cerrar Sesión'];
 const NavbarAdmin = () => {
   const navigate = useNavigate();
   const [anchorElUser, setAnchorElUser] = useState(null);
+
+  // Usa el tema de Material-UI para detectar si el dispositivo es móvil
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -34,27 +39,39 @@ const NavbarAdmin = () => {
             <Typography variant="h6" component={Link} to="/dashboard" sx={{ ml: 2, textDecoration: 'none', color: 'black' }}>
               Cursos
             </Typography>
-            <Typography variant="h6" component={Link} to="/students" sx={{ ml: 2, textDecoration: 'none', color: 'black' }}>
-              Alumnos
-            </Typography>
+            {/* Oculta "Alumnos" si isMobile es true */}
+            {!isMobile && (
+              <Typography variant="h6" component={Link} to="/students" sx={{ ml: 2, textDecoration: 'none', color: 'black' }}>
+                Alumnos
+              </Typography>
+            )}
           </Box>
           <Box>
             <Tooltip title="Abrir Configuración" arrow>
-                <Button startIcon={<PermIdentityOutlinedIcon />} 
-                    variant="contained" sx={{ bgcolor: '#FFB300' }} 
-                    onClick={handleOpenUserMenu}>
-                        Admin
-                </Button>
+              <Button
+                startIcon={<PermIdentityOutlinedIcon />}
+                variant="contained"
+                sx={{ bgcolor: '#FFB300' }}
+                onClick={handleOpenUserMenu}
+              >
+                Admin
+              </Button>
             </Tooltip>
-            <Menu sx={{mt: '45px'}} id="user-menu" anchorEl={anchorElUser}
-                anchorOrigin={{vertical: 'top', horizontal: 'right'}} keepMounted
-                transformOrigin={{vertical: 'top', horizontal: 'right'}}
-                open={Boolean(anchorElUser)} onClose={handleCloseUserMenu}>
-                {settings.map((setting) => (
-                    <MenuItem key={setting} onClick={handleLogout}>
-                        <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
-                    </MenuItem>
-                ))}
+            <Menu
+              sx={{ mt: '45px' }}
+              id="user-menu"
+              anchorEl={anchorElUser}
+              anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+              keepMounted
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+              {settings.map((setting) => (
+                <MenuItem key={setting} onClick={handleLogout}>
+                  <Typography sx={{ textAlign: 'center' }}>{setting}</Typography>
+                </MenuItem>
+              ))}
             </Menu>
           </Box>
         </Toolbar>

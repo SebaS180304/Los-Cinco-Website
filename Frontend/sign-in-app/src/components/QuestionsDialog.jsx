@@ -6,7 +6,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import CheckMark from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-const QuestionsDialog = ({ open, onClose, lecture, onQuestionChange, onOptionChange, onCorrectOptionChange, onAddOption, onRemoveOption, onAddQuestion, onSaveQuestions, onRemoveQuestion, }) => {
+const QuestionsDialog = ({ open, onClose, lecture, onQuestionChange, onOptionChange, onCorrectOptionChange, onAddOption, onRemoveOption, onAddQuestion, onSaveQuestions, onRemoveQuestion, isMobile }) => {
   const [errors, setErrors] = useState({}); // Estado para manejar los errores
   const [expandedPanels, setExpandedPanels] = useState([]); // Estado para manejar los paneles expandidos
 
@@ -100,7 +100,16 @@ const QuestionsDialog = ({ open, onClose, lecture, onQuestionChange, onOptionCha
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mr: 3, pb: 0 }}>
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          flexDirection: isMobile ? 'column' : 'row', // Cambiar a columna en móvil
+          alignItems: isMobile ? 'flex-start' : 'center', // Alinear correctamente en móvil
+          justifyContent: 'space-between', 
+          mr: 3, 
+          pb: 0 
+        }}
+      >
         <DialogTitle>Preguntas de Evaluación</DialogTitle>
         <Button
           variant="outlined"
@@ -108,6 +117,11 @@ const QuestionsDialog = ({ open, onClose, lecture, onQuestionChange, onOptionCha
           onClick={handleAddQuestion}
           startIcon={<AddIcon />}
           disabled={lecture?.questions?.length >= 10} // Limitar a 10 preguntas
+          sx={{
+            mt: isMobile ? 2 : 0, // Agregar margen superior en móvil para separar del texto
+            ml: isMobile ? 3 : 0,
+            alignSelf: isMobile ? 'stretch' : 'auto', // Alinear al ancho completo en móvil
+          }}
         >
           Agregar Pregunta
         </Button>
@@ -233,7 +247,7 @@ const QuestionsDialog = ({ open, onClose, lecture, onQuestionChange, onOptionCha
           </Accordion>
         ))}
       </DialogContent>
-      <Box sx={{ display: 'flex', alignItems: 'end', justifyContent: 'end', mb: 2, gap: 2, mr: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'end', justifyContent: isMobile ? 'center' : 'end', mb: 2, gap: 2, mr: 2 }}>
         <Button
           variant="contained"
           color="primary"

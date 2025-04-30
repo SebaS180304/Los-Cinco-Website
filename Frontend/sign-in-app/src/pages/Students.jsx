@@ -1,17 +1,23 @@
-import React, { useState, useEffect, } from 'react';
-import { Box, Typography, Divider, Table, TableBody, TableCell, TableContainer, TableRow, Paper, TextField, IconButton, Autocomplete,  } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, Divider, Table, TableBody, TableCell, TableContainer, TableRow, Paper, TextField, IconButton, Autocomplete } from '@mui/material';
+import { useTheme } from '@mui/material/styles'; // Importa useTheme
+import { useMediaQuery } from '@mui/material'; // Importa useMediaQuery
 import NavbarAdmin from '../components/NavbarAdmin';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import axios from '../api/axios';
+import AdminBottBar from '../components/AdminBottBar';
 
 const Students = () => {
   const [alumnos, setAlumnos] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [selectedAlumno, setSelectedAlumno] = useState(null);
 
-  // Fetch the list of current students (own)
+  // Usa el tema de Material-UI para detectar si el dispositivo es móvil
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   useEffect(() => {
     const fetchOwnAlumnos = async () => {
       try {
@@ -26,7 +32,6 @@ const Students = () => {
     fetchOwnAlumnos();
   }, [setAlumnos]);
 
-  // Search for students not already added
   const handleSearch = async (query) => {
     if (!query.trim()) {
       setSearchResults([]);
@@ -43,19 +48,16 @@ const Students = () => {
     }
   };
 
-  // Add a new student
   const handleAddAlumno = async () => {
     if (selectedAlumno) {
       try {
-        console.log('Selected Alumno:', selectedAlumno.idAlumno);
         const idEstudiante = selectedAlumno.idAlumno;
-        console.log('ID Estudiante:', idEstudiante);
         const response = await axios.post(
           '/Alumnos/Add',
-          null, 
-          { 
+          null,
+          {
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-            params: { IdEstudiante: idEstudiante }, 
+            params: { IdEstudiante: idEstudiante },
           },
         );
         if (response.status === 200) {
@@ -69,7 +71,6 @@ const Students = () => {
     }
   };
 
-  // Remove a student
   const handleRemoveAlumno = async (idInscripcion) => {
     try {
       const response = await axios.delete('/Alumnos/UnSubscribe', {
@@ -166,6 +167,7 @@ const Students = () => {
           </Box>
         </Box>
       </Box>
+      {isMobile && <AdminBottBar />}
     </Box>
   );
 };
