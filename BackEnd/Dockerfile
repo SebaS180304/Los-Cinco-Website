@@ -49,9 +49,10 @@ FROM node:18-alpine
 
 # Establece el directorio de trabajo dentro del contenedor
 WORKDIR /app
-
 # Copia los archivos del proyecto al contenedor
-COPY . .
+COPY MyApiProyect/googleDriveApi.js .
+COPY MyApiProyect/package.json .
+COPY MyApiProyect/package-lock.json .
 
 # Instala las dependencias necesarias
 RUN npm install
