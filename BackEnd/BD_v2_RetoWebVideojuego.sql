@@ -129,14 +129,14 @@ for each row
 		end if;
 	END;
 delimiter //
-
 ###reseteo de curso
 create trigger ResetCurso before update on InscripcionCurso
 for each row
 begin
 	declare MaxInt int;
+	declare cal int;
 	select intentos_max into MaxInt from Cursos where id_curso = old.id_curso;
-	if(old.intento != new.intento and new.intento > MaxInt) then
+	if(old.intento != new.intento and new.intento > MaxInt and new.puntaje < 50) then
 		set new.intento = 0;
 		update LeccionCompletada set valida = false where id_usuario = old.id_estudiante 
         and id_leccion in (
@@ -310,6 +310,7 @@ delimiter $$
 insert into Cursos(titulo_curso, categoria, id_instructor, intentos_max, descripcion, visible) values 
 ("Lavadoras 3", 2, 1002, 2, "Curso avanzado sobre lavadoras industriales", TRUE );
 delimiter $$
+
 
 
 

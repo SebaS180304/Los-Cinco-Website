@@ -337,7 +337,7 @@ namespace MyApiProyect.Services
             if(inscripc is null) return new List<QuizValuesDTO>();
             var submitions = await _context.QuizSubmitions.Where(q => q.IdInscripcionCurso == inscripc.IdInscripcionCurso).
                                                             Take(inscripc.Intento).
-                                                            OrderByDescending(q=> q.FechaSubmition).ToListAsync();
+                                                            OrderBy(q=> q.FechaSubmition).ToListAsync();
             var res = submitions.Select( s=> new QuizValuesDTO{
                     cal = s.Calificacion,
                     intento = s.IdSubmition,
