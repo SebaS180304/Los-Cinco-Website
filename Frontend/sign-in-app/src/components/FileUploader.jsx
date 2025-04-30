@@ -106,7 +106,7 @@ const FileUploader = ({ lesson, onFileUploaded, open, onClose, setShowPopup }) =
                         {uploading ? 'Subiendo...' : 'Subir Archivo'}
                     </Button>
                     {/* Iframe para visualizar el archivo cargado */}
-                    {lesson?.Url && lesson.Url.trim() !== '' && (
+                    {lesson?.Url && lesson.Url.trim() !== '' && lesson.Url.includes('https://drive.google.com') && (
                       <Box sx={{ mt: 2, border: '1px solid #ccc', borderRadius: '8px', overflow: 'hidden' }}>
                         <iframe
                           src={lesson.Url}
