@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import BuildIcon from '@mui/icons-material/Build';
 import SecurityIcon from '@mui/icons-material/Security';
+import HandymanOutlinedIcon from '@mui/icons-material/HandymanOutlined';
 import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
 import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 import { Bar } from 'react-chartjs-2';
@@ -16,9 +16,9 @@ const SECONDARY_COLOR = '#0c1633';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const categoryIconMapping = {
-  0 : <BuildIcon />,
-  1 : <SecurityIcon />,
-  2 : <ElectricBoltIcon />,
+  0 : <HandymanOutlinedIcon/>,
+  1 : <ElectricBoltIcon />,
+  2 : <SecurityIcon />,
   3 : <SupportAgentIcon />
 };
 
@@ -98,7 +98,7 @@ const CourseProgressChart = ({ course }) => {
               }}
             >
               <Box sx={{ mr: 1, display: 'flex', alignItems: 'center' }}>
-                {course?.categoria &&
+                {course?.categoria !== undefined && course?.categoria !== null &&
                   React.cloneElement(categoryIconMapping[course?.categoria] || <></>, {
                     sx: { color: isEven ? '#fff' : SECONDARY_COLOR, fontSize: 'inherit' },
                   })}
