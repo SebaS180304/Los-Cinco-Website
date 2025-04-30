@@ -43,3 +43,26 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 
 # Set the entry point for the container
 ENTRYPOINT ["dotnet", "MyApiProyect.dll"]
+
+# Usa una imagen base de Node.js para ejecutar la API de Google Drive
+FROM node:18-alpine
+
+# Establece el directorio de trabajo dentro del contenedor
+WORKDIR /app
+
+# Copia los archivos del proyecto al contenedor
+COPY . .
+
+# Instala las dependencias necesarias
+RUN npm install
+
+# Expone el puerto en el que se ejecutará la API
+EXPOSE 5010
+
+# Configura las variables de entorno para la API de Google Drive
+ENV CLIENT_ID=""
+ENV CLIENT_SECRET=""
+ENV REFRESH_TOKEN=""
+
+# Comando para iniciar la aplicación
+CMD ["node", "googleDriveApi.js"]
