@@ -60,10 +60,5 @@ RUN npm install
 # Expone el puerto en el que se ejecutará la API
 EXPOSE 5010
 
-# Configura las variables de entorno para la API de Google Drive
-ENV CLIENT_ID=""
-ENV CLIENT_SECRET=""
-ENV REFRESH_TOKEN=""
-
 # Comando para iniciar la aplicación
 CMD ["node", "googleDriveApi.js"]
