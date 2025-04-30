@@ -1109,7 +1109,7 @@ function Courses() {
                 </Box>
               </Box>
               <Box {...(!isMobile ? { flex: 2 } : {})}>
-                <CourseDetailsList courseLessons={courseLessons} editableCourse={editableCourse} setEditableCourse={setEditableCourse} isEditing={isEditing} isMobile={isMobile} selectedCategory={selectedCategory} handleEditorSave={handleEditOrSave} handleCancel={handleCancel} handleCategoryChange={handleCategoryChange} />
+                <CourseDetailsList courseLessons={courseLessons} editableCourse={editableCourse} setEditableCourse={setEditableCourse} isEditing={isEditing} isMobile={isMobile} selectedCategory={selectedCategory} handleEditOrSave={handleEditOrSave} handleCancel={handleCancel} handleCategoryChange={handleCategoryChange} />
               </Box>
             </Stack>
             {/* <Box sx={{ pt: 3 }}>
