@@ -22,7 +22,7 @@ const FileUploader = ({ lesson, onFileUploaded, open, onClose }) => {
         setUploading(true);
 
         // Subir el archivo al backend (Google Drive)
-        const response = await axios.post('http://localhost:5010/upload', formData, {
+        const response = await axios.post('http://130.213.216.127:5010/upload', formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
         });
 
@@ -54,7 +54,7 @@ const FileUploader = ({ lesson, onFileUploaded, open, onClose }) => {
 
         // Enviar el fileId y la URL generada al backend para actualizar la lección
         await axios.patch(
-            'http://localhost:5011/CursoAdmin/Leccion/Edit',
+            'http://130.213.216.127:5011/CursoAdmin/Leccion/Edit',
             {
                 IdLeccion: lesson.IdLeccion,
                 TituloLeccion: lesson.TituloLeccion,

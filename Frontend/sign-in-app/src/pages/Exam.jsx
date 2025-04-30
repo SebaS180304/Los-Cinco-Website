@@ -4,6 +4,7 @@ import { AppBar, Box, Button, CircularProgress, Dialog, Toolbar, Typography, Lin
 import axios from '../api/axios';
 import Lectbar from '../components/LectBar';
 import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import { Unity, useUnityContext } from "react-unity-webgl";
 
 const LESSON_ARRAY_URL = '/CursoEstudiante/LeccionesIdCurso?id_curso=';
@@ -23,8 +24,9 @@ const Exam = () => {
     const [lessons, setLessons] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
     const [isGameLaunched, setIsGameLaunched] = useState(false);
+    const [isPortrait, setIsPortrait] = useState(false);
 
-    const { unityProvider, loadingProgression, isLoaded } = useUnityContext({
+    const { unityProvider, loadingProgression, isLoaded, sendMessage, requestFullscreen  } = useUnityContext({
         loaderUrl: "/assets/unity/FIxIt_Web.loader.js",
         dataUrl: "/assets/unity/FIxIt_Web.data.gz",
         frameworkUrl: "/assets/unity/FIxIt_Web.framework.js.gz",
@@ -55,6 +57,30 @@ const Exam = () => {
         };
         fetchLessonsArray();
     }, [courseId, navigate]);
+
+    useEffect(() => {
+        if (isLoaded && isGameLaunched) {
+            const jwtToken = localStorage.getItem('token'); 
+
+            // Envía Token y CursoId por separado
+            sendMessage("TokenManager", "ReceiveToken", jwtToken);
+            sendMessage("TokenManager", "ReceiveCursoId", String(courseId));
+
+            console.log("Datos enviados a Unity:", { jwtToken, courseId });
+        }
+    }, [isLoaded, isGameLaunched, courseId, sendMessage]);
+
+    useEffect(() => {
+        const mql = window.matchMedia("(orientation: portrait)");
+        setIsPortrait(mql.matches);
+        const handleOrientationChange = (e) => {
+            setIsPortrait(e.matches);
+        }
+        mql.addEventListener("change", handleOrientationChange);
+        return () => {
+            mql.removeEventListener("change", handleOrientationChange);
+        };
+    }, []);
 
     if (loading) {
         return (
@@ -110,10 +136,16 @@ const Exam = () => {
                             <Typography variant="h4" fontWeight="bold" gutterBottom sx={{ color: 'white' }}>
                                 ¡Ahora puedes realizar el examen final de curso!
                             </Typography>
+                            {isPortrait && (
+                                <Typography variant="body1" sx={{ color: 'white', mb: 2 }}>
+                                    Por favor, gira tu dispositivo a modo horizontal para realizar tu examen.
+                                </Typography>
+                            )}
                             <Button
                                 variant="outlined"
                                 onClick={()=> setIsGameLaunched(true)}
                                 startIcon={<HistoryEduIcon />}
+                                disabled={isPortrait}
                                 sx={{
                                     color: CUSTOM_COLOR,
                                     border: `2px solid ${CUSTOM_COLOR}`,
@@ -146,18 +178,37 @@ const Exam = () => {
                                 </>
                             )}
                             <Unity unityProvider={unityProvider} style={{ width: "100%", height: "auto" }} />
-                            <Button
-                                variant="outlined"
-                                onClick={()=> setIsGameLaunched(false)}
-                                startIcon={<HistoryEduIcon />}
-                                sx={{
-                                    color: CUSTOM_COLOR,
-                                    border: `2px solid ${CUSTOM_COLOR}`,
-                                    '&:hover': { opacity: 0.8 },
-                                }}
-                            >
-                                Cerrar Examen
-                            </Button>
+                            <Box sx={{ 
+                                display: 'flex', 
+                                gap: 2, 
+                                justifyContent: 'center',
+                                mt: 2 
+                            }}>
+                                <Button
+                                    variant="outlined"
+                                    onClick={() => requestFullscreen(true)}
+                                    startIcon={<FullscreenIcon />}
+                                    sx={{
+                                        color: CUSTOM_COLOR,
+                                        border: `2px solid ${CUSTOM_COLOR}`,
+                                        '&:hover': { opacity: 0.8 },
+                                    }}
+                                >
+                                    Pantalla Completa
+                                </Button>
+                                <Button
+                                    variant="outlined"
+                                    onClick={() => setIsGameLaunched(false)}
+                                    startIcon={<HistoryEduIcon />}
+                                    sx={{
+                                        color: CUSTOM_COLOR,
+                                        border: `2px solid ${CUSTOM_COLOR}`,
+                                        '&:hover': { opacity: 0.8 },
+                                    }}
+                                >
+                                    Cerrar Examen
+                                </Button>
+                            </Box>
                         </Box>
                     )}
                 </Box>
