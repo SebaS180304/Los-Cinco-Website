@@ -45,7 +45,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 ENTRYPOINT ["dotnet", "MyApiProyect.dll"]
 
 # Usa una imagen base de Node.js para ejecutar la API de Google Drive
-FROM node:18-alpine
+FROM node:18-alpine AS google-drive-api
 
 # Establece el directorio de trabajo dentro del contenedor
 WORKDIR /app
