@@ -7,6 +7,7 @@ using MyApiProyect.Services;
 using MyApiProyect.DTO;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Diagnostics;
 
 namespace MyApiProyect.Controllers
 {
@@ -60,7 +61,7 @@ namespace MyApiProyect.Controllers
             if(response){
                 return NoContent();
             }else{
-                return StatusCode(500);
+                return StatusCode(201);
             }
         }
 

@@ -297,8 +297,31 @@ delimiter //
 insert into Usuarios (nombre_completo, rol, contrasena) values
 ("Romeo Juanin", 0, "123456" ),
 ("Otro Alumno", 0, "abcde"),
-("Romeo Mejor Juanin", 1, "123456"),
-("Otro Instructor", 1, "abcde");
+	("Romeo Mejor Juanin", 1, "123456"),
+	("Otro Instructor", 1, "abcde"),
+("Rolando", 1, "1234"),
+("Roberto",  1, "1234"),
+("Benjamin",  1, "1234"),
+("Jesus Carlos", 1, "1234"),
+("Luisa", 1, "1234"),
+	("Rolando", 0, "1234"),
+	("Roberto", 0, "1234"),
+	("Benjamin",  0, "1234"),
+	("Jesus Carlos",  0, "1234"),
+	("Luisa", 0, "1234"),
+("Diego", 0, "1234"),
+("Efrain", 0, "1234"),
+("Bruno", 0, "1234"),
+("Victor", 0, "1234"),
+	("Diego", 1, "1234"),
+	("Efrain", 1, "1234"),
+	("Bruno", 1, "1234"),
+	("Victor", 1, "1234"),
+("Jaime", 0, "1234"),
+("Admin", 0, "1234"),
+	("Jaime", 1, "1234"),
+	("Admin", 1, "1234");
+
 delimiter //
 
 delimiter @@
@@ -310,6 +333,8 @@ delimiter $$
 insert into Cursos(titulo_curso, categoria, id_instructor, intentos_max, descripcion, visible) values 
 ("Lavadoras 3", 2, 1002, 2, "Curso avanzado sobre lavadoras industriales", TRUE );
 delimiter $$
+
+select * from Usuarios;
 
 
 
