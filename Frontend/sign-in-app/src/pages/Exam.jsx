@@ -47,9 +47,9 @@ const Exam = () => {
         unload 
     } = useUnityContext({
         loaderUrl: "/assets/unity/FIxIt_Web.loader.js",
-        dataUrl: "/assets/unity/FIxIt_Web.data",
-        frameworkUrl: "/assets/unity/FIxIt_Web.framework.js",
-        codeUrl: "/assets/unity/FIxIt_Web.wasm",
+        dataUrl: "/assets/unity/FIxIt_Web.data.gz",
+        frameworkUrl: "/assets/unity/FIxIt_Web.framework.js.gz",
+        codeUrl: "/assets/unity/FIxIt_Web.wasm.gz",
     });
 
     useEffect(() => {
