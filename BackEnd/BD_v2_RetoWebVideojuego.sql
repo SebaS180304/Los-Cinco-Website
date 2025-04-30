@@ -303,16 +303,14 @@ delimiter //
 
 delimiter @@
 insert into InscripcionInstructor ( id_estudiante, id_instructor) values
-(1000,1001),
-(1000, 1002);
+(1000,1002),
+(1000, 1003);
 delimiter @@
 delimiter $$
-insert into Cursos(titulo_curso, categoria, id_instructor, intentos_max, descripcion) values 
-("Lavadoras 3", 2, 1002, 2, "Curso avanzado sobre lavadoras industriales");
+insert into Cursos(titulo_curso, categoria, id_instructor, intentos_max, descripcion, visible) values 
+("Lavadoras 3", 2, 1002, 2, "Curso avanzado sobre lavadoras industriales", TRUE );
 delimiter $$
 
-
-select * from Usuarios;
 
 
 

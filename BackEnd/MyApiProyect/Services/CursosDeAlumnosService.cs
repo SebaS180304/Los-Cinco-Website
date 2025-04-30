@@ -68,6 +68,7 @@ namespace MyApiProyect.Services
         public async Task<CursoInscripcionDTO?> GetCurso(int id_estudiante, int id_curso){
             var curso = await _context.Cursos.
                                 Where(c=> c.IdCurso == id_curso && c.Visible).
+                                Include(c=> c.InscripcionCursos).
                                 Include(c=> c.Lecciones).
                                 ThenInclude(c=> c.LeccionCompletada).
                                 FirstOrDefaultAsync();
@@ -78,8 +79,8 @@ namespace MyApiProyect.Services
                 DescripcionCurso = curso.Descripcion ?? "NA",
                 Categoria = curso.Categoria,
                 IntentosMax = curso.IntentosMax,
-                Intentos = 0,
-                CalificacionExamen = 0,
+                Intentos = curso.InscripcionCursos.Where(ic=> ic.IdEstudiante == id_estudiante).Select(ic=> ic.Intento).FirstOrDefault(),
+                CalificacionExamen = curso.InscripcionCursos.Where(ic=> ic.IdEstudiante == id_estudiante).Select(ic=> ic.Puntaje).FirstOrDefault(),
                 lecciones = curso.Lecciones.Select(l=>new LeccionInscripcionDTO{
                     IdLeccion = l.IdLeccion,
                     TituloLeccion = l.TituloLeccion,
