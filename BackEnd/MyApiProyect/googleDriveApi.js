@@ -10,10 +10,15 @@ const app = express();
 app.use(cors({ origin: '*' }));
 const upload = multer({ dest: 'uploads/' });
 
-const CLIENT_ID = '';
-const CLIENT_SECRET = '';
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
 const REDIRECT_URI = 'https://developers.google.com/oauthplayground';
-const REFRESH_TOKEN = ''; 
+
+if (!CLIENT_ID || !CLIENT_SECRET || !REFRESH_TOKEN) {
+  console.error('Error: Las variables de entorno CLIENT_ID, CLIENT_SECRET y REFRESH_TOKEN son obligatorias.');
+  process.exit(1);
+}
 
 const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 oauth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
