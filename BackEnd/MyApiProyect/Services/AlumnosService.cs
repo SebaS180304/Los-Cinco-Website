@@ -48,12 +48,14 @@ namespace MyApiProyect.Services
         }
 
         public async Task<int> AddAlumnoInscr(int id_estudiante, int id_instructor){
+            Console.WriteLine(id_estudiante);
+            Console.WriteLine(id_instructor);
             var Inscripcion = new InscripcionInstructor{
                 IdEstudiante = id_estudiante,
                 IdInstructor = id_instructor
             };
             try{
-                await _context.InscripcionInstructors.AddAsync(Inscripcion);
+                await _context.AddAsync(Inscripcion);
                 await _context.SaveChangesAsync();
             }catch (Exception e)
             {

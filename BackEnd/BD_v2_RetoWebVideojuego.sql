@@ -172,7 +172,7 @@ for each row
 		select Count(*) into Ncurs from Cursos where id_instructor = new.id_instructor;
 		if(Ncurs > 0) then
 			insert into InscripcionCurso (id_estudiante, id_curso) 
-			select new.id_estudiante, id_curso from cursos where (id_instructor = new.id_instructor);
+			select new.id_estudiante, id_curso from Cursos where (id_instructor = new.id_instructor);
 		end if;
 	end;
 delimiter $$
@@ -326,15 +326,14 @@ delimiter //
 
 delimiter @@
 insert into InscripcionInstructor ( id_estudiante, id_instructor) values
-(1000,1002),
-(1000, 1003);
+(1017, 1019);
 delimiter @@
 delimiter $$
 insert into Cursos(titulo_curso, categoria, id_instructor, intentos_max, descripcion, visible) values 
-("Lavadoras 3", 2, 1002, 2, "Curso avanzado sobre lavadoras industriales", TRUE );
+("Lavadoras 3", 2, 1019, 2, "Curso avanzado sobre lavadoras industriales", TRUE );
 delimiter $$
 
-select * from Usuarios;
+
 
 
 
