@@ -107,8 +107,21 @@ const EnrolledCourse = () => {
                     </Box>
                 </Box>
                 <Box sx={{ pt: 7 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                        <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'black' }}>
+                    <Box sx={{ 
+                        display: 'flex', 
+                        flexDirection: { xs: 'column', md: 'row' },
+                        alignItems: { xs: 'flex-start', md: 'center' },
+                        gap: { xs: 2, md: 0 },
+                        mb: 3 
+                    }}>
+                        <Typography 
+                            variant="h4" 
+                            sx={{ 
+                                fontWeight: 'bold', 
+                                color: 'black',
+                                order: { xs: 1, md: 1 }
+                            }}
+                        >
                             Contenido del Curso
                         </Typography>
                         <Button
@@ -121,7 +134,9 @@ const EnrolledCourse = () => {
                                 color: CUSTOM_COLOR,
                                 border: `2px solid ${CUSTOM_COLOR}`,
                                 '&:hover': { opacity: 0.8 },
-                                ml: 'auto',
+                                ml: { xs: 0, md: 'auto' },
+                                order: { xs: 2, md: 2 },
+                                width: { xs: '50%', md: 'auto' },
                                 '&.Mui-disabled': {
                                     color: 'rgba(255, 255, 255, 0.3)',
                                     borderColor: 'rgba(255, 255, 255, 0.3)'
